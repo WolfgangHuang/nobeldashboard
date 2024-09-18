@@ -1,0 +1,601 @@
+﻿ID_Laureate;AwardeeDisplayName;Prize0_Category;Prize0_AwardYear;ID_External;YearOfPublication;Source;Timegap
+16;Wilhelm Wien;Physics;1911;10189;1883;Harvard Dataverse;28
+193;Frederic Joliot;Chemistry;1935;20143;1934;Harvard Dataverse;1
+194;Irene Joliot-Curie;Chemistry;1935;20142;1934;Harvard Dataverse;1
+310;August Krogh;Medicine;1920;30187;1919;Harvard Dataverse;1
+313;Frederick G. Banting;Medicine;1923;30184;1922;Harvard Dataverse;1
+351;Philip S. Hench;Medicine;1950;30153;1949;Harvard Dataverse;1
+368;Arthur Kornberg;Medicine;1959;30135;1958;Harvard Dataverse;1
+19;Max von Laue;Physics;1914;10187;1913;Harvard Dataverse;1
+25;Charles Edouard Guillaume;Physics;1920;10181;1919;Harvard Dataverse;1
+69;Tsung-Dao Lee;Physics;1957;10137;1956;Harvard Dataverse;1
+68;Chen Ning Yang;Physics;1957;10138;1956;Harvard Dataverse;1
+124;Carlo Rubbia;Physics;1984;10080;1983;Harvard Dataverse;1
+125;Simon van der Meer;Physics;1984;10081;1983;Harvard Dataverse;1
+130;J. Georg Bednorz;Physics;1987;10075;1986;Harvard Dataverse;1
+131;K. Alex MÃ¼ller;Physics;1987;10074;1986;Harvard Dataverse;1
+176;Richard WillstÃ¤tter;Chemistry;1915;20160;1913;Harvard Dataverse;2
+183;The Svedberg;Chemistry;1926;20153;1924;Harvard Dataverse;2
+192;Harold C. Urey;Chemistry;1934;20144;1932;Harvard Dataverse;2
+218;Vincent du Vigneaud;Chemistry;1955;20118;1953;Harvard Dataverse;2
+226;Max F. Perutz;Chemistry;1962;20110;1960;Harvard Dataverse;2
+306;Alexis Carrel;Medicine;1912;30189;1910;Harvard Dataverse;2
+314;John Macleod;Medicine;1923;30183;1921;Harvard Dataverse;2
+18;Heike Kamerlingh Onnes;Physics;1913;10188;1911;Harvard Dataverse;2
+21;Lawrence Bragg;Physics;1915;10185;1913;Harvard Dataverse;2
+20;William Bragg;Physics;1915;10186;1913;Harvard Dataverse;2
+37;Sir Chandrasekhara Venkata Raman;Physics;1930;10169;1928;Harvard Dataverse;2
+105;Burton Richter;Physics;1976;10100;1974;Harvard Dataverse;2
+106;Samuel C.C. Ting;Physics;1976;10099;1974;Harvard Dataverse;2
+180;Francis W. Aston;Chemistry;1922;20156;1919;Harvard Dataverse;3
+187;Hans von Euler-Chelpin;Chemistry;1929;20150;1926;Harvard Dataverse;3
+217;Linus Pauling;Chemistry;1954;20119;1951;Harvard Dataverse;3
+222;Frederick Sanger;Chemistry;1958;20114;1955;Harvard Dataverse;3
+254;Paul Berg;Chemistry;1980;20082;1977;Harvard Dataverse;3
+255;Walter Gilbert;Chemistry;1980;20080;1977;Harvard Dataverse;3
+10222;Frederick Sanger;Chemistry;1980;20081;1977;Harvard Dataverse;3
+288;John E. Walker;Chemistry;1997;20048;1994;Harvard Dataverse;3
+312;Otto Meyerhof;Medicine;1922;30185;1919;Harvard Dataverse;3
+322;Otto Warburg;Medicine;1931;30179;1928;Harvard Dataverse;3
+388;Robert W. Holley;Medicine;1968;30115;1965;Harvard Dataverse;3
+41;James Chadwick;Physics;1935;10165;1932;Harvard Dataverse;3
+43;Carl D. Anderson;Physics;1936;10164;1933;Harvard Dataverse;3
+55;Cecil Powell;Physics;1950;10151;1947;Harvard Dataverse;3
+76;Rudolf MÃ¶ssbauer;Physics;1961;10129;1958;Harvard Dataverse;3
+185;Adolf Windaus;Chemistry;1928;20151;1924;Harvard Dataverse;4
+199;Adolf Butenandt;Chemistry;1939;20137;1935;Harvard Dataverse;4
+227;John C. Kendrew;Chemistry;1962;20109;1958;Harvard Dataverse;4
+270;Johann Deisenhofer;Chemistry;1988;20064;1984;Harvard Dataverse;4
+271;Robert Huber;Chemistry;1988;20065;1984;Harvard Dataverse;4
+324;Edgar Adrian;Medicine;1932;30178;1928;Harvard Dataverse;4
+334;Gerhard Domagk;Medicine;1939;30168;1935;Harvard Dataverse;4
+336;Edward A. Doisy;Medicine;1943;30166;1939;Harvard Dataverse;4
+346;Paul MÃ¼ller;Medicine;1948;30156;1944;Harvard Dataverse;4
+367;Severo Ochoa;Medicine;1959;30136;1955;Harvard Dataverse;4
+380;FranÃ§ois Jacob;Medicine;1965;30123;1961;Harvard Dataverse;4
+382;Jacques Monod;Medicine;1965;30121;1961;Harvard Dataverse;4
+387;George Wald;Medicine;1967;30118;1963;Harvard Dataverse;4
+33;Arthur H. Compton;Physics;1927;10172;1923;Harvard Dataverse;4
+38;Werner Heisenberg;Physics;1932;10168;1928;Harvard Dataverse;4
+46;Enrico Fermi;Physics;1938;10160;1934;Harvard Dataverse;4
+73;Owen Chamberlain;Physics;1959;10132;1955;Harvard Dataverse;4
+72;Emilio SegrÃ¨;Physics;1959;10133;1955;Harvard Dataverse;4
+128;Gerd Binnig;Physics;1986;10076;1982;Harvard Dataverse;4
+129;Heinrich Rohrer;Physics;1986;10077;1982;Harvard Dataverse;4
+177;Fritz Haber;Chemistry;1918;20159;1913;Harvard Dataverse;5
+184;Heinrich Wieland;Chemistry;1927;20152;1922;Harvard Dataverse;5
+198;Richard Kuhn;Chemistry;1938;20138;1933;Harvard Dataverse;5
+202;Otto Hahn;Chemistry;1944;20134;1939;Harvard Dataverse;5
+213;Glenn T. Seaborg;Chemistry;1951;20123;1946;Harvard Dataverse;5
+278;Kary B. Mullis;Chemistry;1993;20058;1988;Harvard Dataverse;5
+770;Roderick MacKinnon;Chemistry;2003;20034;1998;Harvard Dataverse;5
+332;Albert Szent-GyÃ¶rgyi;Medicine;1937;30170;1932;Harvard Dataverse;5
+340;Ernst B. Chain;Medicine;1945;30161;1940;Harvard Dataverse;5
+341;Sir Howard Florey;Medicine;1945;30163;1940;Harvard Dataverse;5
+345;Bernardo Houssay;Medicine;1947;30158;1942;Harvard Dataverse;5
+356;John F. Enders;Medicine;1954;30146;1949;Harvard Dataverse;5
+358;Frederick C. Robbins;Medicine;1954;30144;1949;Harvard Dataverse;5
+357;Thomas H. Weller;Medicine;1954;30145;1949;Harvard Dataverse;5
+406;David Baltimore;Medicine;1975;30096;1970;Harvard Dataverse;5
+408;Howard M. Temin;Medicine;1975;30097;1970;Harvard Dataverse;5
+3;Pieter Zeeman;Physics;1902;10193;1897;Harvard Dataverse;5
+24;Johannes Stark;Physics;1919;10182;1914;Harvard Dataverse;5
+36;Louis de Broglie;Physics;1929;10170;1924;Harvard Dataverse;5
+40;Paul A.M. Dirac;Physics;1933;10167;1928;Harvard Dataverse;5
+126;Klaus von Klitzing;Physics;1985;10079;1980;Harvard Dataverse;5
+726;Zhores Alferov;Physics;2000;10044;1995;Harvard Dataverse;5
+793;Theodor W. HÃ¤nsch;Physics;2005;10029;2000;Harvard Dataverse;5
+792;John L. Hall;Physics;2005;10030;2000;Harvard Dataverse;5
+167;Ernest Rutherford;Chemistry;1908;20163;1902;Harvard Dataverse;6
+179;Frederick Soddy;Chemistry;1921;20157;1915;Harvard Dataverse;6
+197;Paul Karrer;Chemistry;1937;20140;1931;Harvard Dataverse;6
+231;Robert B. Woodward;Chemistry;1965;20105;1959;Harvard Dataverse;6
+272;Hartmut Michel;Chemistry;1988;20066;1982;Harvard Dataverse;6
+273;Sidney Altman;Chemistry;1989;20063;1983;Harvard Dataverse;6
+418;Godfrey N. Hounsfield;Medicine;1979;30086;1973;Harvard Dataverse;6
+875;Shinya Yamanaka;Medicine;2012;30011;2006;Harvard Dataverse;6
+49;Isidor Isaac Rabi;Physics;1944;10157;1938;Harvard Dataverse;6
+58;Felix Bloch;Physics;1952;10147;1946;Harvard Dataverse;6
+59;E. M. Purcell;Physics;1952;10148;1946;Harvard Dataverse;6
+81;Charles H. Townes;Physics;1964;10123;1958;Harvard Dataverse;6
+101;Antony Hewish;Physics;1974;10105;1968;Harvard Dataverse;6
+738;Eric Cornell;Physics;2001;10040;1995;Harvard Dataverse;6
+739;Wolfgang Ketterle;Physics;2001;10041;1995;Harvard Dataverse;6
+740;Carl Wieman;Physics;2001;10042;1995;Harvard Dataverse;6
+849;Andre Geim;Physics;2010;10017;2004;Harvard Dataverse;6
+850;Konstantin Novoselov;Physics;2010;10016;2004;Harvard Dataverse;6
+274;Thomas R. Cech;Chemistry;1989;20062;1982;Harvard Dataverse;7
+333;Corneille Heymans;Medicine;1938;30169;1931;Harvard Dataverse;7
+390;Marshall W. Nirenberg;Medicine;1968;30113;1961;Harvard Dataverse;7
+411;Roger Guillemin;Medicine;1977;30092;1970;Harvard Dataverse;7
+415;Daniel Nathans;Medicine;1978;30088;1971;Harvard Dataverse;7
+39;Erwin SchrÃ¶dinger;Physics;1933;10166;1926;Harvard Dataverse;7
+64;Polykarp Kusch;Physics;1955;10142;1948;Harvard Dataverse;7
+65;William B. Shockley;Physics;1956;10141;1949;Harvard Dataverse;7
+89;Luis Alvarez;Physics;1968;10116;1961;Harvard Dataverse;7
+229;Giulio Natta;Chemistry;1963;20108;1955;Harvard Dataverse;8
+228;Karl Ziegler;Chemistry;1963;20107;1955;Harvard Dataverse;8
+230;Dorothy Crowfoot Hodgkin;Chemistry;1964;20106;1956;Harvard Dataverse;8
+250;Ilya Prigogine;Chemistry;1977;20086;1969;Harvard Dataverse;8
+991;Emmanuelle Charpentier;Chemistry;2020;;2012;ChatGPT 4c (September 2024);8
+992;Jennifer A. Doudna;Chemistry;2020;;2012;ChatGPT 4c (September 2024);8
+327;George R. Minot;Medicine;1934;30174;1926;Harvard Dataverse;8
+328;William P. Murphy;Medicine;1934;30176;1926;Harvard Dataverse;8
+335;Henrik Dam;Medicine;1943;30167;1935;Harvard Dataverse;8
+355;Fritz Lipmann;Medicine;1953;30147;1945;Harvard Dataverse;8
+360;AndrÃ© F. Cournand;Medicine;1956;30142;1948;Harvard Dataverse;8
+362;Dickinson W. Richards;Medicine;1956;30141;1948;Harvard Dataverse;8
+412;Andrew V. Schally;Medicine;1977;30091;1969;Harvard Dataverse;8
+416;Hamilton O. Smith;Medicine;1978;30090;1970;Harvard Dataverse;8
+426;Bengt I. Samuelsson;Medicine;1982;30077;1974;Harvard Dataverse;8
+802;Andrew Z. Fire;Medicine;2006;30027;1998;Harvard Dataverse;8
+803;Craig C. Mello;Medicine;2006;30026;1998;Harvard Dataverse;8
+29;Manne Siegbahn;Physics;1924;10177;1916;Harvard Dataverse;8
+47;Ernest Lawrence;Physics;1939;10159;1931;Harvard Dataverse;8
+63;Willis E. Lamb;Physics;1955;10143;1947;Harvard Dataverse;8
+67;Walter H. Brattain;Physics;1956;10140;1948;Harvard Dataverse;8
+74;Donald A. Glaser;Physics;1960;10131;1952;Harvard Dataverse;8
+168;Wilhelm Ostwald;Chemistry;1909;20162;1900;Harvard Dataverse;9
+178;Walther Nernst;Chemistry;1920;20158;1911;Harvard Dataverse;9
+196;Norman Haworth;Chemistry;1937;20139;1928;Harvard Dataverse;9
+225;Melvin Calvin;Chemistry;1961;20111;1952;Harvard Dataverse;9
+841;Venkatraman Ramakrishnan;Chemistry;2009;20019;2000;Harvard Dataverse;9
+842;Thomas A. Steitz;Chemistry;2009;20020;2000;Harvard Dataverse;9
+843;Ada E. Yonath;Chemistry;2009;20021;2000;Harvard Dataverse;9
+370;Peter Medawar;Medicine;1960;30133;1951;Harvard Dataverse;9
+372;Francis Crick;Medicine;1962;30131;1953;Harvard Dataverse;9
+373;James Watson;Medicine;1962;30130;1953;Harvard Dataverse;9
+374;Maurice Wilkins;Medicine;1962;30129;1953;Harvard Dataverse;9
+375;Sir John Eccles;Medicine;1963;30126;1954;Harvard Dataverse;9
+389;H. Gobind Khorana;Medicine;1968;30114;1959;Harvard Dataverse;9
+397;Earl W. Sutherland, Jr.;Medicine;1971;30106;1962;Harvard Dataverse;9
+430;Georges J.F. KÃ¶hler;Medicine;1984;30074;1975;Harvard Dataverse;9
+431;CÃ©sar Milstein;Medicine;1984;30073;1975;Harvard Dataverse;9
+905;Edvard I. Moser;Medicine;2014;30005;2005;Harvard Dataverse;9
+904;May-Britt Moser;Medicine;2014;30007;2005;Harvard Dataverse;9
+10;J.J. Thomson;Physics;1906;10191;1897;Harvard Dataverse;9
+27;Niels Bohr;Physics;1922;10179;1913;Harvard Dataverse;9
+30;James Franck;Physics;1925;10176;1916;Harvard Dataverse;9
+31;Gustav Hertz;Physics;1925;10175;1916;Harvard Dataverse;9
+66;John Bardeen;Physics;1956;10139;1947;Harvard Dataverse;9
+153;Claude Cohen-Tannoudji;Physics;1997;10052;1988;Harvard Dataverse;9
+154;William D. Phillips;Physics;1997;10051;1988;Harvard Dataverse;9
+206;Wendell M. Stanley;Chemistry;1946;20130;1936;Harvard Dataverse;10
+369;Sir Frank Macfarlane Burnet;Medicine;1960;30134;1950;Harvard Dataverse;10
+410;D. Carleton Gajdusek;Medicine;1976;30094;1966;Harvard Dataverse;10
+429;Niels K. Jerne;Medicine;1984;30075;1974;Harvard Dataverse;10
+444;Erwin Neher;Medicine;1991;30060;1981;Harvard Dataverse;10
+445;Bert Sakmann;Medicine;1991;30059;1981;Harvard Dataverse;10
+44;Clinton Davisson;Physics;1937;10161;1927;Harvard Dataverse;10
+45;George Paget Thomson;Physics;1937;10162;1927;Harvard Dataverse;10
+82;Nicolay G. Basov;Physics;1964;10124;1954;Harvard Dataverse;10
+83;Aleksandr M. Prokhorov;Physics;1964;10122;1954;Harvard Dataverse;10
+175;Theodore W. Richards;Chemistry;1914;20161;1903;Harvard Dataverse;11
+208;Arne Tiselius;Chemistry;1948;20128;1937;Harvard Dataverse;11
+212;Edwin M. McMillan;Chemistry;1951;20124;1940;Harvard Dataverse;11
+214;Archer J.P. Martin;Chemistry;1952;20122;1941;Harvard Dataverse;11
+215;Richard L.M. Synge;Chemistry;1952;20121;1941;Harvard Dataverse;11
+224;Willard F. Libby;Chemistry;1960;20112;1949;Harvard Dataverse;11
+232;Robert S. Mulliken;Chemistry;1966;20104;1955;Harvard Dataverse;11
+241;Christian Anfinsen;Chemistry;1972;20093;1961;Harvard Dataverse;11
+284;Robert F. Curl Jr.;Chemistry;1996;20052;1985;Harvard Dataverse;11
+285;Sir Harold Kroto;Chemistry;1996;20050;1985;Harvard Dataverse;11
+286;Richard E. Smalley;Chemistry;1996;20051;1985;Harvard Dataverse;11
+292;Ahmed Zewail;Chemistry;1999;20044;1988;Harvard Dataverse;11
+769;Peter Agre;Chemistry;2003;20033;1992;Harvard Dataverse;11
+831;Roger Y. Tsien;Chemistry;2008;20023;1997;Harvard Dataverse;11
+307;Charles Richet;Medicine;1913;30188;1902;Harvard Dataverse;11
+329;Hans Spemann;Medicine;1935;30173;1924;Harvard Dataverse;11
+376;Alan Hodgkin;Medicine;1963;30127;1952;Harvard Dataverse;11
+377;Andrew Huxley;Medicine;1963;30128;1952;Harvard Dataverse;11
+379;Feodor Lynen;Medicine;1964;30124;1953;Harvard Dataverse;11
+385;Ragnar Granit;Medicine;1967;30116;1956;Harvard Dataverse;11
+409;Baruch S. Blumberg;Medicine;1976;30095;1965;Harvard Dataverse;11
+427;John R. Vane;Medicine;1982;30078;1971;Harvard Dataverse;11
+432;Michael S. Brown;Medicine;1985;30071;1974;Harvard Dataverse;11
+433;Joseph L. Goldstein;Medicine;1985;30072;1974;Harvard Dataverse;11
+436;Susumu Tonegawa;Medicine;1987;30068;1976;Harvard Dataverse;11
+459;Louis J. Ignarro;Medicine;1998;30046;1987;Harvard Dataverse;11
+998;Ardem Patapoutian;Medicine;2021;;2010;ChatGPT 4c (September 2024);11
+9;Philipp Lenard;Physics;1905;10192;1894;Harvard Dataverse;11
+22;Charles Glover Barkla;Physics;1917;10184;1906;Harvard Dataverse;11
+90;Murray Gell-Mann;Physics;1969;10115;1958;Harvard Dataverse;11
+99;Brian D. Josephson;Physics;1973;10108;1962;Harvard Dataverse;11
+114;Abdus Salam;Physics;1979;10090;1968;Harvard Dataverse;11
+121;Kenneth G. Wilson;Physics;1982;10084;1971;Harvard Dataverse;11
+152;Steven Chu;Physics;1997;10053;1986;Harvard Dataverse;11
+221;Lord Todd;Chemistry;1957;20115;1945;Harvard Dataverse;12
+311;Archibald V. Hill;Medicine;1922;30186;1910;Harvard Dataverse;12
+331;Otto Loewi;Medicine;1936;30172;1924;Harvard Dataverse;12
+348;Egas Moniz;Medicine;1949;30155;1937;Harvard Dataverse;12
+353;Selman A. Waksman;Medicine;1952;30149;1940;Harvard Dataverse;12
+366;Joshua Lederberg;Medicine;1958;30137;1946;Harvard Dataverse;12
+396;Julius Axelrod;Medicine;1970;30108;1958;Harvard Dataverse;12
+458;Robert F. Furchgott;Medicine;1998;30045;1986;Harvard Dataverse;12
+1011;Svante PÃ¤Ã¤bo;Medicine;2022;;2010;ChatGPT 4c (September 2024);12
+54;Hideki Yukawa;Physics;1949;10152;1937;Harvard Dataverse;12
+75;Robert Hofstadter;Physics;1961;10130;1949;Harvard Dataverse;12
+98;Ivar Giaever;Physics;1973;10107;1961;Harvard Dataverse;12
+115;Steven Weinberg;Physics;1979;10091;1967;Harvard Dataverse;12
+203;Artturi Virtanen;Chemistry;1945;20133;1932;Harvard Dataverse;13
+233;Manfred Eigen;Chemistry;1967;20103;1954;Harvard Dataverse;13
+237;Derek Barton;Chemistry;1969;20098;1956;Harvard Dataverse;13
+247;John Cornforth;Chemistry;1975;20089;1962;Harvard Dataverse;13
+756;John B. Fenn;Chemistry;2002;20037;1989;Harvard Dataverse;13
+795;Robert H. Grubbs;Chemistry;2005;20028;1992;Harvard Dataverse;13
+347;Walter Hess;Medicine;1949;30154;1936;Harvard Dataverse;13
+394;Sir Bernard Katz;Medicine;1970;30109;1957;Harvard Dataverse;13
+398;Gerald M. Edelman;Medicine;1972;30104;1959;Harvard Dataverse;13
+399;Rodney R. Porter;Medicine;1972;30105;1959;Harvard Dataverse;13
+440;J. Michael Bishop;Medicine;1989;30064;1976;Harvard Dataverse;13
+441;Harold E. Varmus;Medicine;1989;30063;1976;Harvard Dataverse;13
+774;Richard Axel;Medicine;2004;30031;1991;Harvard Dataverse;13
+775;Linda B. Buck;Medicine;2004;30030;1991;Harvard Dataverse;13
+861;Bruce A. Beutler;Medicine;2011;30015;1998;Harvard Dataverse;13
+28;Robert A. Millikan;Physics;1923;10178;1910;Harvard Dataverse;13
+111;Arno Penzias;Physics;1978;10095;1965;Harvard Dataverse;13
+112;Robert Woodrow Wilson;Physics;1978;10094;1965;Harvard Dataverse;13
+864;Saul Perlmutter;Physics;2011;10013;1998;Harvard Dataverse;13
+866;Adam G. Riess;Physics;2011;10015;1998;Harvard Dataverse;13
+865;Brian P. Schmidt;Physics;2011;10014;1998;Harvard Dataverse;13
+920;Arthur B. McDonald;Physics;2015;10005;2002;Harvard Dataverse;13
+191;Irving Langmuir;Chemistry;1932;20145;1918;Harvard Dataverse;14
+242;Stanford Moore;Chemistry;1972;20095;1958;Harvard Dataverse;14
+243;William H. Stein;Chemistry;1972;20094;1958;Harvard Dataverse;14
+259;Aaron Klug;Chemistry;1982;20077;1968;Harvard Dataverse;14
+265;Yuan T. Lee;Chemistry;1986;20072;1972;Harvard Dataverse;14
+757;Koichi Tanaka;Chemistry;2002;20036;1988;Harvard Dataverse;14
+830;Martin Chalfie;Chemistry;2008;20022;1994;Harvard Dataverse;14
+911;William E. Moerner;Chemistry;2014;20007;2000;Harvard Dataverse;14
+326;George H. Whipple;Medicine;1934;30175;1920;Harvard Dataverse;14
+349;Edward C. Kendall;Medicine;1950;30151;1936;Harvard Dataverse;14
+352;Max Theiler;Medicine;1951;30150;1937;Harvard Dataverse;14
+371;Georg von BÃ©kÃ©sy;Medicine;1961;30132;1947;Harvard Dataverse;14
+395;Ulf von Euler;Medicine;1970;30107;1956;Harvard Dataverse;14
+450;Alfred G. Gilman;Medicine;1994;30054;1980;Harvard Dataverse;14
+737;Sir Paul Nurse;Medicine;2001;30037;1987;Harvard Dataverse;14
+79;Maria Goeppert Mayer;Physics;1963;10125;1949;Harvard Dataverse;14
+80;J. Hans D. Jensen;Physics;1963;10126;1949;Harvard Dataverse;14
+805;George F. Smoot;Physics;2006;10027;1992;Harvard Dataverse;14
+239;Luis Leloir;Chemistry;1970;20097;1955;Harvard Dataverse;15
+240;Gerhard Herzberg;Chemistry;1971;20096;1956;Harvard Dataverse;15
+248;Vladimir Prelog;Chemistry;1975;20088;1960;Harvard Dataverse;15
+249;William Lipscomb;Chemistry;1976;20087;1961;Harvard Dataverse;15
+276;Richard R. Ernst;Chemistry;1991;20060;1976;Harvard Dataverse;15
+796;Richard R. Schrock;Chemistry;2005;20029;1990;Harvard Dataverse;15
+337;Joseph Erlanger;Medicine;1944;30164;1929;Harvard Dataverse;15
+338;Herbert S. Gasser;Medicine;1944;30165;1929;Harvard Dataverse;15
+381;AndrÃ© Lwoff;Medicine;1965;30122;1950;Harvard Dataverse;15
+386;Keffer Hartline;Medicine;1967;30117;1952;Harvard Dataverse;15
+453;Christiane NÃ¼sslein-Volhard;Medicine;1995;30050;1980;Harvard Dataverse;15
+454;Eric F. Wieschaus;Medicine;1995;30051;1980;Harvard Dataverse;15
+457;Stanley B. Prusiner;Medicine;1997;30047;1982;Harvard Dataverse;15
+862;Jules A. Hoffmann;Medicine;2011;30014;1996;Harvard Dataverse;15
+10066;John Bardeen;Physics;1972;10111;1957;Harvard Dataverse;15
+95;Leon N. Cooper;Physics;1972;10110;1957;Harvard Dataverse;15
+96;Robert Schrieffer;Physics;1972;10109;1957;Harvard Dataverse;15
+97;Leo Esaki;Physics;1973;10106;1958;Harvard Dataverse;15
+155;Robert B. Laughlin;Physics;1998;10050;1983;Harvard Dataverse;15
+755;Riccardo Giacconi;Physics;2002;10037;1987;Harvard Dataverse;15
+200;Leopold Ruzicka;Chemistry;1939;20136;1923;Harvard Dataverse;16
+209;William F. Giauque;Chemistry;1949;20127;1933;Harvard Dataverse;16
+279;Michael Smith;Chemistry;1993;20057;1977;Harvard Dataverse;16
+339;Sir Alexander Fleming;Medicine;1945;30162;1929;Harvard Dataverse;16
+350;Tadeus Reichstein;Medicine;1950;30152;1934;Harvard Dataverse;16
+354;Hans Krebs;Medicine;1953;30148;1937;Harvard Dataverse;16
+414;Werner Arber;Medicine;1978;30089;1962;Harvard Dataverse;16
+417;Allan M. Cormack;Medicine;1979;30087;1963;Harvard Dataverse;16
+423;David H. Hubel;Medicine;1981;30080;1965;Harvard Dataverse;16
+424;Torsten N. Wiesel;Medicine;1981;30082;1965;Harvard Dataverse;16
+448;Richard J. Roberts;Medicine;1993;30056;1977;Harvard Dataverse;16
+449;Phillip A. Sharp;Medicine;1993;30055;1977;Harvard Dataverse;16
+751;H. Robert Horvitz;Medicine;2002;30034;1986;Harvard Dataverse;16
+26;Albert Einstein;Physics;1921;10180;1905;Harvard Dataverse;16
+34;C.T.R. Wilson;Physics;1927;10173;1911;Harvard Dataverse;16
+53;Patrick M.S. Blackett;Physics;1948;10153;1932;Harvard Dataverse;16
+86;Richard P. Feynman;Physics;1965;10119;1949;Harvard Dataverse;16
+87;Alfred Kastler;Physics;1966;10118;1950;Harvard Dataverse;16
+116;James Cronin;Physics;1980;10088;1964;Harvard Dataverse;16
+117;Val Fitch;Physics;1980;10089;1964;Harvard Dataverse;16
+156;Horst L. StÃ¶rmer;Physics;1998;10048;1982;Harvard Dataverse;16
+157;Daniel C. Tsui;Physics;1998;10049;1982;Harvard Dataverse;16
+804;John C. Mather;Physics;2006;10026;1990;Harvard Dataverse;16
+876;Serge Haroche;Physics;2012;10011;1996;Harvard Dataverse;16
+205;John H. Northrop;Chemistry;1946;20131;1929;Harvard Dataverse;17
+251;Peter Mitchell;Chemistry;1978;20085;1961;Harvard Dataverse;17
+264;Dudley R. Herschbach;Chemistry;1986;20071;1969;Harvard Dataverse;17
+266;John C. Polanyi;Chemistry;1986;20070;1969;Harvard Dataverse;17
+758;Kurt WÃ¼thrich;Chemistry;2002;20035;1985;Harvard Dataverse;17
+933;Bernard L. Feringa;Chemistry;2016;20002;1999;Harvard Dataverse;17
+1015;Carolyn Bertozzi;Chemistry;2022;;2005;ChatGPT 4c (September 2024);17
+320;Sir Frederick Hopkins;Medicine;1929;30180;1912;Harvard Dataverse;17
+325;Thomas H. Morgan;Medicine;1933;30177;1916;Harvard Dataverse;17
+364;George Beadle;Medicine;1958;30138;1941;Harvard Dataverse;17
+365;Edward Tatum;Medicine;1958;30139;1941;Harvard Dataverse;17
+392;Alfred D. Hershey;Medicine;1969;30111;1952;Harvard Dataverse;17
+413;Rosalyn Yalow;Medicine;1977;30093;1960;Harvard Dataverse;17
+452;Edward B. Lewis;Medicine;1995;30052;1978;Harvard Dataverse;17
+23;Max Planck;Physics;1918;10183;1901;Harvard Dataverse;17
+85;Julian Schwinger;Physics;1965;10120;1948;Harvard Dataverse;17
+84;Sin-Itiro Tomonaga;Physics;1965;10121;1948;Harvard Dataverse;17
+141;Pierre-Gilles de Gennes;Physics;1991;10064;1974;Harvard Dataverse;17
+877;David J. Wineland;Physics;2012;10012;1995;Harvard Dataverse;17
+919;Takaaki Kajita;Physics;2015;10004;1998;Harvard Dataverse;17
+181;Fritz Pregl;Chemistry;1923;20155;1905;Harvard Dataverse;18
+190;Friedrich Bergius;Chemistry;1931;20146;1913;Harvard Dataverse;18
+189;Carl Bosch;Chemistry;1931;20147;1913;Harvard Dataverse;18
+234;Ronald G.W. Norrish;Chemistry;1967;20101;1949;Harvard Dataverse;18
+235;George Porter;Chemistry;1967;20102;1949;Harvard Dataverse;18
+258;Roald Hoffmann;Chemistry;1981;20079;1963;Harvard Dataverse;18
+268;Jean-Marie Lehn;Chemistry;1987;20068;1969;Harvard Dataverse;18
+342;Hermann J. Muller;Medicine;1946;30160;1928;Harvard Dataverse;18
+343;Carl Cori;Medicine;1947;30159;1929;Harvard Dataverse;18
+344;Gerty Cori;Medicine;1947;30157;1929;Harvard Dataverse;18
+422;Roger W. Sperry;Medicine;1981;30081;1963;Harvard Dataverse;18
+736;Tim Hunt;Medicine;2001;30038;1983;Harvard Dataverse;18
+971;Sir Peter J. Ratcliffe;Medicine;2019;;2001;ChatGPT 4c (September 2024);18
+1024;Katalin KarikÃ³;Medicine;2023;;2005;ChatGPT 4c (September 2024);18
+1025;Drew Weissman;Medicine;2023;;2005;ChatGPT 4c (September 2024);18
+32;Jean Baptiste Perrin;Physics;1926;10174;1908;Harvard Dataverse;18
+113;Sheldon Glashow;Physics;1979;10092;1961;Harvard Dataverse;18
+143;Russell A. Hulse;Physics;1993;10061;1975;Harvard Dataverse;18
+144;Joseph H. Taylor Jr.;Physics;1993;10062;1975;Harvard Dataverse;18
+727;Herbert Kroemer;Physics;2000;10043;1982;Harvard Dataverse;18
+318;Charles Nicolle;Medicine;1928;30181;1909;Harvard Dataverse;19
+404;Christian de Duve;Medicine;1974;30099;1955;Harvard Dataverse;19
+405;George E. Palade;Medicine;1974;30100;1955;Harvard Dataverse;19
+419;Baruj Benacerraf;Medicine;1980;30085;1961;Harvard Dataverse;19
+56;John Cockcroft;Physics;1951;10150;1932;Harvard Dataverse;19
+57;Ernest T.S. Walton;Physics;1951;10149;1932;Harvard Dataverse;19
+60;Frits Zernike;Physics;1953;10146;1934;Harvard Dataverse;19
+107;Philip W. Anderson;Physics;1977;10097;1958;Harvard Dataverse;19
+118;Nicolaas Bloembergen;Physics;1981;10087;1962;Harvard Dataverse;19
+814;Albert Fert;Physics;2007;10024;1988;Harvard Dataverse;19
+201;George de Hevesy;Chemistry;1943;20135;1923;Harvard Dataverse;20
+204;James B. Sumner;Chemistry;1946;20132;1926;Harvard Dataverse;20
+269;Charles J. Pedersen;Chemistry;1987;20069;1967;Harvard Dataverse;20
+910;Stefan W. Hell;Chemistry;2014;20009;1994;Harvard Dataverse;20
+1016;Morten Meldal;Chemistry;2022;;2002;ChatGPT 4c (September 2024);20
+359;Hugo Theorell;Medicine;1955;30143;1935;Harvard Dataverse;20
+363;Daniel Bovet;Medicine;1957;30140;1937;Harvard Dataverse;20
+811;Mario R. Capecchi;Medicine;2007;30024;1987;Harvard Dataverse;20
+884;James E. Rothman;Medicine;2013;30010;1993;Harvard Dataverse;20
+11;Albert A. Michelson;Physics;1907;10190;1887;Harvard Dataverse;20
+50;Wolfgang Pauli;Physics;1945;10156;1925;Harvard Dataverse;20
+768;Anthony J. Leggett;Physics;2003;10035;1983;Harvard Dataverse;20
+908;Shuji Nakamura;Physics;2014;10008;1994;Harvard Dataverse;20
+220;Nikolay Semenov;Chemistry;1956;20117;1935;Harvard Dataverse;21
+244;Ernst Otto Fischer;Chemistry;1973;20092;1952;Harvard Dataverse;21
+245;Geoffrey Wilkinson;Chemistry;1973;20091;1952;Harvard Dataverse;21
+252;Herbert C. Brown;Chemistry;1979;20084;1958;Harvard Dataverse;21
+261;Bruce Merrifield;Chemistry;1984;20075;1963;Harvard Dataverse;21
+282;Mario J. Molina;Chemistry;1995;20053;1974;Harvard Dataverse;21
+283;F. Sherwood Rowland;Chemistry;1995;20055;1974;Harvard Dataverse;21
+743;K. Barry Sharpless;Chemistry;2001;20040;1980;Harvard Dataverse;21
+1002;Benjamin List;Chemistry;2021;;2000;ChatGPT 4c (September 2024);21
+1003;David W.C. MacMillan;Chemistry;2021;;2000;ChatGPT 4c (September 2024);21
+10743;K. Barry Sharpless;Chemistry;2022;;2001;ChatGPT 4c (September 2024);21
+315;Willem Einthoven;Medicine;1924;30182;1903;Harvard Dataverse;21
+378;Konrad Bloch;Medicine;1964;30125;1943;Harvard Dataverse;21
+407;Renato Dulbecco;Medicine;1975;30098;1954;Harvard Dataverse;21
+420;Jean Dausset;Medicine;1980;30084;1959;Harvard Dataverse;21
+460;Ferid Murad;Medicine;1998;30044;1977;Harvard Dataverse;21
+789;Barry J. Marshall;Medicine;2005;30029;1984;Harvard Dataverse;21
+790;J. Robin Warren;Medicine;2005;30028;1984;Harvard Dataverse;21
+48;Otto Stern;Physics;1943;10158;1922;Harvard Dataverse;21
+721;IlÂ´ja M. Frank;Physics;1958;10136;1937;Harvard Dataverse;21
+71;Igor Y. Tamm;Physics;1958;10135;1937;Harvard Dataverse;21
+77;Lev Landau;Physics;1962;10128;1941;Harvard Dataverse;21
+138;Jerome I. Friedman;Physics;1990;10066;1969;Harvard Dataverse;21
+139;Henry W. Kendall;Physics;1990;10067;1969;Harvard Dataverse;21
+140;Richard E. Taylor;Physics;1990;10065;1969;Harvard Dataverse;21
+147;Martin L. Perl;Physics;1995;10057;1974;Harvard Dataverse;21
+815;Peter GrÃ¼nberg;Physics;2007;10025;1986;Harvard Dataverse;21
+211;Kurt Alder;Chemistry;1950;20125;1928;Harvard Dataverse;22
+210;Otto Diels;Chemistry;1950;20126;1928;Harvard Dataverse;22
+219;Sir Cyril Hinshelwood;Chemistry;1956;20116;1934;Harvard Dataverse;22
+238;Odd Hassel;Chemistry;1969;20099;1947;Harvard Dataverse;22
+330;Sir Henry Dale;Medicine;1936;30171;1914;Harvard Dataverse;22
+455;Peter C. Doherty;Medicine;1996;30049;1974;Harvard Dataverse;22
+456;Rolf M. Zinkernagel;Medicine;1996;30048;1974;Harvard Dataverse;22
+958;James P. Allison;Medicine;2018;;1996;ChatGPT 4c (September 2024);22
+52;Edward V. Appleton;Physics;1947;10154;1925;Harvard Dataverse;22
+92;Louis NÃ©el;Physics;1970;10113;1948;Harvard Dataverse;22
+102;Aage N. Bohr;Physics;1975;10101;1953;Harvard Dataverse;22
+103;Ben R. Mottelson;Physics;1975;10102;1953;Harvard Dataverse;22
+990;Andrea Ghez;Physics;2020;;1998;ChatGPT 4c (September 2024);22
+1027;Ferenc Krausz;Physics;2023;;2001;ChatGPT 4c (September 2024);22
+182;Richard Zsigmondy;Chemistry;1925;20154;1902;Harvard Dataverse;23
+186;Arthur Harden;Chemistry;1929;20149;1906;Harvard Dataverse;23
+729;Alan Heeger;Chemistry;2000;20041;1977;Harvard Dataverse;23
+730;Alan MacDiarmid;Chemistry;2000;20043;1977;Harvard Dataverse;23
+731;Hideki Shirakawa;Chemistry;2000;20042;1977;Harvard Dataverse;23
+909;Eric Betzig;Chemistry;2014;20008;1991;Harvard Dataverse;23
+425;Sune K. BergstrÃ¶m;Medicine;1982;30079;1959;Harvard Dataverse;23
+451;Martin Rodbell;Medicine;1994;30053;1971;Harvard Dataverse;23
+813;Oliver Smithies;Medicine;2007;30025;1984;Harvard Dataverse;23
+885;Randy W. Schekman;Medicine;2013;30008;1990;Harvard Dataverse;23
+927;Yoshinori Ohsumi;Medicine;2016;30001;1993;Harvard Dataverse;23
+940;Michael W. Young;Medicine;2017;;1994;ChatGPT 4c (September 2024);23
+93;Dennis Gabor;Physics;1971;10112;1948;Harvard Dataverse;23
+119;Arthur L. Schawlow;Physics;1981;10086;1958;Harvard Dataverse;23
+989;Reinhard Genzel;Physics;2020;;1997;ChatGPT 4c (September 2024);23
+195;Peter Debye;Chemistry;1936;20141;1912;Harvard Dataverse;24
+779;Aaron Ciechanover;Chemistry;2004;20030;1980;Harvard Dataverse;24
+780;Avram Hershko;Chemistry;2004;20031;1980;Harvard Dataverse;24
+781;Irwin Rose;Chemistry;2004;20032;1980;Harvard Dataverse;24
+461;GÃ¼nter Blobel;Medicine;1999;30043;1975;Harvard Dataverse;24
+825;Luc Montagnier;Medicine;2008;30021;1984;Harvard Dataverse;24
+836;Carol W. Greider;Medicine;2009;30018;1985;Harvard Dataverse;24
+997;David Julius;Medicine;2021;;1997;ChatGPT 4c (September 2024);24
+42;Victor F. Hess;Physics;1936;10163;1912;Harvard Dataverse;24
+70;Pavel A. Cherenkov;Physics;1958;10134;1934;Harvard Dataverse;24
+142;Georges Charpak;Physics;1992;10063;1968;Harvard Dataverse;24
+149;David M. Lee;Physics;1996;10054;1972;Harvard Dataverse;24
+150;Douglas D. Osheroff;Physics;1996;10055;1972;Harvard Dataverse;24
+151;Robert C. Richardson;Physics;1996;10056;1972;Harvard Dataverse;24
+728;Jack Kilby;Physics;2000;10045;1976;Harvard Dataverse;24
+974;Michel Mayor;Physics;2019;;1995;ChatGPT 4c (September 2024);24
+975;Didier Queloz;Physics;2019;;1995;ChatGPT 4c (September 2024);24
+281;Paul J. Crutzen;Chemistry;1995;20054;1970;Harvard Dataverse;25
+291;John Pople;Chemistry;1998;20045;1973;Harvard Dataverse;25
+932;Sir J. Fraser Stoddart;Chemistry;2016;20001;1991;Harvard Dataverse;25
+963;Frances H. Arnold;Chemistry;2018;;1993;ChatGPT 4c (September 2024);25
+384;Charles B. Huggins;Medicine;1966;30119;1941;Harvard Dataverse;25
+752;John E. Sulston;Medicine;2002;30036;1977;Harvard Dataverse;25
+824;FranÃ§oise BarrÃ©-Sinoussi;Medicine;2008;30020;1983;Harvard Dataverse;25
+823;Harald zur Hausen;Medicine;2008;30022;1983;Harvard Dataverse;25
+104;James Rainwater;Physics;1975;10103;1950;Harvard Dataverse;25
+120;Kai M. Siegbahn;Physics;1981;10085;1956;Harvard Dataverse;25
+906;Isamu Akasaki;Physics;2014;10006;1989;Harvard Dataverse;25
+907;Hiroshi Amano;Physics;2014;10007;1989;Harvard Dataverse;25
+942;Barry C. Barish;Physics;2017;;1992;ChatGPT 4c (September 2024);25
+1014;Anton Zeilinger;Physics;2022;;1997;ChatGPT 4c (September 2024);25
+253;Georg Wittig;Chemistry;1979;20083;1953;Harvard Dataverse;26
+879;Brian Kobilka;Chemistry;2012;20014;1986;Harvard Dataverse;26
+878;Robert J. Lefkowitz;Chemistry;2012;20013;1986;Harvard Dataverse;26
+922;Paul Modrich;Chemistry;2015;20004;1989;Harvard Dataverse;26
+391;Max DelbrÃ¼ck;Medicine;1969;30112;1943;Harvard Dataverse;26
+393;Salvador E. Luria;Medicine;1969;30110;1943;Harvard Dataverse;26
+437;Sir James W. Black;Medicine;1988;30065;1962;Harvard Dataverse;26
+765;Sir Peter Mansfield;Medicine;2003;30032;1977;Harvard Dataverse;26
+812;Sir Martin J. Evans;Medicine;2007;30023;1981;Harvard Dataverse;26
+959;Tasuku Honjo;Medicine;2018;;1992;ChatGPT 4c (September 2024);26
+970;William G. Kaelin Jr;Medicine;2019;;1993;ChatGPT 4c (September 2024);26
+132;Leon M. Lederman;Physics;1988;10073;1962;Harvard Dataverse;26
+133;Melvin Schwartz;Physics;1988;10072;1962;Harvard Dataverse;26
+134;Jack Steinberger;Physics;1988;10071;1962;Harvard Dataverse;26
+867;Dan Shechtman;Chemistry;2011;20015;1984;Harvard Dataverse;27
+946;Richard Henderson;Chemistry;2017;;1990;ChatGPT 4c (September 2024);27
+835;Elizabeth H. Blackburn;Medicine;2009;30019;1982;Harvard Dataverse;27
+837;Jack W. Szostak;Medicine;2009;30017;1982;Harvard Dataverse;27
+35;Owen Willans Richardson;Physics;1928;10171;1901;Harvard Dataverse;27
+158;Gerardus 't Hooft;Physics;1999;10047;1972;Harvard Dataverse;27
+159;Martinus J.G. Veltman;Physics;1999;10046;1972;Harvard Dataverse;27
+965;Sir Gregory P. Winter;Chemistry;2018;;1990;ChatGPT 4c (September 2024);28
+403;Albert Claude;Medicine;1974;30101;1946;Harvard Dataverse;28
+421;George D. Snell;Medicine;1980;30083;1952;Harvard Dataverse;28
+750;Sydney Brenner;Medicine;2002;30035;1974;Harvard Dataverse;28
+972;Gregg L. Semenza;Medicine;2019;;1991;ChatGPT 4c (September 2024);28
+61;Max Born;Physics;1954;10144;1926;Harvard Dataverse;28
+88;Hans Bethe;Physics;1967;10117;1939;Harvard Dataverse;28
+100;Martin Ryle;Physics;1974;10104;1946;Harvard Dataverse;28
+108;Sir Nevill F. Mott;Physics;1977;10096;1949;Harvard Dataverse;28
+257;Kenichi Fukui;Chemistry;1981;20078;1952;Harvard Dataverse;29
+262;Herbert A. Hauptman;Chemistry;1985;20074;1956;Harvard Dataverse;29
+263;Jerome Karle;Chemistry;1985;20073;1956;Harvard Dataverse;29
+945;Joachim Frank;Chemistry;2017;;1988;ChatGPT 4c (September 2024);29
+62;Walther Bothe;Physics;1954;10145;1925;Harvard Dataverse;29
+207;Sir Robert Robinson;Chemistry;1947;20129;1917;Harvard Dataverse;30
+1029;Moungi Bawendi;Chemistry;2023;;1993;ChatGPT 4c (September 2024);30
+724;Eric Kandel;Medicine;2000;30040;1970;Harvard Dataverse;30
+735;Leland Hartwell;Medicine;2001;30039;1971;Harvard Dataverse;30
+764;Paul C. Lauterbur;Medicine;2003;30033;1973;Harvard Dataverse;30
+943;Kip S. Thorne;Physics;2017;;1987;ChatGPT 4c (September 2024);30
+260;Henry Taube;Chemistry;1983;20076;1952;Harvard Dataverse;31
+275;Elias James Corey;Chemistry;1990;20061;1959;Harvard Dataverse;31
+853;Akira Suzuki;Chemistry;2010;20018;1979;Harvard Dataverse;31
+443;E. Donnall Thomas;Medicine;1990;30061;1959;Harvard Dataverse;31
+723;Paul Greengard;Medicine;2000;30041;1969;Harvard Dataverse;31
+986;Michael Houghton;Medicine;2020;;1989;ChatGPT 4c (September 2024);31
+78;Eugene Wigner;Physics;1963;10127;1932;Harvard Dataverse;31
+91;Hannes AlfvÃ©n;Physics;1970;10114;1939;Harvard Dataverse;31
+776;David J. Gross;Physics;2004;10032;1973;Harvard Dataverse;31
+777;H. David Politzer;Physics;2004;10033;1973;Harvard Dataverse;31
+778;Frank Wilczek;Physics;2004;10031;1973;Harvard Dataverse;31
+280;George A. Olah;Chemistry;1994;20056;1962;Harvard Dataverse;32
+806;Roger D. Kornberg;Chemistry;2006;20026;1974;Harvard Dataverse;32
+923;Aziz Sancar;Chemistry;2015;20006;1983;Harvard Dataverse;32
+978;Akira Yoshino;Chemistry;2019;;1987;ChatGPT 4c (September 2024);32
+434;Stanley Cohen;Medicine;1986;30069;1954;Harvard Dataverse;32
+848;Robert G. Edwards;Medicine;2010;30016;1978;Harvard Dataverse;32
+51;Percy W. Bridgman;Physics;1946;10155;1914;Harvard Dataverse;32
+123;William A. Fowler;Physics;1983;10082;1951;Harvard Dataverse;32
+136;Hans G. Dehmelt;Physics;1989;10069;1957;Harvard Dataverse;32
+960;Arthur Ashkin;Physics;2018;;1986;ChatGPT 4c (September 2024);32
+1028;Anne Lâ€™Huillier;Physics;2023;;1991;ChatGPT 4c (September 2024);32
+741;William Knowles;Chemistry;2001;20039;1968;Harvard Dataverse;33
+742;Ryoji Noyori;Chemistry;2001;20038;1968;Harvard Dataverse;33
+816;Gerhard Ertl;Chemistry;2007;20025;1974;Harvard Dataverse;33
+931;Jean-Pierre Sauvage;Chemistry;2016;20003;1983;Harvard Dataverse;33
+944;Jacques Dubochet;Chemistry;2017;;1984;ChatGPT 4c (September 2024);33
+964;George P. Smith;Chemistry;2018;;1985;ChatGPT 4c (September 2024);33
+938;Jeffrey C. Hall;Medicine;2017;;1984;ChatGPT 4c (September 2024);33
+939;Michael Rosbash;Medicine;2017;;1984;ChatGPT 4c (September 2024);33
+929;F. Duncan M. Haldane;Physics;2016;10003;1983;Harvard Dataverse;33
+961;GÃ©rard Mourou;Physics;2018;;1985;ChatGPT 4c (September 2024);33
+962;Donna Strickland;Physics;2018;;1985;ChatGPT 4c (September 2024);33
+216;Hermann Staudinger;Chemistry;1953;20120;1919;Harvard Dataverse;34
+290;Walter Kohn;Chemistry;1998;20046;1964;Harvard Dataverse;34
+794;Yves Chauvin;Chemistry;2005;20027;1971;Harvard Dataverse;34
+852;Ei-ichi Negishi;Chemistry;2010;20017;1976;Harvard Dataverse;34
+435;Rita Levi-Montalcini;Medicine;1986;30070;1952;Harvard Dataverse;34
+438;Gertrude B. Elion;Medicine;1988;30067;1954;Harvard Dataverse;34
+439;George H. Hitchings;Medicine;1988;30066;1954;Harvard Dataverse;34
+442;Joseph E. Murray;Medicine;1990;30062;1956;Harvard Dataverse;34
+447;Edwin G. Krebs;Medicine;1992;30058;1958;Harvard Dataverse;34
+886;Thomas C. SÃ¼dhof;Medicine;2013;30009;1979;Harvard Dataverse;34
+754;Masatoshi Koshiba;Physics;2002;10039;1968;Harvard Dataverse;34
+267;Donald J. Cram;Chemistry;1987;20067;1952;Harvard Dataverse;35
+985;Harvey J. Alter;Medicine;2020;;1985;ChatGPT 4c (September 2024);35
+987;Charles M. Rice;Medicine;2020;;1985;ChatGPT 4c (September 2024);35
+145;Bertram N. Brockhouse;Physics;1994;10060;1959;Harvard Dataverse;35
+827;Makoto Kobayashi;Physics;2008;10022;1973;Harvard Dataverse;35
+828;Toshihide Maskawa;Physics;2008;10023;1973;Harvard Dataverse;35
+188;Hans Fischer;Chemistry;1930;20148;1894;Harvard Dataverse;36
+277;Rudolph A. Marcus;Chemistry;1992;20059;1956;Harvard Dataverse;36
+446;Edmond H. Fischer;Medicine;1992;30057;1956;Harvard Dataverse;36
+917;Satoshi ÅŒmura;Medicine;2015;30004;1979;Harvard Dataverse;36
+916;William C. Campbell;Medicine;2015;30003;1979;Harvard Dataverse;36
+137;Wolfgang Paul;Physics;1989;10070;1953;Harvard Dataverse;36
+236;Lars Onsager;Chemistry;1968;20100;1931;Harvard Dataverse;37
+246;Paul J. Flory;Chemistry;1974;20090;1936;Harvard Dataverse;38
+851;Richard F. Heck;Chemistry;2010;20016;1972;Harvard Dataverse;38
+890;Michael Levitt;Chemistry;2013;20010;1975;Harvard Dataverse;38
+891;Arieh Warshel;Chemistry;2013;20011;1975;Harvard Dataverse;38
+1031;Aleksey Yekimov ;Chemistry;2023;;1985;ChatGPT 4c (September 2024);38
+401;Konrad Lorenz;Medicine;1973;30103;1935;Harvard Dataverse;38
+863;Ralph M. Steinman;Medicine;2011;30013;1973;Harvard Dataverse;38
+918;Tu Youyou;Medicine;2015;30002;1977;Harvard Dataverse;38
+976;John B. Goodenough;Chemistry;2019;;1980;ChatGPT 4c (September 2024);39
+1030;Louis Brus;Chemistry;2023;;1984;ChatGPT 4c (September 2024);39
+135;Norman F. Ramsey;Physics;1989;10068;1950;Harvard Dataverse;39
+839;Willard S. Boyle;Physics;2009;10019;1970;Harvard Dataverse;39
+840;George E. Smith;Physics;2009;10020;1970;Harvard Dataverse;39
+289;Jens C. Skou;Chemistry;1997;20049;1957;Harvard Dataverse;40
+110;Pyotr Kapitsa;Physics;1978;10093;1938;Harvard Dataverse;40
+753;Raymond Davis Jr.;Physics;2002;10038;1962;Harvard Dataverse;40
+1012;Alain Aspect;Physics;2022;;1982;ChatGPT 4c (September 2024);40
+889;Martin Karplus;Chemistry;2013;20012;1972;Harvard Dataverse;41
+921;Tomas Lindahl;Chemistry;2015;20005;1974;Harvard Dataverse;41
+428;Barbara McClintock;Medicine;1983;30076;1941;Harvard Dataverse;42
+722;Arvid Carlsson;Medicine;2000;30042;1958;Harvard Dataverse;42
+148;Frederick Reines;Physics;1995;10058;1953;Harvard Dataverse;42
+791;Roy J. Glauber;Physics;2005;10028;1963;Harvard Dataverse;42
+1001;Giorgio Parisi;Physics;2021;;1979;ChatGPT 4c (September 2024);42
+287;Paul D. Boyer;Chemistry;1997;20047;1954;Harvard Dataverse;43
+977;M. Stanley Whittingham;Chemistry;2019;;1976;ChatGPT 4c (September 2024);43
+903;John O'Keefe;Medicine;2014;30006;1971;Harvard Dataverse;43
+146;Clifford G. Shull;Physics;1994;10059;1951;Harvard Dataverse;43
+838;Charles K. Kao;Physics;2009;10018;1966;Harvard Dataverse;43
+930;J. Michael Kosterlitz;Physics;2016;10002;1973;Harvard Dataverse;43
+928;David J. Thouless;Physics;2016;10001;1973;Harvard Dataverse;43
+1026;Pierre Agostini;Physics;2023;;1979;ChatGPT 4c (September 2024);44
+109;John H. Van Vleck;Physics;1977;10098;1932;Harvard Dataverse;45
+941;Rainer Weiss;Physics;2017;;1972;ChatGPT 4c (September 2024);45
+1000;Klaus Hasselmann;Physics;2021;;1976;ChatGPT 4c (September 2024);45
+829;Osamu Shimomura;Chemistry;2008;20024;1962;Harvard Dataverse;46
+400;Karl von Frisch;Medicine;1973;30102;1927;Harvard Dataverse;46
+766;Alexei Abrikosov;Physics;2003;10034;1957;Harvard Dataverse;46
+826;Yoichiro Nambu;Physics;2008;10021;1960;Harvard Dataverse;48
+887;FranÃ§ois Englert;Physics;2013;10009;1964;Harvard Dataverse;49
+888;Peter Higgs;Physics;2013;10010;1964;Harvard Dataverse;49
+874;Sir John B. Gurdon;Medicine;2012;30012;1962;Harvard Dataverse;50
+1013;John Clauser;Physics;2022;;1972;ChatGPT 4c (September 2024);50
+122;Subrahmanyan Chandrasekhar;Physics;1983;10083;1931;Harvard Dataverse;52
+767;Vitaly L. Ginzburg;Physics;2003;10036;1950;Harvard Dataverse;53
+127;Ernst Ruska;Physics;1986;10078;1932;Harvard Dataverse;54
+973;James Peebles;Physics;2019;;1965;ChatGPT 4c (September 2024);54
+999;Syukuro Manabe;Physics;2021;;1967;ChatGPT 4c (September 2024);54
+988;Roger Penrose;Physics;2020;;1965;ChatGPT 4c (September 2024);55
+383;Peyton Rous;Medicine;1966;30120;1910;Harvard Dataverse;56
