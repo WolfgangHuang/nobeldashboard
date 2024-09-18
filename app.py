@@ -365,7 +365,7 @@ tab1_content = dbc.Card(
             dbc.Row(
                 [
                     dbc.Col(
-                        html.Div("Please select:", style={"margin-top": "10px", "font-weight": "bold"}),
+                        html.Div("Please select location:", style={"margin-top": "10px", "font-weight": "bold"}),
                         width="auto"  # Auto width for the label
                     ),
                     dbc.Col(
