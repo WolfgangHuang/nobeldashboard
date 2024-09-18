@@ -15,7 +15,6 @@ import os
 import json
 import numpy as np
 
-# comment for testign git
 
 
 ##################################################################################################
@@ -478,5 +477,9 @@ def update_cities_map(selected_city_type): # the passed value here is passed bef
 
 
 # Run the app
-if __name__ == "__main__":
-    app.run(debug=True, port=5085)
+# if __name__ == "__main__":
+#     app.run(debug=True, port=5085)
+
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 8050))  # Fallback to port 8050 if PORT isn't set
+    app.run_server(host='0.0.0.0', port=port, debug=True)
