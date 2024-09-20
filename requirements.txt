@@ -1,7 +1,7 @@
 dash
 dash-bootstrap-components
+dash-mantine-components
 plotly
 pandas
 dash-ag-grid
 numpy
-dash-mantine-components
