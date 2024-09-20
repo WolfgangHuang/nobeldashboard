@@ -430,7 +430,7 @@ app.layout = dmc.Container(
     children=[
         dmc.Grid(
             children=[
-                dmc.Col(html.H1("Nobel Laureate Data Dashboard", className="text-center mt-5 mb-5"), span=12)
+                dmc.Col(html.H1("Nobel Laureate Data Dashboard v10.35", className="text-center mt-5 mb-5"), span=12)
             ]
         ),
         dmc.Tabs(
