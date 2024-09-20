@@ -1,0 +1,12 @@
+/* Style for the range slider track */
+.dmc-bar .slider-track .mantine-Slider-bar {
+    background-image: linear-gradient(to right, yellow, orange) !important;
+}
+
+/* Style for the range slider thumb */
+.dmc-thumb .slider-thumb {
+    border-color: orange !important;
+    height: 20px !important;
+    width: 20px !important;
+    background-color: white !important;
+}
