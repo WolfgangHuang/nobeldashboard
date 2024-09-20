@@ -5,4 +5,4 @@ plotly
 pandas
 dash-ag-grid
 numpy
-sklearn
+scikit-learn
