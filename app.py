@@ -302,95 +302,45 @@ fig_1d = generate_scatterbox_plot(df_laureates)
 # Dashboard
 ##################################################################################################
 
-# Initialize the app with Bootstrap stylesheet
-# app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
-# app = dash.Dash(__name__) # loads the theme in assets
-
 import dash_mantine_components as dmc
 from dash import Dash, _dash_renderer
 _dash_renderer._set_react_version("18.2.0")
 
 
-# Assume df_laureates, fig_1b, fig_1d, fig2, fig3, and max_prize_count are defined
+app = Dash(external_stylesheets=dmc.styles.ALL)
 
-app = dash.Dash(__name__)
+# ---------------------
 
-# Defining the grid of AGGrid
-grid = dag.AgGrid(
+# Defining the grid of AGGrid: The full data table
+full_table = dag.AgGrid(
     id="nl-aggrid",
     rowData=df_laureates.to_dict("records"),
     columnDefs=[{"field": i} for i in df_laureates.columns],
 )
 
-# Correct usage of Paper with padding
+# Contents of Tab 1
+
 tab1_content = dmc.Paper(
     children=[
-        html.H5("Nobel Laureates by Country of Birth", className="card-title"),
-        html.Div("The rotatable, zoomable globe below shows the number of laureates born in the respective country. You may use the slider to set lower and upper limits. Note that country borders have changed throughout history, so there is some fuzziness involved.", className="mt-5 mb-5"),
+        html.H5("Tab 4: Full Data", className="card-title"),
+        html.Div("This page shows a scatter plot."),
         dmc.Grid(
             children=[
                 dmc.GridCol(dcc.Graph(id='globe-plot', figure=fig_1b), span=12)
             ]
         ),
-        dmc.Grid(
-            children=[
-                dmc.GridCol(
-                    dcc.RangeSlider(
-                        id='prize-slider',
-                        min=0,
-                        max=max_prize_count,  # Dynamic maximum value based on data
-                        step=1,
-                        value=[0, max_prize_count],  # Default range from 0 to max
-                        marks={i: str(i) for i in range(0, int(max_prize_count) + 1, 50)},  # Custom marks
-                        tooltip={"placement": "bottom", "always_visible": True}
-                    ),
-                    span=10,
-                ),
-            ],
-            justify="left",
-            style={"margin-top": "30px"}
-        ),
-        html.Hr(style={'border': '1px solid #aaa', 'margin-top': '50px', 'margin-bottom': '50px'}),
-        html.H5("Nobel Laureates by City of Birth", className="card-title"),
-        html.Div("Shows cities of birth.", className="mt-5 mb-5"),
-        dmc.Grid(
-            children=[
-                dmc.GridCol(dcc.Graph(id='cities-map', figure=fig_1d), span=12)
-            ]
-        ),
-        dmc.Grid(
-            children=[
-                dmc.GridCol(
-                    html.Div("Please select location:", style={"margin-top": "10px", "font-weight": "bold"}),
-                    span="auto"  # Auto width for the label
-                ),
-                dmc.GridCol(
-                    dcc.Dropdown(
-                        id='city-dropdown',
-                        options=[
-                            {'label': 'City of Birth', 'value': 'birth'},
-                            {'label': 'City of Death', 'value': 'death'}
-                        ],
-                        value='birth',  # Default value
-                        clearable=False,
-                    ),
-                    span=6  # Width for the dropdown
-                ),
-            ],
-            justify="left",
-            style={"margin-top": "20px"}
-        ),
     ],
     shadow="md",
     radius="md",
-    p="lg",  # Correct usage of padding attribute
-    className="mt-5",
+    p="lg",
+    className="mt-3",
 )
 
 tab2_content = dmc.Paper(
     children=[
-        html.H5("Tab 2: Bar Chart", className="card-title"),
-        dcc.Graph(figure=fig2),
+        html.H5("Tab 4: Full Data", className="card-title"),
+        html.Div("This page shows a scatter plot."),
+        html.Div("Tab2"),
     ],
     shadow="md",
     radius="md",
@@ -400,21 +350,23 @@ tab2_content = dmc.Paper(
 
 tab3_content = dmc.Paper(
     children=[
-        html.H5("Tab 3: Scatter Plot", className="card-title"),
+        html.H5("Tab 4: Full Data", className="card-title"),
         html.Div("This page shows a scatter plot."),
-        dcc.Graph(figure=fig3),
+        html.Div("Tab3"),
     ],
     shadow="md",
     radius="md",
     p="lg",  # Correct usage of padding attribute
     className="mt-3",
 )
+
+
 
 tab4_content = dmc.Paper(
     children=[
         html.H5("Tab 4: Full Data", className="card-title"),
         html.Div("This page shows a scatter plot."),
-        html.Div([grid]),
+        html.Div([full_table]),
     ],
     shadow="md",
     radius="md",
@@ -422,62 +374,51 @@ tab4_content = dmc.Paper(
     className="mt-3",
 )
 
-# Define app layout
-# app.layout = dmc.Container(
+
+# Defining the main layout
+
 app.layout = dmc.MantineProvider(
     children=[
-        dmc.GridCol(
+        dmc.Container(
             children=[
-                dmc.GridCol(html.H1("Nobel Laureate Data Dashboard v10.35", className="text-center mt-5 mb-5"), span=12)
-            ]
-        ),
-        dmc.Tabs(
-            [
-                dmc.TabsList(
-                    [
-                        dmc.TabsTab(dmc.Text("Nationality"), value="tab1"),
-                        dmc.TabsTab(dmc.Text("Bar Chart"), value="tab2"),
-                        dmc.TabsTab(dmc.Text("Scatter Plot"), value="tab3"),
-                        dmc.TabsTab(dmc.Text("Full Data"), value="tab4"),
+                dmc.Grid(
+                    children=[
+                        dmc.GridCol(html.H1("Nobel Laureate Data Dashboard v10.55", className="text-left mt-5 mb-5"), span=12)
                     ]
                 ),
-                dmc.TabsPanel(tab1_content, value="tab1"),
-                dmc.TabsPanel(tab2_content, value="tab2"),
-                dmc.TabsPanel(tab3_content, value="tab3"),
-                dmc.TabsPanel(tab4_content, value="tab4"),
+                dmc.Tabs(
+                    [
+                        dmc.TabsList(
+                            [
+                                dmc.TabsTab("Nationality", value="tab1"),
+                                dmc.TabsTab("Bar Chart", value="tab2"),
+                                dmc.TabsTab("Scatter Plot", value="tab3"),
+                                dmc.TabsTab("Full Data", value="tab4"),
+                            ]
+                        ),
+                        dmc.TabsPanel(tab1_content, value="tab1"),
+                        dmc.TabsPanel(tab2_content, value="tab2"),
+                        dmc.TabsPanel(tab3_content, value="tab3"),
+                        dmc.TabsPanel(tab4_content, value="tab4"),
+                    ],
+                    value="tab1",  # Default selected tab
+                    id="tabs",
+                ),
             ],
-            value="tab1",  # Default selected tab
-            id="tabs",
-        ),
+            fluid=True,
+            style={"margin": "20px"}  # Adding 20px margin on all sides
+        )
     ]
 )
 
-##################################################################################################
-# Callbacks
-##################################################################################################
 
-# Nationality Globe
-@app.callback(
-    Output('globe-plot', 'figure'),
-    [Input('prize-slider', 'value')]
-)
-def update_globe(selected_range):
-    # Filter the data based on the selected range
-    filtered_data = df_nobelprizes_percountry[
-        (df_nobelprizes_percountry['Count'] >= selected_range[0]) &
-        (df_nobelprizes_percountry['Count'] <= selected_range[1])
-    ]
-    # Generate and return the updated globe plot
-    return generate_globe_plot(filtered_data)
+# --------------------
+# Run the app (locally)
+# if __name__ == "__main__":
+#     app.run(debug=True, port=5085)
 
-# Cities of Birth
-@app.callback(
-    Output('cities-map', 'figure'),
-    Input('city-dropdown', 'value'),
-)
-def update_cities_map(selected_city_type): # the passed value here is passed before from the callback automatically
-    return generate_scatterbox_plot(df_laureates, selected_city_type)
+# Run the app on render.com
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 8050))  # Fallback to port 8050 if PORT isn't set
+    app.run_server(host='0.0.0.0', port=port, debug=True)
 
-# Run the app
-if __name__ == "__main__":
-    app.run(debug=True, port=5085)
