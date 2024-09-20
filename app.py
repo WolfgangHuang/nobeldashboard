@@ -95,9 +95,11 @@ df_prizes_import = pd.read_csv('df_prizes.csv', sep=';')
 # Timegap Seminal Paper and Prize
 df_timegap = pd.read_csv('df_prize-publication-timegap.csv', sep=';', encoding='UTF-8')
 
-
 # Average life expectancy data
 df_lifeexpectancy = pd.read_excel('df_life-expectancy.xlsx')
+
+# Country Populations
+df_pop = pd.read_excel("df_population.xlsx")
 
 # Degree - Work - Prize Movement
 df_movement_dwp = pd.read_excel('df_degree_institutions_work.xlsx')
@@ -229,7 +231,7 @@ def generate_globe_plot(data):
         # showlegend = True,
 
         title=dict(
-            text = "1.b: Nobel Prizes per Country (Globe)",
+            text = "1.b: Nobel Prizes per Country (Country of Birth)",
             font=dict(size = 20),
             x = 0,                            # Left align the title
             xanchor = 'left',                 # Align to the left edge
@@ -238,8 +240,8 @@ def generate_globe_plot(data):
             pad=dict(t = 20, b = 20)
         ),
 
-        width=800, 
-        height=600,
+        width=1200, 
+        height=800,
 
         geo=dict(
             showframe=False,
@@ -323,8 +325,8 @@ def generate_scatterbox_plot(data, city="birth"):
             pad=dict(t = 20, b = 20)
         ),
 
-        width = 800,
-        height = 600,
+        width = 1200,
+        height = 800,
 
         mapbox=dict(
             style="carto-positron",  # Free CartoDB Positron map style
@@ -337,6 +339,268 @@ def generate_scatterbox_plot(data, city="birth"):
     return fig
 
 fig_1c = generate_scatterbox_plot(df_laureates)
+
+
+# Plot 1.d: Prizes per Country x Population
+# ================================================================================================
+
+# Get some relevant columsn from the master table, rename
+df_nlpc = df_prizes[['BirthCountryNow', 'LaureateGender', 'Prize0_AwardYear']]
+df_nlpc.columns = ['Country', 'Gender', 'Year']
+
+# Merge the counts list and the ISO3 list
+df_nlpc = pd.merge(df_nlpc, df_iso, on="Country")
+
+# Calculate the number of prizes per country per year
+df_nlpc_count = df_nlpc.groupby(['Year', 'Country']).size().reset_index(name='Prizes')
+
+# Sort the data by 'Country' and 'Year'
+df_nlpc_count = df_nlpc_count.sort_values(by=['Country', 'Year'])
+
+# Calculate the running sum (cumulative sum) per country
+df_nlpc_count['RunningSum'] = df_nlpc_count.groupby('Country')['Prizes'].cumsum()
+
+# Create a complete index of years for each country
+all_years = pd.DataFrame({'Year': range(df_nlpc_count['Year'].min(), df_nlpc_count['Year'].max() + 1)})
+all_countries = df_nlpc_count['Country'].unique()
+complete_index = pd.MultiIndex.from_product([all_years['Year'], all_countries], names=['Year', 'Country'])
+
+# Reindex the DataFrame to include all years for each country
+df_nlpc_complete = df_nlpc_count.set_index(['Year', 'Country']).reindex(complete_index).reset_index()
+
+# Forward fill the missing values for the running sum
+df_nlpc_complete['RunningSum'] = df_nlpc_complete.groupby('Country')['RunningSum'].ffill().fillna(0)
+df_nlpc_complete['Prizes'] = df_nlpc_complete['Prizes'].fillna(0)
+
+
+#df_nlpc.columns =["Year", "Country", "PrizeInThisYear", "Prizes"]
+df_nlpc_complete = df_nlpc_complete.sort_values(by=['Year', 'Country'])
+
+# Add a small constant to ensure minimum bubble size
+df_nlpc_complete['AdjustedSize'] = df_nlpc_complete['RunningSum'] + 10
+
+# Create a column for the text labels
+df_nlpc_complete['Text'] = df_nlpc_complete.apply(lambda row: f"{row['Country']}: {int(row['RunningSum'])}", axis=1)
+
+
+# clean POP data
+df_pop.pop("ISO3")
+
+# Function to convert the population values accurately
+def convert_population_accurate(value):
+    if isinstance(value, str):
+        if 'B' in value:
+            return float(value.replace('B', '')) * 1_000_000_000
+        elif 'M' in value:
+            return float(value.replace('M', '')) * 1_000_000
+        elif 'k' in value:
+            return float(value.replace('k', '')) * 1_000
+        else:
+            try:
+                return int(value)
+            except ValueError:
+                return value  # Return the original value if conversion fails
+    return value  # Return the original value if it's not a string
+
+# Apply the conversion function to all columns except the first one ('country')
+for column in df_pop.columns[1:]:
+    df_pop[column] = df_pop[column].apply(convert_population_accurate)
+
+# Melt the population DataFrame
+df_pop_melted = df_pop.melt(id_vars=["country"], var_name="year", value_name="population")
+df_pop_melted.columns=["Country", "Year", "Population"]
+
+df_nlpc_complete_population = df_nlpc_complete.merge(df_pop_melted, how='left', on=["Country", "Year"])
+
+df_nlpc_complete_population['Prizes'] = pd.to_numeric(df_nlpc_complete_population['RunningSum'], errors='coerce')
+df_nlpc_complete_population['Population'] = pd.to_numeric(df_nlpc_complete_population['Population'], errors='coerce')
+df_nlpc_complete_population["PrizesPerPop"] = (df_nlpc_complete_population["RunningSum"] / df_nlpc_complete_population["Population"])
+df_nlpc_complete_population["PrizesPer1MPop"] = (df_nlpc_complete_population["RunningSum"] / df_nlpc_complete_population["Population"])*1000000
+
+
+# Log transform the Population and add the 4th root of PrizesPer1MPop
+df_nlpc_complete_population_log = df_nlpc_complete_population
+df_nlpc_complete_population_log['LogPopulation'] = np.log(df_nlpc_complete_population_log['Population'] + 1) # Adding 1 to avoid log(0)
+df_nlpc_complete_population_log['SQRT4ofPrizesPer1MPop'] = np.power(df_nlpc_complete_population_log['PrizesPer1MPop'], (1/4)) # forth root, gives a nice scaling
+
+
+# plot settings
+
+df_nlpc_complete_population_log.loc[:, 'PopulationNormalized'] = min_max_normalize(df_nlpc_complete_population['Population'])
+y_range_max = df_nlpc_complete_population_log['SQRT4ofPrizesPer1MPop'].max()*1.1
+
+min_size = 0.2
+bubblesize = np.maximum(df_nlpc_complete_population_log['PopulationNormalized']*10, min_size)*3
+
+
+# generate the plot
+
+def generate_population_bubbles(data):
+
+    fig = px.scatter(data, 
+                    x="LogPopulation", 
+                    y="SQRT4ofPrizesPer1MPop", 
+                    size=bubblesize, 
+                    color="Country",
+                    hover_name="Country", 
+                    animation_frame="Year", 
+                    range_x=[np.log(50_000), np.log(2_000_000_000)],  # Adjust range for log scale
+                    range_y=[0, y_range_max],  # Adjust range for 1M scale                
+                    text="Text",
+                    hover_data={
+                        'Year': True,
+                        #'Country': True,
+                        'Prizes': True,
+                        'Population': True,
+                        'SQRT4ofPrizesPer1MPop': ':.2f',  # Format to 2 decimal places
+                        },
+                    )
+
+    fig.update_layout(
+
+            template='plotly_white',
+            plot_bgcolor=brand_color_plot_background,
+
+            margin={"r":0,"t":60,"l":0,"b":0},
+
+            font=dict(
+                family = 'Rubik, sans-serif',
+                size = 11,
+                color = brand_color_main,
+            ),
+            
+            # showlegend = True,
+
+            title=dict(
+                text = "5.a: Nobel Prizes x Country of Birth x Population: 1901-2023",
+                font=dict(size = 20),
+                x = 0,                            # Left align the title
+                xanchor = 'left',                 # Align to the left edge
+                y = 0.97,                         # Adjust Y to position title above the map
+                yanchor = 'top',                  # Anchor at the top of the title box
+            ),
+
+            width=1200, 
+            height=800,
+
+    )
+
+    # Define tick values and labels for the x-axis (population)
+    tickvals_x = np.log([50_000, 100_000, 1_000_000, 10_000_000, 100_000_000, 1_500_000_000, 2_000_000_000])
+    ticktext_x = ['50k', '100k', '1M', '10M', '100M', '1.5B', '2.0B']
+
+    # Define tick values and labels for the y-axis (normalized prizes per population)
+    tickvals_y = np.power([0, 1, 2, 3, 4, 5, 10, 20, 50], (1/4))
+    ticktext_y = ['0', '1', '2', '3', '4', '5', '10', '20', '50']
+
+    # Update x-axis and y-axis to show original values
+    fig.update_xaxes(tickvals=tickvals_x, ticktext=ticktext_x, title="Population (log-scale)")
+    fig.update_yaxes(tickvals=tickvals_y, ticktext=ticktext_y, title="Prizes Per Population (4th root)")
+
+    # Adjust the position of the text labels
+    fig.update_traces(textposition='top center')
+
+    return fig
+
+fig_5a = generate_population_bubbles(df_nlpc_complete_population_log)
+
+
+# Plot 5.b: Prizer per Country Stacked Bar Chart
+# ================================================================================================
+
+df_pivot = df_nlpc_complete.pivot(index='Year', columns='Country', values='Prizes').fillna(0)
+df_pivot = df_pivot.reset_index()
+
+
+def generate_prizerpercountry(data):
+
+    fig = px.bar(df_pivot, x='Year', y=df_pivot.columns[1:], title='Number of Nobel Prizes by Country per Year',
+    labels={'value': 'Number of Prizes', 'variable': 'Country'})
+
+    # Update the layout to stack bars
+    fig.update_layout(barmode='stack', xaxis_title='Year', yaxis_title='Number of Prizes')
+
+    fig.update_layout(
+
+            template='plotly_white',
+            plot_bgcolor=brand_color_plot_background,
+
+            margin={"r":0,"t":60,"l":0,"b":0},
+
+            font=dict(
+                family = 'Rubik, sans-serif',
+                size = 11,
+                color = brand_color_main,
+            ),
+            
+            # showlegend = True,
+
+            title=dict(
+                text = "5.b: Nobel Prizes per Country (Individual Years)",
+                font=dict(size = 20),
+                x = 0,                            # Left align the title
+                xanchor = 'left',                 # Align to the left edge
+                y = 0.97,                         # Adjust Y to position title above the map
+                yanchor = 'top',                  # Anchor at the top of the title box
+            ),
+
+            width=1200, 
+            height=600,
+
+    )
+
+    return fig
+
+fig_5b = generate_prizerpercountry(df_pivot)
+
+
+# Plot 5.c: Prizer per Country Stacked Bar Chart (Running Sum)
+# ================================================================================================
+
+df_pivot_rs = df_nlpc_complete.pivot(index='Year', columns='Country', values='RunningSum').fillna(0)
+df_pivot_rs = df_pivot_rs.reset_index()
+
+
+def generate_prizespercountry_rs(data):
+
+    fig = px.bar(df_pivot_rs, x='Year', y=df_pivot.columns[1:], title='Number of Nobel Prizes by Country per Year',
+                labels={'value': 'Number of Prizes', 'variable': 'Country'})
+
+    # Update the layout to stack bars
+    fig.update_layout(barmode='stack', xaxis_title='Year', yaxis_title='Number of Prizes')
+
+    fig.update_layout(
+
+        template='plotly_white',
+        plot_bgcolor=brand_color_plot_background,
+
+        margin={"r":0,"t":60,"l":0,"b":0},
+
+        font=dict(
+            family = 'Rubik, sans-serif',
+            size = 11,
+            color = brand_color_main,
+        ),
+        
+        # showlegend = True,
+
+        title=dict(
+            text = "Nobel Prizes per Country (Running Sum)",
+            font=dict(size = 20),
+            x = 0,                            # Left align the title
+            xanchor = 'left',                 # Align to the left edge
+            y = 0.97,                         # Adjust Y to position title above the map
+            yanchor = 'top',                  # Anchor at the top of the title box
+        ),
+
+        width=1200, 
+        height=600,
+
+    )
+    
+    return fig
+
+fig_5c = generate_prizespercountry_rs(df_pivot_rs)
 
 
 
@@ -406,8 +670,8 @@ def generate_surface_plot(data):
             yanchor = 'top',                  # Anchor at the top of the title box
         ),
 
-        width=800, 
-        height=600,
+        width=1200, 
+        height=800,
 
         scene=dict(
             xaxis=dict(
@@ -482,8 +746,8 @@ def generate_timegap_histogram(data, category="all"):
 
         legend_title_text="Prize Category",
 
-        width = 800,
-        height = 600,
+        width = 1200,
+        height = 800,
         ),
     
     return fig
@@ -583,8 +847,8 @@ def generate_timegap_trend(data, df_lifeexpectancy, category="all"):
             pad=dict(t = 20, b = 20)
         ),
 
-        width = 1000,
-        height = 600,
+        width = 1200,
+        height = 800,
         ),
 
     return fig
@@ -643,8 +907,8 @@ def generate_migration_dwp(data, loc1="DegreeCountry", loc2="WorkCountry", loc3=
             pad=dict(t = 20, b = 20)
         ),
 
-        width = 1600,
-        height = 1400,
+        width = 1200,
+        height = 1800,
         ),
 
     return fig
@@ -685,11 +949,25 @@ full_table = dag.AgGrid(
 
 tab1_content = dmc.Paper(
     children=[
-        html.H5("Tab 4: Full Data", className="card-title"),
-        html.Div("This page shows a scatter plot."),
+        html.Div("This section contains plots related to the Nationality of Nobel Laureates. Actually, most of the time, it refers to the country of birth, which is unique and easy to identify, unlike the actual nationality. Note that quite some Laureates will actually not have the nationaliyt of the country they were born in."),
+        dmc.Space(h="xl"),
+        html.Div("Some of the plots offer additional selection option, such as date range sliders, or options which data should be displayed."),
+        dmc.Space(h="xl"),
+
+        
+        # dmc.Stack(
+        #     gap=0,
+        #     children=[
+        #         dmc.Skeleton(h=50, mb="xl"),
+        #         dmc.Skeleton(h=8, radius="xl"),
+        #         dmc.Skeleton(h=8, my=6),
+        #         dmc.Skeleton(h=8, w="70%", radius="xl"),
+        #     ],
+        # ),
+
         dmc.Grid(
             children=[
-                dmc.GridCol(dcc.Graph(id='globe-plot', figure=fig_1b), span=12)
+                dmc.GridCol(dcc.Graph(id='fig_1b', figure=fig_1b), span=12)
             ]
         ),
         dmc.Grid(
@@ -716,13 +994,9 @@ tab1_content = dmc.Paper(
 
         dmc.Stack([dmc.Space(h="xl"), dmc.Divider(size="lg"), dmc.Space(h="xl")]),
     
-    
-        
-        html.H5("Nobel Laureates by City of Birth", className="card-title"),
-        html.Div("Shows cities of birth.", className="mt-5 mb-5"),
         dmc.Grid(
             children=[
-                dmc.GridCol(dcc.Graph(id='cities-map', figure=fig_1c), span=12)
+                dmc.GridCol(dcc.Graph(id='fig_1c', figure=fig_1c), span=12)
             ]
         ),
         dmc.Group(
@@ -742,7 +1016,31 @@ tab1_content = dmc.Paper(
             gap="md",  # Adjusts the space between the label and the dropdown
             align="flex-start",  # Align items to the left
             style={"margin-top": "20px"}
-        )
+        ),
+
+        dmc.Stack([dmc.Space(h="xl"), dmc.Divider(size="lg"), dmc.Space(h="xl")]),
+
+        dmc.Grid(
+            children=[
+                dmc.GridCol(dcc.Graph(id='fig_5a', figure=fig_5a), span=12)
+            ]
+        ),
+
+        dmc.Stack([dmc.Space(h="xl"), dmc.Divider(size="lg"), dmc.Space(h="xl")]),
+
+        dmc.Grid(
+            children=[
+                dmc.GridCol(dcc.Graph(id='fig_5b', figure=fig_5b), span=12)
+            ]
+        ),
+
+        dmc.Stack([dmc.Space(h="xl"), dmc.Divider(size="lg"), dmc.Space(h="xl")]),
+
+        dmc.Grid(
+            children=[
+                dmc.GridCol(dcc.Graph(id='fig_5c', figure=fig_5c), span=12)
+            ]
+        ),
     ],
 
     shadow="md",
@@ -756,11 +1054,12 @@ tab1_content = dmc.Paper(
 
 tab2_content = dmc.Paper(
     children=[
-        html.H5("Tab 4: Full Data", className="card-title"),
-        html.Div("This page shows a scatter plot."),
+        # html.H5("Tab 4: Full Data", className="card-title"),
+        html.Div("This tab contains plots related to gender, ethnicity and relgion. I am aware that that these categories are sometimes disputed or disputable, and I havebeen trying to use the in a sensible way."),
+        dmc.Space(h="xl"),
         dmc.Grid(
             children=[
-                dmc.GridCol(dcc.Graph(id='3dsurface', figure=fig_2a), span=12)
+                dmc.GridCol(dcc.Graph(id='fig_2a', figure=fig_2a), span=12)
             ]
         ),
 
@@ -776,11 +1075,12 @@ tab2_content = dmc.Paper(
 
 tab3_content = dmc.Paper(
     children=[
-        html.H5("Tab 4: Full Data", className="card-title"),
-        html.Div("This page shows a scatter plot."),
+        # html.H5("Tab 4: Full Data", className="card-title"),
+        html.Div("Plots on this tabe relate to the age of Nobel Laureates, as well as to the time gap between their invention/research/seminal paper and the Nobel Prize."),
+        dmc.Space(h="xl"),
         dmc.Grid(
             children=[
-                dmc.GridCol(dcc.Graph(id='timegap', figure=fig_3a), span=12)
+                dmc.GridCol(dcc.Graph(id='fig_3a', figure=fig_3a), span=12)
             ]
         ),
 
@@ -805,11 +1105,12 @@ tab3_content = dmc.Paper(
 
 tab4_content = dmc.Paper(
     children=[
-        html.H5("Tab 4: Full Data", className="card-title"),
-        html.Div("This page shows a scatter plot."),
+        # html.H5("Tab 4: Full Data", className="card-title"),
+        html.Div("This tab contains plots related to the migration of Nobel laureates."),
+        dmc.Space(h="xl"),
         dmc.Grid(
             children=[
-                dmc.GridCol(dcc.Graph(id='timegap', figure=fig_4a), span=12)
+                dmc.GridCol(dcc.Graph(id='fig_4a', figure=fig_4a), span=12)
             ]
         ),
 
@@ -833,8 +1134,9 @@ tab4_content = dmc.Paper(
 
 tab5_content = dmc.Paper(
     children=[
-        html.H5("Tab 4: Full Data", className="card-title"),
-        html.Div("This page shows a scatter plot."),
+        # html.H5("Tab 4: Full Data", className="card-title"),
+        html.Div("Placeholder Tab"),
+        dmc.Space(h="xl"),
         # dmc.Grid(
         #     children=[
         #         dmc.GridCol(dcc.Graph(id='timegap', figure=fig_3a), span=12)
@@ -855,8 +1157,9 @@ tab5_content = dmc.Paper(
 
 tabdata_content = dmc.Paper(
     children=[
-        html.H5("Tab 4: Full Data", className="card-title"),
-        html.Div("This page shows a scatter plot."),
+        # html.H5("Tab 4: Full Data", className="card-title"),
+        html.Div("Here you can access the raw data, download it, and see references."),
+        dmc.Space(h="xl"),
         html.Div([full_table]),
     ],
     shadow="md",
@@ -881,8 +1184,8 @@ app.layout = dmc.MantineProvider(
                     [
                         dmc.TabsList(
                             [
-                                dmc.TabsTab("Nationality", value="tab1"),
-                                dmc.TabsTab("Gender, Ethnicity, Religion", value="tab2"),
+                                dmc.TabsTab("Nationality & Country", value="tab1"),
+                                dmc.TabsTab("Gender, Ethnicity & Religion", value="tab2"),
                                 dmc.TabsTab("Time & Age", value="tab3"),
                                 dmc.TabsTab("Migration", value="tab4"),
                                 dmc.TabsTab("X", value="tab5"),
@@ -913,7 +1216,7 @@ app.layout = dmc.MantineProvider(
 
 # Nationality Globe
 @app.callback(
-    Output('globe-plot', 'figure'),
+    Output('fig_1b', 'figure'),
     [Input('prize-slider', 'value')]
 )
 def update_globe(selected_range):
@@ -927,7 +1230,7 @@ def update_globe(selected_range):
 
 # Cities of Birth
 @app.callback(
-    Output('cities-map', 'figure'),
+    Output('fig_1c', 'figure'),
     Input('city-dropdown', 'value'),
 )
 def update_cities_map(selected_city_type): # the passed value here is passed before from the callback automatically
@@ -937,7 +1240,7 @@ def update_cities_map(selected_city_type): # the passed value here is passed bef
 
 
 ##################################################################################################
-# Runnign the app
+# Running the app
 ##################################################################################################
 
 # --------------------
