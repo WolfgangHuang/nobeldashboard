@@ -298,7 +298,6 @@ def generate_scatterbox_plot(data, city="birth"):
 fig_1d = generate_scatterbox_plot(df_laureates)
 
 
-
 ##################################################################################################
 # Dashboard
 ##################################################################################################
@@ -307,12 +306,10 @@ fig_1d = generate_scatterbox_plot(df_laureates)
 # app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 # app = dash.Dash(__name__) # loads the theme in assets
 
-import dash
-from dash import dcc, html, Input, Output
 import dash_mantine_components as dmc
-import dash_ag_grid as dag
-import pandas as pd
-import os
+from dash import Dash, _dash_renderer
+_dash_renderer._set_react_version("18.2.0")
+
 
 # Assume df_laureates, fig_1b, fig_1d, fig2, fig3, and max_prize_count are defined
 
@@ -332,12 +329,12 @@ tab1_content = dmc.Paper(
         html.Div("The rotatable, zoomable globe below shows the number of laureates born in the respective country. You may use the slider to set lower and upper limits. Note that country borders have changed throughout history, so there is some fuzziness involved.", className="mt-5 mb-5"),
         dmc.Grid(
             children=[
-                dmc.Col(dcc.Graph(id='globe-plot', figure=fig_1b), span=12)
+                dmc.GridCol(dcc.Graph(id='globe-plot', figure=fig_1b), span=12)
             ]
         ),
         dmc.Grid(
             children=[
-                dmc.Col(
+                dmc.GridCol(
                     dcc.RangeSlider(
                         id='prize-slider',
                         min=0,
@@ -358,16 +355,16 @@ tab1_content = dmc.Paper(
         html.Div("Shows cities of birth.", className="mt-5 mb-5"),
         dmc.Grid(
             children=[
-                dmc.Col(dcc.Graph(id='cities-map', figure=fig_1d), span=12)
+                dmc.GridCol(dcc.Graph(id='cities-map', figure=fig_1d), span=12)
             ]
         ),
         dmc.Grid(
             children=[
-                dmc.Col(
+                dmc.GridCol(
                     html.Div("Please select location:", style={"margin-top": "10px", "font-weight": "bold"}),
                     span="auto"  # Auto width for the label
                 ),
-                dmc.Col(
+                dmc.GridCol(
                     dcc.Dropdown(
                         id='city-dropdown',
                         options=[
@@ -426,21 +423,22 @@ tab4_content = dmc.Paper(
 )
 
 # Define app layout
-app.layout = dmc.Container(
+# app.layout = dmc.Container(
+app.layout = dmc.MantineProvider(
     children=[
-        dmc.Grid(
+        dmc.GridCol(
             children=[
-                dmc.Col(html.H1("Nobel Laureate Data Dashboard v10.35", className="text-center mt-5 mb-5"), span=12)
+                dmc.GridCol(html.H1("Nobel Laureate Data Dashboard v10.35", className="text-center mt-5 mb-5"), span=12)
             ]
         ),
         dmc.Tabs(
             [
                 dmc.TabsList(
                     [
-                        dmc.Tab(dmc.Text("Nationality"), value="tab1"),
-                        dmc.Tab(dmc.Text("Bar Chart"), value="tab2"),
-                        dmc.Tab(dmc.Text("Scatter Plot"), value="tab3"),
-                        dmc.Tab(dmc.Text("Full Data"), value="tab4"),
+                        dmc.TabsTab(dmc.Text("Nationality"), value="tab1"),
+                        dmc.TabsTab(dmc.Text("Bar Chart"), value="tab2"),
+                        dmc.TabsTab(dmc.Text("Scatter Plot"), value="tab3"),
+                        dmc.TabsTab(dmc.Text("Full Data"), value="tab4"),
                     ]
                 ),
                 dmc.TabsPanel(tab1_content, value="tab1"),
@@ -451,8 +449,7 @@ app.layout = dmc.Container(
             value="tab1",  # Default selected tab
             id="tabs",
         ),
-    ],
-    fluid=True,
+    ]
 )
 
 ##################################################################################################
