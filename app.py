@@ -913,7 +913,7 @@ def generate_migration_dwp(data, loc1="DegreeCountry", loc2="WorkCountry", loc3=
 
     return fig
 
-fig_4a = generate_migration_dwp(df_movement_dwp, "DegreeCity", "WorkCountry", "PrizeCityCountry")
+fig_4a = generate_migration_dwp(df_movement_dwp, "DegreeCountry", "WorkCountry", "PrizeCountry")
 
 
 ##################################################################################################
