@@ -1177,7 +1177,7 @@ app.layout = dmc.MantineProvider(
             children=[
                 dmc.Grid(
                     children=[
-                        dmc.GridCol(html.H1("Nobel Laureate Data Dashboard v12.25", className="text-left mt-5 mb-5"), span=12)
+                        dmc.GridCol(html.H1("Nobel Laureate Data Dashboard v20.16.50", className="text-left mt-5 mb-5"), span=12)
                     ]
                 ),
                 dmc.Tabs(
