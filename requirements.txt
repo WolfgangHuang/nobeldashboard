@@ -6,3 +6,4 @@ pandas
 dash-ag-grid
 numpy
 scikit-learn
+openpyxl
