@@ -17,8 +17,8 @@ from dash import Dash, _dash_renderer
 from dash.dependencies import Input, Output
 import dash_mantine_components as dmc
 from sklearn.linear_model import LinearRegression
-_dash_renderer._set_react_version("18.2.0")
-
+import pickle
+import precompute_plots as pcp 
 
 
 ##################################################################################################
@@ -38,10 +38,15 @@ c_magenta = '#cf437d'
 c_pink = '#ff99c8'
 
 c_red_verylight = '#f7c1c6'
+c_red_superlight = '#fbe0e2'
 c_red_verydark = '#3A070B'
 
 c_teal_verylight = '#C2EEF3'
+c_teal_superlight = '#e1f7f9'
 c_teal_verydark = '#072124'
+
+c_lightblue_verylight = '#e9f1f8'
+c_lightblue_superlight = '#f4f8fc'
 
 
 colorscale_palette = [c_teal, c_lightblue, c_red, c_orange, c_yellow, c_darkmagenta, c_magenta, c_pink]
@@ -65,19 +70,8 @@ c_peace = c_pink
 c_literature = c_yellow
 
 
-
 ##################################################################################################
-# General Functions
-##################################################################################################
-
-# Define a Min-Max normalization function to manipulate the bubble size based on population.
-def min_max_normalize(series):
-    return (series - series.min()) / (series.max() - series.min())
-
-
-
-##################################################################################################
-# Data Import
+# Load Precomputed Plots
 ##################################################################################################
 
 # Get the path of the directory where the script is located
@@ -86,11 +80,36 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 # Set the working directory to this location
 os.chdir(current_dir)
 
-#Import from local project folder
-df_laureates_import = pd.read_csv('df_laureates.csv', sep=';')
+# Load precomputed plots from file
+with open('precomputed_plots.pkl', 'rb') as f:
+    precomputed_plots = pickle.load(f)
+
+fig_1b = precomputed_plots['fig_1b']
+fig_1c = precomputed_plots['fig_1c']
+fig_5a = precomputed_plots['fig_5a']
+fig_5b = precomputed_plots['fig_5b']
+fig_5c = precomputed_plots['fig_5c']
+fig_2a = precomputed_plots['fig_2a']
+fig_2b = precomputed_plots['fig_2b']
+fig_2c = precomputed_plots['fig_2c']
+fig_2d = precomputed_plots['fig_2d']
+fig_2e = precomputed_plots['fig_2e']
+fig_3a = precomputed_plots['fig_3a']
+fig_3b = precomputed_plots['fig_3b']
+fig_3c = precomputed_plots['fig_3c']
+fig_3d = precomputed_plots['fig_3d']
+fig_4a = precomputed_plots['fig_4a']
+fig_4b = precomputed_plots['fig_4b']
+fig_6a = precomputed_plots['fig_6a']
+
+
+# Load tables
+
+# Laureates data
+df_laureates = pd.read_csv('df_laureates_cleaned.csv', sep=';', encoding="UTF-8")
 
 # Same as laureates, but the two-time-winners are listed twice
-df_prizes_import = pd.read_csv('df_prizes.csv', sep=';')
+df_prizes = pd.read_csv('df_prizes_cleaned.csv', sep=';', encoding="UTF-8")
 
 # Timegap Seminal Paper and Prize
 df_timegap = pd.read_csv('df_prize-publication-timegap.csv', sep=';', encoding='UTF-8')
@@ -101,875 +120,181 @@ df_lifeexpectancy = pd.read_excel('df_life-expectancy.xlsx')
 # Country Populations
 df_pop = pd.read_excel("df_population.xlsx")
 
+# Ethnicity
+df_ethnicity = pd.read_csv('df_ethnicity.csv', sep=';', encoding="UTF-8")
+
+# Religion
+df_religion = pd.read_csv('df_religion.csv', sep=';', encoding="UTF-8")
+
 # Degree - Work - Prize Movement
 df_movement_dwp = pd.read_excel('df_degree_institutions_work.xlsx')
 df_movement_dwp = df_movement_dwp.fillna('None')
 
+# Birth - Prize - Death Movement
+df_movement_bpd = df_laureates[["BirthCityNow", "BirthCountryNow","BirthContinent","Prize0_Affiliation0_CityNow", "Prize0_Affiliation0_Country","Prize0_Affiliation0_Continent", "DeathCityNow", "DeathCountryNow", "DeathContinent"]]
+df_movement_bpd = df_movement_bpd.fillna('None')
+
 # ISO3 list
-df_iso = pd.read_csv('countries_iso2_iso3.csv', sep=';')
+df_iso = pd.read_csv('countries_iso2_iso3.csv', sep=';', encoding="UTF-8")
 
-
-##################################################################################################
-# Data Cleaning
-##################################################################################################
-
-
-# There are some non-conventional country names (reference: geonames.org) in the data. These will be replaced now.
-
-def replace_values_in_columns(df, columns, replacement_dict):
-    """
-    Replace values in the given columns of a DataFrame according to the provided dictionary.
-
-    Parameters:
-    df (pd.DataFrame): The input DataFrame.
-    columns (list): List of column headers where replacements should be made.
-    replacement_dict (dict): A dictionary where keys are the values to be replaced, and values are the replacements.
-
-    Returns:
-    pd.DataFrame: DataFrame with the replaced values.
-    """
-    # Ensure columns exist in the DataFrame
-    for column in columns:
-        if column in df.columns:
-            # Use pandas replace method to replace values in the column according to the dictionary
-            df[column] = df[column].replace(replacement_dict)
-    
-    return df
-
-
-# Columns to modify
-columns_to_modify = ['BirthCountryNow', 
-                     'DeathCountryNow', 
-                     'Prize0_Affiliation0_CountryNow', 
-                     'Prize0_Affiliation1_CountryNow', 
-                     'Prize0_Residence0_CountryNow', 
-                     'Prize0_Residence1_CountryNow', 
-                     'Prize1_Affiliation0_CountryNow', 
-                     'Prize0_Affiliation2_CountryNow', 
-                     'Prize0_Affiliation3_CountryNow']
-
-# Dictionary for replacement
-replacement_dict = {
-    'Czech Republic': 'Czechia',
-    'Faroe Islands (Denmark)': 'Denmark',
-    'Northern Ireland': 'United Kingdom',
-    'Scotland': 'United Kingdom',
-    'Guadeloupe, France': 'Guadeloupe',
-    'The Netherlands': 'Netherlands',
-    'East Timor': 'Timor-Leste',
-    'USA': 'United States'
-
-}
-
-# Call the function
-df_laureates = replace_values_in_columns(df_laureates_import, columns_to_modify, replacement_dict)
-df_prizes = replace_values_in_columns(df_prizes_import, columns_to_modify, replacement_dict)
-
-
-
-##################################################################################################
-# Count Laureates per Country
-##################################################################################################
-
-# Count unique values in "BirthCountryNow"
-ds_nobelprizes_percountry = df_laureates['BirthCountryNow'].value_counts()
-
-# The result is a Pandas series object; but we prefer it to be a Pandas data frame. Let's convert it.
-df_nobelprizes_percountry = ds_nobelprizes_percountry.reset_index()
-
-# Rename the columns
-df_nobelprizes_percountry.columns = ['Country', 'Count']
-
-# Merge the counts list and the ISO3 list
-df_nobelprizes_percountry = pd.merge(df_nobelprizes_percountry, df_iso, on="Country")
-
-df_nobelprizes_percountry.head(100)
+# Nobelprizes per Country
+df_nobelprizes_percountry = pd.read_csv("df_nobelprizes_percountry.csv", sep=';', encoding="UTF-8")
 
 max_prize_count = df_nobelprizes_percountry['Count'].max()
 
 
-
 ##################################################################################################
-# Plots
-##################################################################################################
-
-# Series 1: Country and City of Birth on Maps
+# Dashboard Main Setup
 ##################################################################################################
 
-# Plot 1a: Simple Map
-# ================================================================================================
-# not included, because it doesn't appear in the dashboard
-
-
-
-# Plot 1b: Rotatable Globe (Nobel Laureates per Country of Birth)
-# ================================================================================================
-
-def generate_globe_plot(data):
-    
-    fig = go.Figure(data=go.Choropleth(
-        locations=data['ISO3'],
-        z=data['Count'],
-        # colorscale='Blues',
-        colorscale=colorscale_teal_to_read,
-        marker_line_color='darkgray',
-        marker_line_width=0.5,
-        colorbar_title='No of Laureates',
-    )) 
-   
-    fig.update_layout(      
-        template='plotly_white',
-
-        margin={"r":0,"t":60,"l":0,"b":0},
-
-        font=dict(
-            family = 'Rubik, sans-serif',
-            size = 11,
-            color = brand_color_main,
-        ),
-
-        # showlegend = True,
-
-        title=dict(
-            text = "1.b: Nobel Prizes per Country (Country of Birth)",
-            font=dict(size = 20),
-            x = 0,                            # Left align the title
-            xanchor = 'left',                 # Align to the left edge
-            y = 1,                         # Adjust Y to position title above the map
-            yanchor = 'top',                  # Anchor at the top of the title box
-            pad=dict(t = 20, b = 20)
-        ),
-
-        width=1200, 
-        height=800,
-
-        geo=dict(
-            showframe=False,
-            showcoastlines=False,
-            projection_type='orthographic'
-        )
-    )
-
-    return fig
-
-fig_1b = generate_globe_plot(df_nobelprizes_percountry)
-
-
-
-# Plot 1.c: Places of Birth of Nobel Laureates
-# ================================================================================================
-
-def generate_scatterbox_plot(data, city="birth"):
-
-    # Function to add small jitter to coordinates to avoid overlap
-    def add_jitter(coordinates, scale=0.05):
-        return coordinates + np.random.uniform(-scale, scale, size=len(coordinates))
-
-    if city == "birth":
-        # Add jitter to latitude and longitude
-        latitudes = add_jitter(data['BirthCityNowLat'])
-        longitudes = add_jitter(data['BirthCityNowLon'])
-        hover_text = [
-            f"Name: {name}<br>City: {city}<br>Country: {country}<br>Date: {date}"
-            for name, city, country, date in zip(data['AwardeeDisplayName'], data['BirthCity'], data['BirthCountryNow'], data['BirthDate'])
-        ]
-    elif city == 'death':
-
-          # Filter out rows where death city coordinates are missing
-        data_filtered = data.dropna(subset=['DeathCityLat', 'DeathCityLon'])
-        
-        if data_filtered.empty:
-            return go.Figure()  # Return an empty figure if no valid data is available
-
-        # Use death city coordinates and data
-        latitudes = add_jitter(data['DeathCityLat'])
-        longitudes = add_jitter(data['DeathCityLon'])
-        hover_text = [
-            f"Name: {name}<br>City: {city}<br>Country: {country}<br>Date: {date}"
-            for name, city, country, date in zip(data['AwardeeDisplayName'], data['DeathCity'], data['DeathCountryNow'], data['DeathDate'])
-        ]
-
-    # Create the map using CartoDB Positron
-    fig = go.Figure(go.Scattermapbox(
-        lat=latitudes,    # Jittered Latitude coordinates
-        lon=longitudes,    # Jittered Longitude coordinates
-        mode='markers',
-        marker=go.scattermapbox.Marker(
-            size=9,   # Marker size
-            color=brand_color_main,  # Color of the marker (your brand color)
-            opacity=0.8
-        ),
-        text=data['AwardeeDisplayName'],  # Laureate name (used for hover)
-        hoverinfo='text',  # Tooltip content
-        hovertext=hover_text  # Use dynamically generated hover text
-    ))
-
-    # Update layout of the map
-    fig.update_layout(
-
-        margin={"r":0,"t":50,"l":0,"b":0},
-
-        font=dict(
-            family = 'Rubik, sans-serif',
-            size = 14,
-            color = brand_color_main,
-        ),
-        
-        title=dict(
-            text = f"1.c: Places of {city.capitalize()} of Nobel Laureates",
-            font=dict(size = 20),
-            x = 0,                            # Left align the title
-            xanchor = 'left',                 # Align to the left edge
-            y = 1,                         # Adjust Y to position title above the map
-            yanchor = 'top',                  # Anchor at the top of the title box
-            pad=dict(t = 20, b = 20)
-        ),
-
-        width = 1200,
-        height = 800,
-
-        mapbox=dict(
-            style="carto-positron",  # Free CartoDB Positron map style
-            zoom=1,  # Set default zoom level
-            center=dict(lat=20, lon=0)  # Default map center
-        ),
-
-    )
-
-    return fig
-
-fig_1c = generate_scatterbox_plot(df_laureates)
-
-
-# Plot 1.d: Prizes per Country x Population
-# ================================================================================================
-
-# Get some relevant columsn from the master table, rename
-df_nlpc = df_prizes[['BirthCountryNow', 'LaureateGender', 'Prize0_AwardYear']]
-df_nlpc.columns = ['Country', 'Gender', 'Year']
-
-# Merge the counts list and the ISO3 list
-df_nlpc = pd.merge(df_nlpc, df_iso, on="Country")
-
-# Calculate the number of prizes per country per year
-df_nlpc_count = df_nlpc.groupby(['Year', 'Country']).size().reset_index(name='Prizes')
-
-# Sort the data by 'Country' and 'Year'
-df_nlpc_count = df_nlpc_count.sort_values(by=['Country', 'Year'])
-
-# Calculate the running sum (cumulative sum) per country
-df_nlpc_count['RunningSum'] = df_nlpc_count.groupby('Country')['Prizes'].cumsum()
-
-# Create a complete index of years for each country
-all_years = pd.DataFrame({'Year': range(df_nlpc_count['Year'].min(), df_nlpc_count['Year'].max() + 1)})
-all_countries = df_nlpc_count['Country'].unique()
-complete_index = pd.MultiIndex.from_product([all_years['Year'], all_countries], names=['Year', 'Country'])
-
-# Reindex the DataFrame to include all years for each country
-df_nlpc_complete = df_nlpc_count.set_index(['Year', 'Country']).reindex(complete_index).reset_index()
-
-# Forward fill the missing values for the running sum
-df_nlpc_complete['RunningSum'] = df_nlpc_complete.groupby('Country')['RunningSum'].ffill().fillna(0)
-df_nlpc_complete['Prizes'] = df_nlpc_complete['Prizes'].fillna(0)
-
-
-#df_nlpc.columns =["Year", "Country", "PrizeInThisYear", "Prizes"]
-df_nlpc_complete = df_nlpc_complete.sort_values(by=['Year', 'Country'])
-
-# Add a small constant to ensure minimum bubble size
-df_nlpc_complete['AdjustedSize'] = df_nlpc_complete['RunningSum'] + 10
-
-# Create a column for the text labels
-df_nlpc_complete['Text'] = df_nlpc_complete.apply(lambda row: f"{row['Country']}: {int(row['RunningSum'])}", axis=1)
-
-
-# clean POP data
-df_pop.pop("ISO3")
-
-# Function to convert the population values accurately
-def convert_population_accurate(value):
-    if isinstance(value, str):
-        if 'B' in value:
-            return float(value.replace('B', '')) * 1_000_000_000
-        elif 'M' in value:
-            return float(value.replace('M', '')) * 1_000_000
-        elif 'k' in value:
-            return float(value.replace('k', '')) * 1_000
-        else:
-            try:
-                return int(value)
-            except ValueError:
-                return value  # Return the original value if conversion fails
-    return value  # Return the original value if it's not a string
-
-# Apply the conversion function to all columns except the first one ('country')
-for column in df_pop.columns[1:]:
-    df_pop[column] = df_pop[column].apply(convert_population_accurate)
-
-# Melt the population DataFrame
-df_pop_melted = df_pop.melt(id_vars=["country"], var_name="year", value_name="population")
-df_pop_melted.columns=["Country", "Year", "Population"]
-
-df_nlpc_complete_population = df_nlpc_complete.merge(df_pop_melted, how='left', on=["Country", "Year"])
-
-df_nlpc_complete_population['Prizes'] = pd.to_numeric(df_nlpc_complete_population['RunningSum'], errors='coerce')
-df_nlpc_complete_population['Population'] = pd.to_numeric(df_nlpc_complete_population['Population'], errors='coerce')
-df_nlpc_complete_population["PrizesPerPop"] = (df_nlpc_complete_population["RunningSum"] / df_nlpc_complete_population["Population"])
-df_nlpc_complete_population["PrizesPer1MPop"] = (df_nlpc_complete_population["RunningSum"] / df_nlpc_complete_population["Population"])*1000000
-
-
-# Log transform the Population and add the 4th root of PrizesPer1MPop
-df_nlpc_complete_population_log = df_nlpc_complete_population
-df_nlpc_complete_population_log['LogPopulation'] = np.log(df_nlpc_complete_population_log['Population'] + 1) # Adding 1 to avoid log(0)
-df_nlpc_complete_population_log['SQRT4ofPrizesPer1MPop'] = np.power(df_nlpc_complete_population_log['PrizesPer1MPop'], (1/4)) # forth root, gives a nice scaling
-
-
-# plot settings
-
-df_nlpc_complete_population_log.loc[:, 'PopulationNormalized'] = min_max_normalize(df_nlpc_complete_population['Population'])
-y_range_max = df_nlpc_complete_population_log['SQRT4ofPrizesPer1MPop'].max()*1.1
-
-min_size = 0.2
-bubblesize = np.maximum(df_nlpc_complete_population_log['PopulationNormalized']*10, min_size)*3
-
-
-# generate the plot
-
-def generate_population_bubbles(data):
-
-    fig = px.scatter(data, 
-                    x="LogPopulation", 
-                    y="SQRT4ofPrizesPer1MPop", 
-                    size=bubblesize, 
-                    color="Country",
-                    hover_name="Country", 
-                    animation_frame="Year", 
-                    range_x=[np.log(50_000), np.log(2_000_000_000)],  # Adjust range for log scale
-                    range_y=[0, y_range_max],  # Adjust range for 1M scale                
-                    text="Text",
-                    hover_data={
-                        'Year': True,
-                        #'Country': True,
-                        'Prizes': True,
-                        'Population': True,
-                        'SQRT4ofPrizesPer1MPop': ':.2f',  # Format to 2 decimal places
-                        },
-                    )
-
-    fig.update_layout(
-
-            template='plotly_white',
-            plot_bgcolor=brand_color_plot_background,
-
-            margin={"r":0,"t":60,"l":0,"b":0},
-
-            font=dict(
-                family = 'Rubik, sans-serif',
-                size = 11,
-                color = brand_color_main,
-            ),
-            
-            # showlegend = True,
-
-            title=dict(
-                text = "5.a: Nobel Prizes x Country of Birth x Population: 1901-2023",
-                font=dict(size = 20),
-                x = 0,                            # Left align the title
-                xanchor = 'left',                 # Align to the left edge
-                y = 0.97,                         # Adjust Y to position title above the map
-                yanchor = 'top',                  # Anchor at the top of the title box
-            ),
-
-            width=1200, 
-            height=800,
-
-    )
-
-    # Define tick values and labels for the x-axis (population)
-    tickvals_x = np.log([50_000, 100_000, 1_000_000, 10_000_000, 100_000_000, 1_500_000_000, 2_000_000_000])
-    ticktext_x = ['50k', '100k', '1M', '10M', '100M', '1.5B', '2.0B']
-
-    # Define tick values and labels for the y-axis (normalized prizes per population)
-    tickvals_y = np.power([0, 1, 2, 3, 4, 5, 10, 20, 50], (1/4))
-    ticktext_y = ['0', '1', '2', '3', '4', '5', '10', '20', '50']
-
-    # Update x-axis and y-axis to show original values
-    fig.update_xaxes(tickvals=tickvals_x, ticktext=ticktext_x, title="Population (log-scale)")
-    fig.update_yaxes(tickvals=tickvals_y, ticktext=ticktext_y, title="Prizes Per Population (4th root)")
-
-    # Adjust the position of the text labels
-    fig.update_traces(textposition='top center')
-
-    return fig
-
-fig_5a = generate_population_bubbles(df_nlpc_complete_population_log)
-
-
-# Plot 5.b: Prizer per Country Stacked Bar Chart
-# ================================================================================================
-
-df_pivot = df_nlpc_complete.pivot(index='Year', columns='Country', values='Prizes').fillna(0)
-df_pivot = df_pivot.reset_index()
-
-
-def generate_prizerpercountry(data):
-
-    fig = px.bar(df_pivot, x='Year', y=df_pivot.columns[1:], title='Number of Nobel Prizes by Country per Year',
-    labels={'value': 'Number of Prizes', 'variable': 'Country'})
-
-    # Update the layout to stack bars
-    fig.update_layout(barmode='stack', xaxis_title='Year', yaxis_title='Number of Prizes')
-
-    fig.update_layout(
-
-            template='plotly_white',
-            plot_bgcolor=brand_color_plot_background,
-
-            margin={"r":0,"t":60,"l":0,"b":0},
-
-            font=dict(
-                family = 'Rubik, sans-serif',
-                size = 11,
-                color = brand_color_main,
-            ),
-            
-            # showlegend = True,
-
-            title=dict(
-                text = "5.b: Nobel Prizes per Country (Individual Years)",
-                font=dict(size = 20),
-                x = 0,                            # Left align the title
-                xanchor = 'left',                 # Align to the left edge
-                y = 0.97,                         # Adjust Y to position title above the map
-                yanchor = 'top',                  # Anchor at the top of the title box
-            ),
-
-            width=1200, 
-            height=600,
-
-    )
-
-    return fig
-
-fig_5b = generate_prizerpercountry(df_pivot)
-
-
-# Plot 5.c: Prizer per Country Stacked Bar Chart (Running Sum)
-# ================================================================================================
-
-df_pivot_rs = df_nlpc_complete.pivot(index='Year', columns='Country', values='RunningSum').fillna(0)
-df_pivot_rs = df_pivot_rs.reset_index()
-
-
-def generate_prizespercountry_rs(data):
-
-    fig = px.bar(df_pivot_rs, x='Year', y=df_pivot.columns[1:], title='Number of Nobel Prizes by Country per Year',
-                labels={'value': 'Number of Prizes', 'variable': 'Country'})
-
-    # Update the layout to stack bars
-    fig.update_layout(barmode='stack', xaxis_title='Year', yaxis_title='Number of Prizes')
-
-    fig.update_layout(
-
-        template='plotly_white',
-        plot_bgcolor=brand_color_plot_background,
-
-        margin={"r":0,"t":60,"l":0,"b":0},
-
-        font=dict(
-            family = 'Rubik, sans-serif',
-            size = 11,
-            color = brand_color_main,
-        ),
-        
-        # showlegend = True,
-
-        title=dict(
-            text = "Nobel Prizes per Country (Running Sum)",
-            font=dict(size = 20),
-            x = 0,                            # Left align the title
-            xanchor = 'left',                 # Align to the left edge
-            y = 0.97,                         # Adjust Y to position title above the map
-            yanchor = 'top',                  # Anchor at the top of the title box
-        ),
-
-        width=1200, 
-        height=600,
-
-    )
-    
-    return fig
-
-fig_5c = generate_prizespercountry_rs(df_pivot_rs)
-
-
-
-# Series 2: Gender and Ethnicity
-##################################################################################################
-
-
-
-# Plot 2.a: Women
-# ================================================================================================
-
-# Get required data from main df
-df_prizes_pergender_perdecade_a = df_prizes[['LaureateGender', 'Prize0_AwardYear', 'Prize0_Category']].copy()
-
-# Calculate the decade and drop the year
-df_prizes_pergender_perdecade_a['Decade'] = (df_prizes_pergender_perdecade_a['Prize0_AwardYear'] // 10) * 10  # The //-operator rounds down.
-df_prizes_pergender_perdecade_a.drop(columns=['Prize0_AwardYear'], inplace=True) 
-
-# Count the genders per decade per discipline (using the groupby-function)
-df_prizes_pergender_perdecade_b = df_prizes_pergender_perdecade_a.groupby(['Decade', 'LaureateGender', 'Prize0_Category']).size().reset_index(name='Count')
-
-# 1: Remove rows with gender "male" or "org"
-df_prizes_forwomen_perdecade_c = df_prizes_pergender_perdecade_b[(df_prizes_pergender_perdecade_b['LaureateGender'] != 'male') & (df_prizes_pergender_perdecade_b['LaureateGender'] != 'org')]
-
-# 2: As we have only women left, delete the column gender
-df_prizes_forwomen_perdecade_d = df_prizes_forwomen_perdecade_c.drop(columns=['LaureateGender']) 
-
-# 3: Pivot the table, so that decades apear on the x-axis, and disciplines on the y-axis. Counts are now values, with zeroes filled in for empty values.
-df_prizes_forwomen_perdecade = df_prizes_forwomen_perdecade_d.pivot_table(index='Prize0_Category', columns='Decade', values='Count', fill_value=0)
-
-
-def generate_surface_plot(data):
-
-    y = ["Chem", "Eco", "Lit", "Med", "Peace", "Phys"]
-    x = ["1900", "1910", "1920", "1930", "1940", "1950", "1960", "1970", "1980", "1990", "2000", "2010", "2020"]
-
-    fig = go.Figure(data=[go.Surface(
-                            z=data.values, 
-                            y=y, 
-                            x=x, 
-                            colorscale=brand_colorscale_main, 
-                            showscale=False, 
-                            opacity=0.7)
-                        ]
-                    )
-
-    fig.update_layout(      
-
-        template='plotly_white',
-                
-        margin={"r":0,"t":50,"l":0,"b":0},
-
-        font=dict(
-            family = 'Rubik, sans-serif',
-            size = 11,
-            color = brand_color_main,
-        ),
-        
-        # showlegend = True,
-
-        title=dict(
-            text = "2.a: Nobel Prizes to Women per Discipline and Decade",
-            font=dict(size = 20),
-            x = 0,                            # Left align the title
-            xanchor = 'left',                 # Align to the left edge
-            y = 0.97,                         # Adjust Y to position title above the map
-            yanchor = 'top',                  # Anchor at the top of the title box
-        ),
-
-        width=1200, 
-        height=800,
-
-        scene=dict(
-            xaxis=dict(
-                tickvals=x,
-                ticktext=x,
-                title='Decades',
-                autorange='reversed'  # Reverse the x-axis  
-            ),
-            yaxis=dict(
-                title='Disciplines'  
-            ),
-            zaxis=dict(
-                title='Number of Prizes to Women'  
-            ),
-            camera=dict(
-                eye=dict(x=1.5, y=1.5, z=1.5),  # Adjust these values to change camera position
-                center=dict(x=0, y=0, z=0),        # Adjust these values to change focus point
-                up=dict(x=0, y=0, z=1)             # Usually set to the Z-axis for upward direction
-            ),
-        )
-    )
-
-    return fig
-
-fig_2a = generate_surface_plot(df_prizes_forwomen_perdecade)
-
-
-
-
-# Series 3: Age & Time
-##################################################################################################
-
-
-# Plot 3.a: Timegap
-# ================================================================================================
-
-def generate_timegap_histogram(data, category="all"):
-    fig = px.histogram(data, x="Timegap", color="Prize0_Category", 
-                             opacity=1,
-                             color_discrete_map={
-                                 "Physics": c_physics, 
-                                 "Chemistry":c_chemistry, 
-                                 "Medicine": c_medicine
-                             },
-                            nbins=100,  # Set number of bins to 1 per gap,
-                            title="Histogram of Timegap Between Seminal Paper and Nobel Prize",
-                            labels={
-                                "Timegap": "Time Gap (years)",   # X-axis label
-                                "count": "Number of Prizes"   # Y-axis label
-                            },
-                             barmode="group" )
-    
-    fig.update_layout(
-
-        margin={"r":0,"t":50,"l":0,"b":0},
-
-        font=dict(
-            family = 'Rubik, sans-serif',
-            size = 14,
-            color = brand_color_main,
-        ),
-        
-        title=dict(
-            text = f"3.a: Histogram of Timegap between Seminal Paper and Nobel Prize",
-            font=dict(size = 20),
-            x = 0,                            # Left align the title
-            xanchor = 'left',                 # Align to the left edge
-            y = 1,                         # Adjust Y to position title above the map
-            yanchor = 'top',                  # Anchor at the top of the title box
-            pad=dict(t = 20, b = 20)
-        ),
-
-        legend_title_text="Prize Category",
-
-        width = 1200,
-        height = 800,
-        ),
-    
-    return fig
-
-fig_3a = generate_timegap_histogram(df_timegap)
-
-
-
-# Plot 3.b: Timegap with Trendlines
-# ================================================================================================
-
-def generate_timegap_trend(data, df_lifeexpectancy, category="all"):
-    fig = go.Figure()
-
-    categories = data['Prize0_Category'].unique()
-
-    colors = {
-        "Physics": c_physics, 
-        "Chemistry":c_chemistry, 
-        "Medicine": c_medicine
-    }
-
-    # Adding scatter points for each category
-    for category in categories:
-        subset = data[data['Prize0_Category'] == category]
-        
-        # Scatter points for each category
-        fig.add_trace(go.Scatter(
-            x=subset["Prize0_AwardYear"], 
-            y=subset["Timegap"],  
-            mode='markers',  
-            name=category,
-            marker=dict(color=colors[category], size=8)
-        ))
-        
-        # Perform linear regression for the trendline
-        X = subset["Prize0_AwardYear"].values.reshape(-1, 1)
-        y = subset["Timegap"].values
-        
-        if len(X) > 1:  # Only perform regression if we have enough points
-            model = LinearRegression()
-            model.fit(X, y)
-            y_pred = model.predict(X)
-            
-            # Add the trendline to the plot
-            fig.add_trace(go.Scatter(
-                x=subset["Prize0_AwardYear"], 
-                y=y_pred,  
-                mode='lines', 
-                name=f"{category} Trendline",
-                line=dict(color=colors[category], dash='dot')
-            ))
-
-            # Add the new red line from df_lifeexpectancy
-    fig.add_trace(go.Scatter(
-        x=df_lifeexpectancy["Year"], 
-        y=df_lifeexpectancy["World"], 
-        mode='lines', 
-        name="Life Expectancy World",
-        line=dict(color=c_literature, width=2)  # Red line for the new data
-    ))
-
-            # Add the new red line from df_lifeexpectancy
-    fig.add_trace(go.Scatter(
-        x=df_lifeexpectancy["Year"], 
-        y=df_lifeexpectancy["Europe"], 
-        mode='lines', 
-        name="Life Expectancy Europe",
-        line=dict(color=c_peace, width=2)  # Red line for the new data
-    ))
-
-    # Update layout
-    fig.update_layout(
-        title="Average Timegap per Year by Category with Linear Regression Trendlines and Life Expectancy",
-        xaxis_title="Year of Nobel Prize Award",
-        yaxis_title="Average Time Gap (years)",
-        showlegend=True
-    )
-
-    fig.update_layout(
-
-        margin={"r":0,"t":50,"l":0,"b":0},
-
-        font=dict(
-            family = 'Rubik, sans-serif',
-            size = 14,
-            color = brand_color_main,
-        ),
-        
-        title=dict(
-            text = f"3.b: Timegap between Seminal Paper and Nobel Prize with Trendlines",
-            font=dict(size = 20),
-            x = 0,                            # Left align the title
-            xanchor = 'left',                 # Align to the left edge
-            y = 1,                         # Adjust Y to position title above the map
-            yanchor = 'top',                  # Anchor at the top of the title box
-            pad=dict(t = 20, b = 20)
-        ),
-
-        width = 1200,
-        height = 800,
-        ),
-
-    return fig
-
-
-fig_3b = generate_timegap_trend(df_timegap, df_lifeexpectancy)
-
-
-
-
-# Series 4: Migration
-##################################################################################################
-
-def generate_migration_dwp(data, loc1="DegreeCountry", loc2="WorkCountry", loc3="PrizeCountry"):
-
-    data['color_value'] = data['PrizeCountry'].factorize()[0]  # Factorize converts categories to unique integers
-
-
-    data = df_movement_dwp
-    data['color_value'] = data['PrizeCountry'].factorize()[0]  # Factorize converts categories to unique integers
-
-    fig = go.Figure(data=[go.Parcats(
-        dimensions=[
-            {'label': 'Degree', 'values': data[loc1]},
-            {'label': 'Work', 'values': data[loc2]},
-            {'label': 'Prize', 'values': data[loc3]}
-        ],
-        line={
-            'color': data['color_value'],  # Use the mapped numerical values for coloring
-            'colorscale': colorscale_palette,
-            'shape': 'hspline'  # hspline is the attribute for curved lines
-        },
-        hoveron='color', # Hover on color
-        hoverinfo='all', # Display all available information on hover
-        arrangement='freeform' # Allows for dragging categories without snapping to a grid
-        
-    )])
-
-    fig.update_layout(
-
-        # margin={"r":0,"t":50,"l":0,"b":0},
-
-        font=dict(
-            family = 'Rubik, sans-serif',
-            size = 14,
-            color = brand_color_main,
-        ),
-        
-        title=dict(
-            text = f"4.a: Movement from Locations of Degree / Achievement / Prize",
-            font=dict(size = 20),
-            x = 0,                            # Left align the title
-            xanchor = 'left',                 # Align to the left edge
-            y = 1,                         # Adjust Y to position title above the map
-            yanchor = 'top',                  # Anchor at the top of the title box
-            pad=dict(t = 20, b = 20)
-        ),
-
-        width = 1200,
-        height = 1800,
-        ),
-
-    return fig
-
-fig_4a = generate_migration_dwp(df_movement_dwp, "DegreeCountry", "WorkCountry", "PrizeCountry")
-
-
-##################################################################################################
-# Dashboard
-##################################################################################################
-
-import dash_mantine_components as dmc
-from dash import Dash, _dash_renderer
 _dash_renderer._set_react_version("18.2.0")
-
-
-# app = Dash(external_stylesheets=dmc.styles.ALL)
-
-# app = Dash(external_stylesheets=["assets/dmc_styles.css"] + dmc.styles.ALL)
 
 app = Dash(
     external_stylesheets=[
         "assets/dmc_styles.css",  # Your custom CSS
         dmc.styles.ALL           # Mantine styles
-    ]
+    ],
+    title="Nobel Laureate Data Dashboard"
 )
 
-# ---------------------
+##################################################################################################
+# AG Grid Definitions
+##################################################################################################
 
-# Defining the grid of AGGrid: The full data table
-full_table = dag.AgGrid(
+# https://medium.com/plotly/getting-started-with-dash-ag-grid-v-31-f167ee19083b
+# https://dash.plotly.com/dash-ag-grid
+
+# # Defining the grid of AGGrid: The full data table
+ag_df_laureates = dag.AgGrid(
     id="nl-aggrid",
     rowData=df_laureates.to_dict("records"),
     columnDefs=[{"field": i} for i in df_laureates.columns],
+    defaultColDef={"filter": True},
+    dashGridOptions={"pagination": True}
+)
+
+# # Defining the grid of AGGrid: Ethnicity
+ag_df_ethnicity = dag.AgGrid(
+    id="ethnicity-aggrid",
+    rowData=df_ethnicity.to_dict("records"),
+    columnDefs=[{"field": i} for i in df_ethnicity.columns],
+    defaultColDef={"filter": True},
+    dashGridOptions={"pagination": True}
+)
+
+# # Defining the grid of AGGrid: Religion
+ag_df_religion = dag.AgGrid(
+    id="religion-aggrid",
+    rowData=df_religion.to_dict("records"),
+    columnDefs=[{"field": i} for i in df_religion.columns],
+    defaultColDef={"filter": True},
+    dashGridOptions={"pagination": True}
+)
+
+##################################################################################################
+# Tab Contents
+##################################################################################################
+
+# Contents of Tab 0
+
+tab0_content = dmc.Paper(
+    children=[
+        dmc.Group(
+            children=[
+
+                html.Div(
+                    children=[
+                            html.Div(
+                                "1000",
+                                className="large-number"
+                            ),
+                            html.Div(
+                                "Exactly 1000 prizes have been awarded since 1901. Of these, two were declined, and one not received.",
+                                className="description"
+                            )
+                    ],
+                    className="info-box"
+                ),
+
+                html.Div(
+                    children=[
+                            html.Div(
+                                "18",
+                                className="large-number"
+                            ),
+                            html.Div(
+                                "Up to 18 new laureates could be announced 2024, three per category. In contrast, prizes could also be given to only 6 recipients.",
+                                className="description"
+                            )
+                    ],
+                    className="info-box"
+                ),
+
+               
+                html.Div(
+                    children=[
+                            html.Div(
+                                f"{(pcp.totalprizeamount*0.088):,.0f}",
+                                className="small-number"
+                            ),
+                            html.Div(
+                                "Inflation-adjusted total prize amount paid until today in EUR.",
+                                className="description"
+                            )
+                    ],
+                    className="info-box"
+                )
+
+            ]
+        ),
+
+        dmc.Stack([dmc.Space(h="xl"), dmc.Space(h="xl")]),
+        
+        dmc.Group(
+            children=[
+
+                dmc.Grid(
+                    children=[
+                        dmc.GridCol(dcc.Loading(dcc.Graph(id='fig_6a', figure=fig_6a, style={'width': '800px', 'height': '400px'})), span=8)
+                    ]
+                )
+            ]
+        ),
+
+        dmc.Stack([dmc.Space(h="xl"), dmc.Space(h="xl")]),
+
+        dmc.Group(
+            children=[
+
+                html.Div(dcc.Loading(dcc.Graph(id='fig_2c', figure=fig_2c)), style={'width': '265px', 'justify':'left'}),
+                html.Div(dcc.Loading(dcc.Graph(id='fig_2d', figure=fig_2d)), style={'width': '265px', 'justify':'left'}),
+                html.Div(dcc.Loading(dcc.Graph(id='fig_2e', figure=fig_2e)), style={'width': '265px', 'justify':'left'})
+
+            ],             
+        )           
+    ],
+    shadow="md",
+    radius="md",
+    p="lg", 
+    className="mt-3",
 )
 
 # Contents of Tab 1
 
 tab1_content = dmc.Paper(
     children=[
-        html.Div("This section contains plots related to the Nationality of Nobel Laureates. Actually, most of the time, it refers to the country of birth, which is unique and easy to identify, unlike the actual nationality. Note that quite some Laureates will actually not have the nationaliyt of the country they were born in."),
+        html.Div("This tab contains plots related to the nationality of Nobel Laureates. Actually, most of the time, it refers to the country of birth, which is unique and easy to identify, unlike the actual nationality. Note that quite some Laureates will actually not have the nationality of the country they were born in."),
         dmc.Space(h="xl"),
-        html.Div("Some of the plots offer additional selection option, such as date range sliders, or options which data should be displayed."),
+        html.H2("Nobel Prizes by Country of Birth [1b]"),
+        html.Div(dcc.Markdown(["This plot shows the distribution of country of birth of the laureates; you may rotate the globe, and zoom in and out. The slider lets you select minimum and maximum number of laureates, e.g.\"*less than 5 laureates*\"."])),
         dmc.Space(h="xl"),
-
-        
-        # dmc.Stack(
-        #     gap=0,
-        #     children=[
-        #         dmc.Skeleton(h=50, mb="xl"),
-        #         dmc.Skeleton(h=8, radius="xl"),
-        #         dmc.Skeleton(h=8, my=6),
-        #         dmc.Skeleton(h=8, w="70%", radius="xl"),
-        #     ],
-        # ),
-
-        dmc.Grid(
-            children=[
-                dmc.GridCol(dcc.Graph(id='fig_1b', figure=fig_1b), span=12)
+        dmc.Group(
+            [
+            dmc.Badge("1901 - 2023", variant="outline", color= brand_color_main),
+            dmc.Badge("All Categories", variant="outline", color= brand_color_alt),
             ]
         ),
+        dmc.Space(h="xl"),
         dmc.Grid(
             children=[
                 dmc.GridCol(
@@ -979,7 +304,7 @@ tab1_content = dmc.Paper(
                         max=max_prize_count,  # Dynamic maximum value based on data
                         step=1,
                         value=[0, max_prize_count],  # Default range from 0 to max
-                        marks={i: str(i) for i in range(0, int(max_prize_count) + 1, 50)},  # Custom marks
+                        marks={i: str(i) for i in range(0, int(max_prize_count) + 1, 50)}, 
                         tooltip={"placement": "bottom", "always_visible": True},
                         className="dmc-bar dmc-thumb",
                     ),
@@ -989,16 +314,41 @@ tab1_content = dmc.Paper(
             justify="left",
             style={"margin-top": "30px"}
         ),
-        
-        #html.Hr(style={'border': '1px solid #aaa', 'margin-top': '50px', 'margin-bottom': '50px'}),
-
-        dmc.Stack([dmc.Space(h="xl"), dmc.Divider(size="lg"), dmc.Space(h="xl")]),
-    
+        dmc.Space(h="xl"),
         dmc.Grid(
-            children=[
-                dmc.GridCol(dcc.Graph(id='fig_1c', figure=fig_1c), span=12)
+            html.Div(
+                children=[
+                    dmc.GridCol(
+                        dcc.Loading(
+                            dcc.Graph(
+                                id='fig_1b',
+                                figure=fig_1b,
+                                config={'responsive': True},
+                                style={'width': '70vw', 'height': '80vh'}
+                            )
+                        ),
+                        span=12,
+                    )
+                ],
+            )
+        ),
+
+               
+        dmc.Stack([dmc.Space(h="xl"), dmc.Divider(size="sm"), dmc.Space(h="xl")]),
+
+        html.H2("Places of Birth and Death [1c]"),
+
+        dmc.Space(h="xl"),
+        html.Div("This map shows the cities of birth and death of the laureates. Note that the points of the map are given as center points of the respective cities, not as the actual places of birth (e.g. hospitals). You can zoom in to quite some detail; the map data is provided via OpenStreetMap. "),
+        dmc.Space(h="xl"),
+
+        dmc.Group(
+            [
+            dmc.Badge("1901 - 2023", variant="outline", color= brand_color_main),
+            dmc.Badge("All Categories", variant="outline", color= brand_color_alt),
             ]
         ),
+
         dmc.Group(
             children=[
                 html.Div("Please select location:", style={"margin-top": "5px", "font-weight": "bold"}),
@@ -1010,7 +360,7 @@ tab1_content = dmc.Paper(
                     ],
                     value='birth',  # Default value
                     clearable=False,
-                    style={"width": "200px"}  # Optional: set width for dropdown
+                    style={"width": "200px"}
                 ),
             ],
             gap="md",  # Adjusts the space between the label and the dropdown
@@ -1018,27 +368,86 @@ tab1_content = dmc.Paper(
             style={"margin-top": "20px"}
         ),
 
-        dmc.Stack([dmc.Space(h="xl"), dmc.Divider(size="lg"), dmc.Space(h="xl")]),
-
         dmc.Grid(
             children=[
-                dmc.GridCol(dcc.Graph(id='fig_5a', figure=fig_5a), span=12)
+                dmc.GridCol(
+                    dcc.Loading(
+                        dcc.Graph(
+                            id='fig_1c',
+                            figure=fig_1c,
+                            style={'width': '80vw', 'height': '80vh'}
+                        )
+                    ), 
+                    span=12
+                )
+            ]
+        ),
+        
+
+        dmc.Stack([dmc.Space(h="xl"), dmc.Divider(size="sm"), dmc.Space(h="xl")]),
+
+        html.H2("Nobel Prizes by Country of Birth and Population [5a]"),
+
+        dmc.Space(h="xl"),
+        html.Div("This plot shows the number of prizes by country of birth, but in relation to the population size of the country in the respective year. You can use the slider or play button to see the animation of the years."),
+        dmc.Space(h="xl"),
+        html.Div(dcc.Markdown(["**How to Read**: The actual number of prizes is shown as a number after the country name. The size of the bubble relates to the population size, but is adjusted to make smaller populations appear bigger, and bigger populations smaller; otherwise, China and India would overlap everything else. The x-axis shows the population on a log scale, again as otherwise the large countries would push the small countries to the far left edge. The y-axis shows the number of prizes per 1 million inhabitants. The scale is ajusted to the 4th root of that value, which makes the range/visible area from 0-1 very large, and that from 10-20 relatively small. Otherwise, the tiny countries with one or two laureates would push the rest to the bottom."])),
+        html.Div(dcc.Markdown(["**Interesting Findings**: The visualization shows, for exampe, that countries like the USA only start to play an important role after World War II; also, in relation to their population number, they did not get unusually many Nobel Prizes. Small population numbers and a few prizes bring you to the top of the chart, as St. Lucia and Iceland show. On the other hand, large countries like India and China still have a bad prize-population ratio, partly simply due to their large population."])),
+        dmc.Space(h="xl"),
+
+        dmc.Group(
+            [
+            dmc.Badge("1901 - 2023", variant="outline", color= brand_color_main),
+            dmc.Badge("All Categories", variant="outline", color= brand_color_alt),
             ]
         ),
 
-        dmc.Stack([dmc.Space(h="xl"), dmc.Divider(size="lg"), dmc.Space(h="xl")]),
-
         dmc.Grid(
             children=[
-                dmc.GridCol(dcc.Graph(id='fig_5b', figure=fig_5b), span=12)
+                dmc.GridCol(dcc.Loading(dcc.Graph(id='fig_5a', figure=fig_5a, style={'width': '80vw', 'height': '80vh'})), span=12)
             ]
         ),
 
-        dmc.Stack([dmc.Space(h="xl"), dmc.Divider(size="lg"), dmc.Space(h="xl")]),
+        dmc.Stack([dmc.Space(h="xl"), dmc.Divider(size="sm"), dmc.Space(h="xl")]),
+
+        html.H2("Nobel Prizes by Country of Birth per Year [5b]"),
+
+        dmc.Space(h="xl"),
+        html.Div(dcc.Markdown(["This plot shows the number of prizes per country of birth of laureates by year"])),
+        html.Div(dcc.Markdown(["**Interesting Findings**: The many pink lines on top in the right part of the plot emphasize our earlier finding that the number of prizes given to the USA has increased tremendously only after World War II."])),
+        dmc.Space(h="xl"),
+
+        dmc.Group(
+            [
+            dmc.Badge("1901 - 2023", variant="outline", color= brand_color_main),
+            dmc.Badge("All Categories", variant="outline", color= brand_color_alt),
+            ]
+        ),
 
         dmc.Grid(
             children=[
-                dmc.GridCol(dcc.Graph(id='fig_5c', figure=fig_5c), span=12)
+                dmc.GridCol(dcc.Loading(dcc.Graph(id='fig_5b', figure=fig_5b, style={'width': '80vw', 'height': '60vh'})), span=12)
+            ]
+        ),
+
+        dmc.Stack([dmc.Space(h="xl"), dmc.Divider(size="sm"), dmc.Space(h="xl")]),
+
+        html.H2("Nobel Prizes by Country of Birth per Year (Running Sum) [5c]"),
+
+        dmc.Space(h="xl"),
+        html.Div(dcc.Markdown(["This plot shows the running sum of prizes per country of birth of laureates by year."])),
+        dmc.Space(h="xl"),
+
+        dmc.Group(
+            [
+            dmc.Badge("1901 - 2023", variant="outline", color= brand_color_main),
+            dmc.Badge("All Categories", variant="outline", color= brand_color_alt),
+            ]
+        ),
+
+        dmc.Grid(
+            children=[
+                dmc.GridCol(dcc.Loading(dcc.Graph(id='fig_5c', figure=fig_5c, style={'width': '80vw', 'height': '60vh'})), span=12)
             ]
         ),
     ],
@@ -1055,15 +464,118 @@ tab1_content = dmc.Paper(
 tab2_content = dmc.Paper(
     children=[
         # html.H5("Tab 4: Full Data", className="card-title"),
-        html.Div("This tab contains plots related to gender, ethnicity and relgion. I am aware that that these categories are sometimes disputed or disputable, and I havebeen trying to use the in a sensible way."),
+        html.Div(dcc.Markdown(["This tab contains plots related to gender, ethnicity and religion."])),
         dmc.Space(h="xl"),
+
+        html.H2("Nobel Prizes Awarded to Women [2a]"),
+
+        html.Div(dcc.Markdown(["This plot shows the number of prizes for women in all of the disciplines per decade. It allows you to see when and in which disciplines the most prizes were awarded to women. Feel free to rotate the plot and zoom."])),
+
+        dmc.Space(h="xl"),
+
+        dmc.Group(
+            [
+            dmc.Badge("1901 - 2023", variant="outline", color= brand_color_main),
+            dmc.Badge("All Categories", variant="outline", color= brand_color_alt),
+            ]
+        ),
+
         dmc.Grid(
             children=[
-                dmc.GridCol(dcc.Graph(id='fig_2a', figure=fig_2a), span=12)
+                dmc.GridCol(dcc.Loading(dcc.Graph(id='fig_2a', figure=fig_2a, style={'width': '80vw', 'height': '60vh'})), span=12)
+            ]
+        ),
+    
+
+        dmc.Stack([dmc.Space(h="xl"), dmc.Divider(size="sm"), dmc.Space(h="xl")]),
+
+        html.H2("Nobel Prizes Awarded to Men & Women [2b]"),
+
+        html.Div(dcc.Markdown(["This plot is identical to the above, but here, men and women are both shown as two surfaces."])),
+        dmc.Space(h="xl"),
+
+        dmc.Group(
+            [
+            dmc.Badge("1901 - 2023", variant="outline", color= brand_color_main),
+            dmc.Badge("All Categories", variant="outline", color= brand_color_alt),
+            ]
+        ),
+
+        dmc.Grid(
+            children=[
+                dmc.GridCol(dcc.Loading(dcc.Graph(id='fig_2b', figure=fig_2b, style={'width': '80vw', 'height': '60vh'})), span=12)
+            ]
+        ),
+
+        dmc.Stack([dmc.Space(h="xl"), dmc.Divider(size="sm"), dmc.Space(h="xl")]),
+
+
+        html.H2("Gender Distribution [2c]"),
+
+        html.Div(dcc.Markdown(["If the 3D surfaces above were to difficult to interpret, here is a plain old pie chart. :-)"])),
+        html.Div(dcc.Markdown(["**Note**: The labels *female* and *male* are taken directly from the official Nobel Prize Outreach API. It would be interesting to learn how they get/set those values, or if they are simply based on perception. In any case, the cases where perception differs from self-identification may exist, but they will not substantially change the findings."])),
+        dmc.Space(h="xl"),
+
+        dmc.Group(
+            [
+            dmc.Badge("1901 - 2023", variant="outline", color= brand_color_main),
+            dmc.Badge("All Categories", variant="outline", color= brand_color_alt),
+            ]
+        ),
+
+        dmc.Grid(
+            children=[
+                dmc.GridCol(dcc.Loading(dcc.Graph(id='fig_2c2', figure=fig_2c, style={'width': '50vw', 'height': '50vh'})), span=12)
+            ]
+        ),
+
+        dmc.Stack([dmc.Space(h="xl"), dmc.Divider(size="sm"), dmc.Space(h="xl")]),
+
+
+        html.H2("Ethnicity Distribution [2d]"),
+
+        html.Div(dcc.Markdown(["This plot shows the distribution of ethnicities among Nobel Laureates."])),
+        html.Div(dcc.Markdown(["**Note**: I am aware that notions of ethnicity or even race can be considered problematic. There are some who suggest to not use these categorizations at all. However, I think we may loose analytical power if we do; this chart is the successor to an earlier one that showed that there are exactly zero Black Nobel laureates in the natural sciences. This certainly is an interesing finding, how ever one may interpret it."])),
+        html.Div(dcc.Markdown(["**Assignment Process**: For additional transparency, here is how I have assigned the labels. Feel free to constructively critizice it. First, I started by geography: Everyone born in Europe was assigned *European*. As a starting point, everyone born in the USA or Canada was also assigned *European*. Similarly for all other continents. That process so far already raises difficult questions as to what ethnicity is, exactly. There is a myriad of publications on this topic, so my working definition was: Where someone's family originated from, going back to before Columbus. That then introduces two new categories for North America: *African-American*, and *North American*. Why not native American? Because even the native people of almost every country immigrated at some point in human history, as far as we know. Consequently, we then have *South American*, and then again *European* for all the (mostly) Spanish and Portuguese immigrants to South America. You may miss some categories like Central America, American Indians, Alaska Natives, etc - but there are simply no laureates in these ethnicities yet, so no need for further distinction. Israel is a special case: geographically, one would have to attribute *Asian*, but historically, most Israeli (laureates) have migrated there from parts of Europe. This is also an example for the next step (after categorization by continent), where I checked various lists available on the internet (mostly Wikipedia), such as \"List of Black Nobel Laureates\", \"List of Latin American Nobel Laureates\", and so on. Whenever appropriate, I changed the label. Next, I went through all the names one by one. Due to my former occupation, I know about 60 percent of them and also know the basics of their biographies. For the remaining ones, I checked their Wikipedia pages. You may note that there is also the category *Various*, which is a more subtle version of \"Mixed\". If it said, for example, on a laureate's Wikipedia page, that he had a British father and Korean mother, then I assigned *Various*."])),
+        dmc.Space(h="xl"),
+
+        dmc.Group(
+            [
+            dmc.Badge("1901 - 2023", variant="outline", color= brand_color_main),
+            dmc.Badge("All Categories", variant="outline", color= brand_color_alt),
+            ]
+        ),
+
+        dmc.Grid(
+            children=[
+                dmc.GridCol(dcc.Loading(dcc.Graph(id='fig_2d2', figure=fig_2d, style={'width': '50vw', 'height': '50vh'})), span=12)
             ]
         ),
 
 
+        dmc.Stack([dmc.Space(h="xl"), dmc.Divider(size="sm"), dmc.Space(h="xl")]),
+
+
+        html.H2("Religion Distribution"),
+
+        html.Div(dcc.Markdown(["This plot shows the distribution of religion among Nobel Laureates."])),
+        html.Div(dcc.Markdown(["**Note**: Yet another sightly problematic categorization, for various reasons. One of them is data availability. There are lists on Wikipedia for Jewish, Muslim and Christian laureates, which I used. My suspicion here is though that the list of Jewish laureates is more or less complete, while that of Muslim laureates is not. For the list of Christian laureates, it states that it only lists laureates that have professed their faith. So this graph is actually somewhat misleading: First of all, it is unclear wether it is about \"firm faith\" or just religious upbringing. Second, we know little about what laureates really believe, which may be different from their religion. In any case: If we were to look at religion as stated in some official documents, then I suppose the number for Muslims should be higher, the number for Christians should be much higher (close to all of European Ethnicity), and we also have to add those religions completely lacking at the moment, e.g. Asian religions (and others)."])),
+        html.Div(dcc.Markdown(["**Interesting Findings**: Even with the necessary changes described above, there still is a large number of Jewish Nobel laureates: 17.6 percent. According to Wikipedia, the Jewish religion has share among all religions in the world of 0.2 percent."])),
+
+        dmc.Space(h="xl"),
+
+        dmc.Group(
+            [
+            dmc.Badge("1901 - 2023", variant="outline", color= brand_color_main),
+            dmc.Badge("All Categories", variant="outline", color= brand_color_alt),
+            ]
+        ),
+
+        dmc.Grid(
+            children=[
+                dmc.GridCol(dcc.Loading(dcc.Graph(id='fig_2e2', figure=fig_2e, style={'width': '50vw', 'height': '50vh'})), span=12)
+            ]
+        )
     ],
     shadow="md",
     radius="md",
@@ -1078,18 +590,131 @@ tab3_content = dmc.Paper(
         # html.H5("Tab 4: Full Data", className="card-title"),
         html.Div("Plots on this tabe relate to the age of Nobel Laureates, as well as to the time gap between their invention/research/seminal paper and the Nobel Prize."),
         dmc.Space(h="xl"),
+
+        html.H2("Timegap Between Discovery and Prize (Histogram) [3a]"),
+        dmc.Space(h="xl"),
+        html.Div(dcc.Markdown(["This plot shows the time that has passed between \"the invention/discovery\" and the awardment of the Nobel Prize. The data used for this plot is from the Nature paper \"A dataset of publication records for Nobel laureates\" (see References tab). This data spans from 1901 to 2014, with quite some ommissions in the early years, where it was not clear when the main discovery was made. As for the definition of this time point in general, please refer to the paper. In addition to that, I queried ChatGPT-o1 for the laureates from 2015 - 2023. You can use the dropdown to select which data should be displayed.  "])),
+        html.Div(dcc.Markdown(["**How to Read**: The data is provided as histogram, meaning it counts how often a value appears. The x-axis reflects the time gap, and the y-axis shows how often a timegap has this value. As you can see, the most common time gap is 11 years, which has happened 14 times."])),
+        html.Div(dcc.Markdown(["**Interesting Findings**: You often hear that you would have to wait decades for the prize; which is true some extent; in the majority of the cases, however, it doesn't take longer than 25 years."])),
+        dmc.Space(h="xl"),
+
+        dmc.Group(
+            [
+            dmc.Badge("1901 - 2014/2023", variant="outline", color= brand_color_main),
+            dmc.Badge("Natural Sciences", variant="outline", color= brand_color_alt),
+            ]
+        ),
+
+        dmc.Group(
+            children=[
+                html.Div("Please select data:", style={"margin-top": "5px", "font-weight": "bold"}),
+                dcc.Dropdown(
+                    id='datasource_dropdown',
+                    options=[
+                        {'label': '1901 - 2014 (Nature paper)', 'value': 'paper'},
+                        {'label': '2015 - 2023 (ChatGPT)', 'value': 'chatgpt'},
+                        {'label': '1901 - 2023 (both)', 'value': 'both'}
+                    ],
+                    value='both',  # Default value
+                    clearable=False,
+                    style={"width": "300px"}
+                ),
+            ],
+            gap="md",  # Adjusts the space between the label and the dropdown
+            align="flex-start",  # Align items to the left
+            style={"margin-top": "20px"}
+        ),
+
         dmc.Grid(
             children=[
-                dmc.GridCol(dcc.Graph(id='fig_3a', figure=fig_3a), span=12)
+                dmc.GridCol(dcc.Loading(dcc.Graph(id='fig_3a', figure=fig_3a, style={'width': '80vw', 'height': '60vh'})), span=12)
             ]
         ),
 
         dmc.Stack([dmc.Space(h="xl"), dmc.Divider(size="lg"), dmc.Space(h="xl")]),
 
-        html.Div("This page shows a scatter plot."),
+        html.H2("Timegap Between Discovery and Prize (Scatterbox with Trendlines) [3b]"),
+
+        dmc.Space(h="xl"),
+        html.Div(dcc.Markdown(["This is basically the same data, but presented differently. Here, you see the time gap for all prizes (averaged in case of multiple winners) in all years. The plot also shows the trendlines (going up), as well as the average life expectancy (also going up)."])),
+        html.Div(dcc.Markdown(["**Interesting Findings**: It seems that the time gap increases in a pretty similar fashion as the life expectancy."])),
+        dmc.Space(h="xl"),
+
+        dmc.Group(
+            [
+            dmc.Badge("1994 - 2014", variant="outline", color= brand_color_main),
+            dmc.Badge("Natural Sciences", variant="outline", color= brand_color_alt),
+            ]
+        ),
+
+        dmc.Group(
+            children=[
+                html.Div("Please select data:", style={"margin-top": "5px", "font-weight": "bold"}),
+                dcc.Dropdown(
+                    id='datasource_dropdown2',
+                    options=[
+                        {'label': '1901 - 2014 (Nature paper)', 'value': 'paper'},
+                        {'label': '2015 - 2023 (ChatGPT)', 'value': 'chatgpt'},
+                        {'label': '1901 - 2023 (both)', 'value': 'both'}
+                    ],
+                    value='both',  # Default value
+                    clearable=False,
+                    style={"width": "300px"}
+                ),
+            ],
+            gap="md",  # Adjusts the space between the label and the dropdown
+            align="flex-start",  # Align items to the left
+            style={"margin-top": "20px"}
+        ),
+
         dmc.Grid(
             children=[
-                dmc.GridCol(dcc.Graph(id='timegaptrends', figure=fig_3b), span=12)
+                dmc.GridCol(dcc.Loading(dcc.Graph(id='fig_3b', figure=fig_3b, style={'width': '80vw', 'height': '60vh'})), span=12)
+            ]
+        ),
+
+        
+        dmc.Stack([dmc.Space(h="xl"), dmc.Divider(size="lg"), dmc.Space(h="xl")]),
+
+        html.H2("Laureate Age at Time of Award (Scatterbox) [3c]"),
+
+        dmc.Space(h="xl"),
+        html.Div(dcc.Markdown(["This plot shows the age of Nobel laureates at the time when they received the award."])),
+        html.Div(dcc.Markdown(["**Interesting Findings**: In the early years, the average age in the natural sciences was around 45, whereas nowadays it is close to 65. This fits well to the earlier finding that the timegap has increased by - on average - 25 years. Interestingly enough, peace prize awardees get younger."])),
+        dmc.Space(h="xl"),
+
+        dmc.Group(
+            [
+            dmc.Badge("1901 - 2023", variant="outline", color= brand_color_main),
+            dmc.Badge("All Categories", variant="outline", color= brand_color_alt),
+            ]
+        ),
+
+        dmc.Grid(
+            children=[
+                dmc.GridCol(dcc.Loading(dcc.Graph(id='fig_3c', figure=fig_3c, style={'width': '80vw', 'height': '60vh'})), span=12)
+            ]
+        ),
+
+        
+        dmc.Stack([dmc.Space(h="xl"), dmc.Divider(size="sm"), dmc.Space(h="xl")]),
+
+        html.H2("Laureate Age at Time of Award (Heatmap) [3d]"),
+
+        dmc.Space(h="xl"),
+        html.Div(dcc.Markdown(["Same data as above, but displayed as heatmap."])),
+        dmc.Space(h="xl"),
+
+        dmc.Group(
+            [
+            dmc.Badge("1901 - 2023", variant="outline", color= brand_color_main),
+            dmc.Badge("All Categories", variant="outline", color= brand_color_alt),
+            ]
+        ),
+
+        dmc.Grid(
+            children=[
+                dmc.GridCol(dcc.Loading(dcc.Graph(id='fig_3d', figure=fig_3d, style={'width': '80vw', 'height': '60vh'})), span=12)
             ]
         ),
 
@@ -1108,42 +733,133 @@ tab4_content = dmc.Paper(
         # html.H5("Tab 4: Full Data", className="card-title"),
         html.Div("This tab contains plots related to the migration of Nobel laureates."),
         dmc.Space(h="xl"),
-        dmc.Grid(
-            children=[
-                dmc.GridCol(dcc.Graph(id='fig_4a', figure=fig_4a), span=12)
+
+        html.H2("Movement: Place of Main Degree / Main Discovery / Prize [4a]"),
+
+        dmc.Space(h="xl"),
+        html.Div(dcc.Markdown(["This plot shows the movement between three locations: where did the laureates get their main university degree (or similar), where did they do their main work that led to the discovery, and where did they work at the time when they received the prize? This plot is based on the Nature paper \"At what institutions did Nobel laureates do their prize-winning work?\" (see References), which unfortunately only covers the years 1994 - 2014."])),
+        html.Div(dcc.Markdown(["**How to Read:**: The three vertical pillars stand for the three points and places in time: **degree, work, prize**. The lines show the flow from one place to the next. The on-hover infobox also shows you the overall percentage of the selected group. If you like, you may also re-arrange the bar sections via drag and drop. The dropdowns let you choose between *City* (many), *Country* (less), and the combination of both, which distinguishes Cambridge UK from Cambridge USA (etc.)"])),
+        html.Div(dcc.Markdown(["**Interesting Findings**: There are many findings to be made: For example, US laureates tend to be very immobile; however, not as immobile as the French. German researchers, on the other hand, love to go abroad - however you may want to interpret that. Finally, it is an interesting exercise to speculate if the period 1994-2014 is significantly different from other periods."])),
+        dmc.Space(h="xl"),
+
+        dmc.Group(
+            [
+            dmc.Badge("1994 - 2014", variant="outline", color= brand_color_main),
+            dmc.Badge("Natural Sciences", variant="outline", color= brand_color_alt),
             ]
         ),
 
-        # dmc.Stack([dmc.Space(h="xl"), dmc.Divider(size="lg"), dmc.Space(h="xl")]),
+        dmc.Group(
+            children=[
+                html.Div("Please select location types.", style={"margin-top": "5px", "font-weight": "bold"}),
+                html.Div("Degree", style={"margin-top": "5px", "font-weight": "bold"}),
+                dcc.Dropdown(
+                    id='degree-dropdown',
+                    options=[
+                        {'label': 'City', 'value': 'DegreeCity'},
+                        {'label': 'Country', 'value': 'DegreeCountry'},
+                        {'label': 'City+Country', 'value': 'DegreeCityCountry'}
+                    ],
+                    value='DegreeCountry',  # Default value
+                    clearable=False,
+                    style={"width": "200px"} 
+                ),
+                html.Div("Work", style={"margin-top": "5px", "font-weight": "bold"}),
+                dcc.Dropdown(
+                    id='work-dropdown',
+                    options=[
+                        {'label': 'City', 'value': 'WorkCity'},
+                        {'label': 'Country', 'value': 'WorkCountry'},
+                        {'label': 'City+Country', 'value': 'WorkCityCountry'}
+                    ],
+                    value='WorkCountry',  # Default value
+                    clearable=False,
+                    style={"width": "200px"} 
+                ),
+                html.Div("Prize", style={"margin-top": "5px", "font-weight": "bold"}),
+                dcc.Dropdown(
+                    id='prize-dropdown',
+                    options=[
+                        {'label': 'City', 'value': 'PrizeCity'},
+                        {'label': 'Country', 'value': 'PrizeCountry'},
+                        {'label': 'City+Country', 'value': 'PrizeCityCountry'}
+                    ],
+                    value='PrizeCountry',  # Default value
+                    clearable=False,
+                    style={"width": "200px"} 
+                ),
+            ],
+        ),
 
-        # html.Div("This page shows a scatter plot."),
-        # dmc.Grid(
-        #     children=[
-        #         dmc.GridCol(dcc.Graph(id='timegaptrends', figure=fig_4b), span=12)
-        #     ]
-        # ),
+        dmc.Grid(
+            children=[
+                dmc.GridCol(dcc.Loading(dcc.Graph(id='fig_4a', figure=fig_4a, style={'width': '80vw', 'height': '95vh'})), span=12)
+            ]
+        ),
+        
+    dmc.Stack([dmc.Space(h="xl"), dmc.Divider(size="sm"), dmc.Space(h="xl")]),
 
-    ],
-    shadow="md",
-    radius="md",
-    p="lg", 
-    className="mt-3",
-)
+    html.H2("Movement: Birth / Prize / Death"),
 
-# Contents of Tab 5
-
-tab5_content = dmc.Paper(
-    children=[
-        # html.H5("Tab 4: Full Data", className="card-title"),
-        html.Div("Placeholder Tab"),
         dmc.Space(h="xl"),
-        # dmc.Grid(
-        #     children=[
-        #         dmc.GridCol(dcc.Graph(id='timegap', figure=fig_3a), span=12)
-        #     ]
-        # ),
+        html.Div(dcc.Markdown(["This plot works the same way, but has slightly diffferent data: place of birth, place of organisation when the prize was awarded, place of death. Note that this dataset, unlike the previous one, spans the full time range. (Selecting *City* may lead to incorrect visuals, as there are simply too many to display.)"])),
+        dmc.Space(h="xl"),
 
-        dmc.Stack([dmc.Space(h="xl"), dmc.Divider(size="lg"), dmc.Space(h="xl")]),
+        dmc.Group(
+            [
+            dmc.Badge("1901 - 2023", variant="outline", color= brand_color_main),
+            dmc.Badge("Natural Sciences", variant="outline", color= brand_color_alt),
+            ]
+        ),
+
+        dmc.Group(
+            children=[
+                html.Div("Please select location types.", style={"margin-top": "5px", "font-weight": "bold"}),
+                html.Div("Degree", style={"margin-top": "5px", "font-weight": "bold"}),
+                dcc.Dropdown(
+                    id='4b_birth_dropdown',
+                    options=[
+                        {'label': 'City', 'value': 'BirthCityNow'},
+                        {'label': 'Country', 'value': 'BirthCountryNow'},
+                        {'label': 'Continent', 'value': 'BirthContinent'},
+                    ],
+                    value='BirthCountryNow',  # Default value
+                    clearable=False,
+                    style={"width": "200px"}  
+                ),
+                html.Div("Work", style={"margin-top": "5px", "font-weight": "bold"}),
+                dcc.Dropdown(
+                    id='4b_prize_dropdown',
+                    options=[
+                        {'label': 'City', 'value': 'Prize0_Affiliation0_CityNow'},
+                        {'label': 'Country', 'value': 'Prize0_Affiliation0_Country'},
+                        {'label': 'Continent', 'value': 'Prize0_Affiliation0_Continent'}
+                    ],
+                    value='Prize0_Affiliation0_Country',  # Default value
+                    clearable=False,
+                    style={"width": "200px"}  
+                ),
+                html.Div("Prize", style={"margin-top": "5px", "font-weight": "bold"}),
+                dcc.Dropdown(
+                    id='4b_death_dropdown',
+                    options=[
+                        {'label': 'City', 'value': 'DeathCityNow'},
+                        {'label': 'Country', 'value': 'DeathCountryNow'},
+                        {'label': 'Continent', 'value': 'DeathContinent'}
+                    ],
+                    value='DeathCountryNow',  # Default value
+                    clearable=False,
+                    style={"width": "200px"} 
+                ),
+            ],
+        ),
+
+        dmc.Grid(
+            children=[
+                dmc.GridCol(dcc.Loading(dcc.Graph(id='fig_4b', figure=fig_4b, style={'width': '80vw'})), span=12) # , 'height': '95vh'
+            ]
+        )
+
 
 
     ],
@@ -1152,54 +868,144 @@ tab5_content = dmc.Paper(
     p="lg", 
     className="mt-3",
 )
+
+
 
 
 
 tabdata_content = dmc.Paper(
     children=[
-        # html.H5("Tab 4: Full Data", className="card-title"),
-        html.Div("Here you can access the raw data, download it, and see references."),
+        html.H3("About"),
+        html.Div(dcc.Markdown(["The Nobel Laureate Data Dashboard is a project of Wolfgang Huang. If you want to learn more about my other projects, please see my portfolio page www.virtuousvector.ai ([Link](https://www.virtuousvector.ai)), or email me at mail-at-virtuousvector.ai."])),
         dmc.Space(h="xl"),
-        html.Div([full_table]),
+        
+        html.H3("Data"),
+
+        html.H5("Nobel Laureate Base Data"),
+        html.Div("The core of the data is provided by Nobel Prize Outreach via their API. You can view it below, or access it via the API yourself. By the way, you can also sort and filter the data by clicking on the column headers / the column burger menu."),
+        dmc.Space(h="xl"),
+        html.Div([ag_df_laureates]),
+
+        dmc.Space(h="xl"),
+
+        html.H5("Timegap Analysis"),
+        html.Div("The data used for timegap analysis is published here:"),
+        html.Div(dcc.Markdown(["Li, Jichao; Yin, Yian; Fortunato, Santo; Wang Dashun, 2018, \"A dataset of publication records for Nobel laureates\", Harvard Dataverse, [Link](https://doi.org/10.7910/DVN/6NJ5RN)"])),
+
+        dmc.Space(h="xl"),
+
+        html.H5("Degree - Work - Prize Migration Analysis"),
+        html.Div("The data used for migration analysis is published here:"),
+        html.Div(dcc.Markdown(["Schlagberger, E.M., Bornmann, L. & Bauer, J.: \"At what institutions did Nobel laureates do their prize-winning work? An analysis of biographical information on Nobel laureates from 1994 to 2014\". Scientometrics 109, 723–767 (2016). [Link](https://doi.org/10.1007/s11192-016-2059-2)"])),
+
+        dmc.Space(h="xl"),
+
+        html.H5("Population & Life Expectancy"),
+        html.Div("The data used for population numbers and life expectancy is published here:"),
+        html.Div(dcc.Markdown(["Gapminder.org Data Downloads [Link](https://www.gapminder.org/data/)"])),
+
+
+        dmc.Space(h="xl"),
+
+        html.H5("Ethnicity"),
+        html.Div("The data used for ethnicity is self-compiled. Further details are provided alongside the plot. Feel free to contact me if you have constructive criticism."),
+        dmc.Space(h="xl"),
+        html.Div([ag_df_ethnicity]),
+
+        dmc.Space(h="xl"),
+
+        html.H5("Religion"),
+        html.Div("The data used for religion is self-compiled. Further details are provided alongside the plot. Feel free to contact me if you have constructive criticism."),
+        dmc.Space(h="xl"),
+        html.Div([ag_df_religion]),
+
+        dmc.Space(h="xl"),
+
+        html.H5("Download the Data"),
+        html.Div(dcc.Markdown(["You can download all the data from my Github repository \"nobeldashboard\". [Link](https://github.com/WolfgangHuang/nobeldashboard)"])),
+        dmc.Space(h="xl"),
+        
     ],
     shadow="md",
     radius="md",
-    p="lg",  # Correct usage of padding attribute
+    p="lg",  
     className="mt-3",
 )
 
 
-# Defining the main layout
+##################################################################################################
+# Layoit Definition
+##################################################################################################
 
 app.layout = dmc.MantineProvider(
+        theme={
+        "colors": {
+            "dmc_color1": [                
+                "#B59B82",
+                "#A78769",
+                "#927356",
+                "#795F47",
+                "#604B38",
+                "#47382A",
+                "#403225",
+                "#392C21",
+                "#31271D",
+                "#2A2119",               
+            ],
+            "dmc_color2": [                
+                "#67D6E0",
+                "#48CDDA",
+                "#2BC4D2",
+                "#25A8B3",
+                "#1F8B95",
+                "#186F77",
+                "#16646B",
+                "#13595F",
+                "#114D53",
+                "#0F4247",
+             
+            ],"dmc_color3": [                
+                "#EC6570",
+                "#E84653",
+                "#E42737",
+                "#CF1A29",
+                "#B01623",
+                "#91121D",
+                "#83101A",
+                "#740E17",
+                "#660D14",
+                "#570B11",             
+            ],
+        },
+    },
     children=[
         dmc.Container(
             children=[
                 dmc.Grid(
                     children=[
-                        dmc.GridCol(html.H1("Nobel Laureate Data Dashboard v20.16.50", className="text-left mt-5 mb-5"), span=12)
+                        dmc.GridCol(html.H1("Nobel Laureate Data Dashboard v01.22.15", className="text-left mt-5 mb-5"), span=12)
                     ]
                 ),
                 dmc.Tabs(
                     [
                         dmc.TabsList(
                             [
+                                dmc.TabsTab("Quick Fun Facts", value="tab0"),
                                 dmc.TabsTab("Nationality & Country", value="tab1"),
                                 dmc.TabsTab("Gender, Ethnicity & Religion", value="tab2"),
                                 dmc.TabsTab("Time & Age", value="tab3"),
                                 dmc.TabsTab("Migration", value="tab4"),
-                                dmc.TabsTab("X", value="tab5"),
-                                dmc.TabsTab("Full Data", value="tabdata"),
+                                dmc.TabsTab("Data & References", value="tabdata"),
                             ]
                         ),
+                        dmc.TabsPanel(tab0_content, value="tab0"),
                         dmc.TabsPanel(tab1_content, value="tab1"),
                         dmc.TabsPanel(tab2_content, value="tab2"),
                         dmc.TabsPanel(tab3_content, value="tab3"),
                         dmc.TabsPanel(tab4_content, value="tab4"),
-                        dmc.TabsPanel(tab5_content, value="tab5"),
                         dmc.TabsPanel(tabdata_content, value="tabdata"),
                     ],
-                    value="tab1",  # Default selected tab
+                    value="tab0",  # Default selected tab
                     id="tabs",
                 ),
             ],
@@ -1226,7 +1032,7 @@ def update_globe(selected_range):
         (df_nobelprizes_percountry['Count'] <= selected_range[1])
     ]
     # Generate and return the updated globe plot
-    return generate_globe_plot(filtered_data)
+    return pcp.generate_globe_plot(filtered_data)
 
 # Cities of Birth
 @app.callback(
@@ -1234,10 +1040,65 @@ def update_globe(selected_range):
     Input('city-dropdown', 'value'),
 )
 def update_cities_map(selected_city_type): # the passed value here is passed before from the callback automatically
-    return generate_scatterbox_plot(df_laureates, selected_city_type)
+    return pcp.generate_scatterbox_plot(df_laureates, selected_city_type)
 
 
+# Timegap Histogram
+@app.callback(
+    Output('fig_3a', 'figure'),
+    Input('datasource_dropdown', 'value'),
+)
+def update_timegap_plot(selected_datasource): # the passed value here is passed before from the callback automatically
 
+    if selected_datasource == "paper":
+        filtered_data = df_timegap[(df_timegap['Source']) == "Harvard Dataverse"]
+
+    elif selected_datasource == "chatgpt":
+        filtered_data = df_timegap[(df_timegap['Source']) == "ChatGPT 4c (September 2024)"]
+    else:
+        filtered_data = df_timegap
+    
+    return pcp.generate_timegap_histogram(filtered_data)
+
+
+# Timegap Scatterbox
+@app.callback(
+    Output('fig_3b', 'figure'),
+    Input('datasource_dropdown2', 'value'),
+)
+def update_timegap_plot(selected_datasource): # the passed value here is passed before from the callback automatically
+
+    if selected_datasource == "paper":
+        filtered_data = df_timegap[(df_timegap['Source']) == "Harvard Dataverse"]
+
+    elif selected_datasource == "chatgpt":
+        filtered_data = df_timegap[(df_timegap['Source']) == "ChatGPT 4c (September 2024)"]
+    else:
+        filtered_data = df_timegap
+    
+    return pcp.generate_timegap_trend(filtered_data, df_lifeexpectancy)
+
+
+# DWP Migration DWP
+@app.callback(
+    Output('fig_4a', 'figure'),
+    Input('degree-dropdown', 'value'),
+    Input('work-dropdown', 'value'),
+    Input('prize-dropdown', 'value'),
+)
+def update_migration_parcat_1(loc1, loc2, loc3): # the passed value here is passed before from the callback automatically
+    return pcp.generate_migration_dwp(df_movement_dwp, loc1=loc1, loc2=loc2, loc3=loc3)
+
+
+# DWP Migration BPD
+@app.callback(
+    Output('fig_4b', 'figure'),
+    Input('4b_birth_dropdown', 'value'),
+    Input('4b_prize_dropdown', 'value'),
+    Input('4b_death_dropdown', 'value'),
+)
+def update_migration_parcat_2(loc1, loc2, loc3): # the passed value here is passed before from the callback automatically
+    return pcp.generate_migration_bpd(df_movement_bpd, loc1=loc1, loc2=loc2, loc3=loc3)
 
 ##################################################################################################
 # Running the app
@@ -1248,7 +1109,7 @@ def update_cities_map(selected_city_type): # the passed value here is passed bef
 # if __name__ == "__main__":
 #     app.run(debug=True, port=5085)
 
-# Run the app on render.com
+# Run the app on the server
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8050))  # Fallback to port 8050 if PORT isn't set
     app.run_server(host='0.0.0.0', port=port, debug=True)

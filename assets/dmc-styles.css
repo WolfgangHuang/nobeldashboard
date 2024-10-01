@@ -1,3 +1,24 @@
+/*
+
+c_brown = '#47382a'
+c_teal = '#186f77'
+c_lightblue = '#93bbdc'
+c_red = '#91121d'
+c_orange = '#ff7703'
+c_yellow = '#ffe74c'
+c_darkmagenta = '#8e2984'
+c_magenta = '#cf437d'
+c_pink = '#ff99c8'
+
+c_red_verylight = '#f7c1c6'
+c_red_verydark = '#3A070B'
+
+c_teal_verylight = '#C2EEF3'
+c_teal_verydark = '#072124'
+
+*/
+
+
 /* Style for the range slider track */
 .dmc-bar .slider-track .mantine-Slider-bar {
     background-image: linear-gradient(to right, yellow, orange) !important;
@@ -9,4 +30,51 @@
     height: 20px !important;
     width: 20px !important;
     background-color: white !important;
+}
+
+
+/* Import the Rubik font */
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;700&display=swap');
+
+/* Styling the div box */
+.info-box {
+    width: 250px;
+    height: 200px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 0px;
+    border-bottom-left-radius: 0px;
+
+    border-bottom-style: solid;
+    border-bottom-width: 5px;
+    border-bottom-color: #aaaaaa;
+
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, #C2EEF3, #186f77);
+
+    color: white;
+    font-family: 'Rubik', sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    text-align: center;
+}
+
+.info-box .large-number {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.info-box .small-number {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.info-box .description {
+    font-size: 12px;
+    line-height: 1.2;
 }

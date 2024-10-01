@@ -1,0 +1,83 @@
+;Country;Count;ISO3;ISO2
+0;United States;289;USA;US
+1;United Kingdom;105;GBR;GB
+2;Germany;84;DEU;DE
+3;France;61;FRA;FR
+4;Sweden;30;SWE;SE
+5;Russia;29;RUS;RU
+6;Poland;28;POL;PL
+7;Japan;28;JPN;JP
+8;Canada;21;CAN;CA
+9;Italy;20;ITA;IT
+10;Austria;19;AUT;AT
+11;Switzerland;19;CHE;CH
+12;Netherlands;19;NLD;NL
+13;Norway;13;NOR;NO
+14;Denmark;13;DNK;DK
+15;China;12;CHN;CN
+16;Hungary;11;HUN;HU
+17;Australia;10;AUS;AU
+18;Belgium;9;BEL;BE
+19;India;9;IND;IN
+20;South Africa;9;ZAF;ZA
+21;Spain;7;ESP;ES
+22;Israel;6;ISR;IL
+23;Czechia;6;CZE;CZ
+24;Egypt;6;EGY;EG
+25;Finland;5;FIN;FI
+26;Ukraine;5;UKR;UA
+27;Ireland;5;IRL;IE
+28;Belarus;4;BLR;BY
+29;Romania;4;ROU;RO
+30;Argentina;4;ARG;AR
+31;Iran;3;IRN;IR
+32;New Zealand;3;NZL;NZ
+33;Mexico;3;MEX;MX
+34;Turkey;3;TUR;TR
+35;Lithuania;3;LTU;LT
+36;Pakistan;3;PAK;PK
+37;Guatemala;2;GTM;GT
+38;Bosnia and Herzegovina;2;BIH;BA
+39;Algeria;2;DZA;DZ
+40;Chile;2;CHL;CL
+41;Luxembourg;2;LUX;LU
+42;Colombia;2;COL;CO
+43;Portugal;2;PRT;PT
+44;Liberia;2;LBR;LR
+45;Saint Lucia;2;LCA;LC
+46;Timor-Leste;2;TLS;TL
+47;South Korea;2;KOR;KR
+48;Trinidad and Tobago;1;TTO;TT
+49;Indonesia;1;IDN;ID
+50;Tunisia;1;TUN;TN
+51;Morocco;1;MAR;MA
+52;Yemen;1;YEM;YE
+53;Latvia;1;LVA;LV
+54;Guadeloupe;1;GLP;GP
+55;Nigeria;1;NGA;NG
+56;Kenya;1;KEN;KE
+57;Brazil;1;BRA;BR
+58;Costa Rica;1;CRI;CR
+59;Greece;1;GRC;GR
+60;Iraq;1;IRQ;IQ
+61;Bangladesh;1;BGD;BD
+62;North Macedonia;1;MKD;MK
+63;Slovakia;1;SVK;SK
+64;Madagascar;1;MDG;MG
+65;Peru;1;PER;PE
+66;Democratic Republic of the Congo;1;COD;CD
+67;Ethiopia;1;ETH;ET
+68;Zimbabwe;1;ZWE;ZW
+69;Lebanon;1;LBN;LB
+70;Myanmar;1;MMR;MM
+71;Venezuela;1;VEN;VE
+72;Cyprus;1;CYP;CY
+73;Bulgaria;1;BGR;BG
+74;Philippines;1;PHL;PH
+75;Slovenia;1;SVN;SI
+76;Iceland;1;ISL;IS
+77;Ghana;1;GHA;GH
+78;Vietnam;1;VNM;VN
+79;Croatia;1;HRV;HR
+80;Azerbaijan;1;AZE;AZ
+81;Taiwan;1;TWN;TW
