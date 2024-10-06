@@ -97,7 +97,7 @@ os.chdir(current_dir)
 df_laureates_import = pd.read_csv('df_laureates.csv', sep=';')
 
 # Same as laureates, but the two-time-winners are listed twice
-df_prizes_import = pd.read_csv('df_prizes.csv', sep=';')
+# df_prizes_import = pd.read_csv('df_prizes.csv', sep=';')
 
 # Timegap Seminal Paper and Prize
 df_timegap = pd.read_csv('df_prize-publication-timegap.csv', sep=';', encoding='UTF-8')
@@ -177,10 +177,48 @@ replacement_dict = {
 
 # Call the function
 df_laureates = replace_values_in_columns(df_laureates_import, columns_to_modify, replacement_dict)
-df_prizes = replace_values_in_columns(df_prizes_import, columns_to_modify, replacement_dict)
 
 df_laureates.to_csv("df_laureates_cleaned.csv", sep=';', encoding="UTF-8")
+print("df_laureates_cleaned.csv has been saved.")
+
+
+
+
+##################################################################################################
+# Generate df_prizes
+##################################################################################################
+
+# Step 1: Filter rows where laureates have multiple prizes
+# df_multiple_prizes = df_laureates.dropna(subset=['Prize1_AwardYear', 'Prize2_AwardYear'], how='all')
+df_prize1 = df_laureates.dropna(subset=['Prize1_AwardYear']).copy(deep=True)
+df_prize2 = df_laureates.dropna(subset=['Prize2_AwardYear']).copy(deep=True)
+
+# Step 2: Identify the Prize1... and Prize2.. columns
+prize0_columns = [col for col in df_laureates.columns if col.startswith('Prize0_')]
+prize1_columns = [col for col in df_laureates.columns if col.startswith('Prize1_')]
+prize2_columns = [col for col in df_laureates.columns if col.startswith('Prize2_')]
+
+# # For second prize (Prize1_)
+df_prize1.drop(columns=prize0_columns, inplace=True)  # Drop existing Prize0 columns before renaming Prize1_ to Prize0_
+df_prize1.drop(columns=prize2_columns, inplace=True)  # Drop existing Prize2 columns before renaming Prize1_ to Prize0_
+renamed_columns = [col.replace('Prize1_', 'Prize0_') for col in df_prize1.columns if col.startswith('Prize1_')]
+df_prize1.rename(columns={old: new for old, new in zip(df_prize1.columns[df_prize1.columns.str.startswith('Prize1_')], renamed_columns)}, inplace=True)
+
+# # For third prize (Prize2_)
+df_prize2.drop(columns=prize0_columns, inplace=True)  # Drop existing Prize0 columns before renaming Prize2_ to Prize0_
+df_prize2.drop(columns=prize1_columns, inplace=True)  # Drop existing Prize1 columns before renaming Prize2_ to Prize0_
+renamed_columns = [col.replace('Prize2_', 'Prize0_') for col in df_prize2.columns if col.startswith('Prize2_')]
+df_prize2.rename(columns={old: new for old, new in zip(df_prize2.columns[df_prize2.columns.str.startswith('Prize2_')], renamed_columns)}, inplace=True)
+
+# # Step 4: Concatenate the original laureates DataFrame with the new prize rows
+df_prizes = pd.concat([df_laureates, df_prize1, df_prize2], ignore_index=True)
+df_prizes.drop(columns=prize1_columns, inplace=True)  # Drop Prize1 columns, which are now obsolete
+df_prizes.drop(columns=prize2_columns, inplace=True)  # Drop Prize2 columns, which are now obsolete
+df_prizes['Prize0_AwardYear'] = df_prizes['Prize0_AwardYear'].astype('Int64') # Convert from float to nullable int
+
 df_prizes.to_csv("df_prizes_cleaned.csv", sep=';', encoding="UTF-8")
+print("df_prizes_cleaned.csv has been saved.")
+
 
 ##################################################################################################
 # Count Laureates per Country
@@ -201,7 +239,7 @@ df_nobelprizes_percountry = pd.merge(df_nobelprizes_percountry, df_iso, on="Coun
 df_nobelprizes_percountry.to_csv("df_nobelprizes_percountry.csv", sep=';', encoding="UTF-8")
 
 max_prize_count = df_nobelprizes_percountry['Count'].max()
-
+lastyearincluded ="2023"
 
 
 ##################################################################################################
@@ -1425,6 +1463,318 @@ def generate_religion_donut(data):
     
     return fig
 
+# Series 7: 2024 Facts
+##################################################################################################
+
+df_sunburst_gender_nationality = df_laureates[df_laureates['Prize0_AwardYear'] == 2023]
+
+# Group by Category and Gender to get the counts
+df_sunburst_gender_nationality_count = df_sunburst_gender_nationality.groupby(['Prize0_Category', 'LaureateGender', 'BirthCountryNow']).size().reset_index(name='count')
+
+df_sunburst_gender_nationality_count.replace({'Physiology or Medicine': 'Medicine', 'Economic Sciences': 'Economics', 'United States': 'USA'}, inplace=True)
+
+
+
+def generate_sunburst_gender_nationality(data):
+    fig = px.sunburst(
+        data, 
+        path=['Prize0_Category', 'LaureateGender', 'BirthCountryNow'], 
+        values='count',
+        color='Prize0_Category',
+        color_discrete_map={
+            "Medicine": c_medicine,
+            "Physics": c_physics,
+            "Chemistry": c_chemistry,
+            "Literature": c_literature,
+            "Peace": c_peace,
+            "Economics": c_economics
+        },
+    )
+
+    fig.update_layout(
+
+        template="plotly_white",
+        plot_bgcolor=c_lightblue_superlight,
+
+        margin={"r":0,"t":60,"l":0,"b":0},
+
+        font=dict(
+            family = 'Rubik, sans-serif',
+            size = 11,
+            color = brand_color_main,
+        ),
+        
+        title=dict(
+            text = f"Categories, Gender, Nationality ({lastyearincluded})",
+            font=dict(size = 20),
+            x = 0,                            # Left align the title
+            xanchor = 'left',                 # Align to the left edge
+            y = 0.97,                         # Adjust Y to position title above the map
+            yanchor = 'top',                  # Anchor at the top of the title box
+        ),
+
+       autosize=True
+
+
+    )
+    return fig
+
+# fig_7a = generate_sunburst_gender_nationality(df_sunburst_gender_nationality_count)
+
+
+# ----------------
+
+df_movement_splines = df_laureates[["AwardeeDisplayName", "Prize0_AwardYear", "BirthCityNow", "BirthCountryNow","BirthContinent", "BirthCityNowLat", "BirthCityNowLon",
+   "Prize0_Affiliation0_CityNow", "Prize0_Affiliation0_Country","Prize0_Affiliation0_Continent", "Prize0_Affiliation0_CityLatitude", "Prize0_Affiliation0_CityLongitude", "DeathCityNow", "DeathCountryNow", "DeathContinent", "DeathCityLat", "DeathCityLon"]]
+df_movement_splines = df_movement_splines.fillna('None')
+df_movement_splines_2024 = df_movement_splines[df_movement_splines["Prize0_AwardYear"] == 2023]
+
+df_movement_splines_2024 = df_movement_splines_2024[
+    (df_movement_splines_2024["BirthCityNowLat"] != 'None') & 
+    (df_movement_splines_2024["BirthCityNowLon"] != 'None') &
+    (df_movement_splines_2024["Prize0_Affiliation0_CityLatitude"] != 'None') &
+    (df_movement_splines_2024["Prize0_Affiliation0_CityLongitude"] != 'None')
+].reset_index(drop=True)  # Resetting the index to ensure sequential IDs
+
+
+def generate_map_splines(data):
+
+    def interpolate_points(lat1, lon1, lat2, lon2, num_points=150):
+        """
+        Generates intermediate lat/lon points for a geodesic (great circle) path.
+        """
+        lats = []
+        lons = []
+
+        # Convert lat/lon to radians
+        lat1, lon1, lat2, lon2 = map(np.radians, [lat1, lon1, lat2, lon2])
+
+        # Calculate differences
+        d = 2 * np.arcsin(np.sqrt(np.sin((lat2 - lat1) / 2) ** 2 + np.cos(lat1) * np.cos(lat2) * np.sin((lon2 - lon1) / 2) ** 2))
+        f = np.linspace(0, 1, num_points)
+
+        # Interpolate points
+        for t in f:
+            A = np.sin((1 - t) * d) / np.sin(d)
+            B = np.sin(t * d) / np.sin(d)
+            x = A * np.cos(lat1) * np.cos(lon1) + B * np.cos(lat2) * np.cos(lon2)
+            y = A * np.cos(lat1) * np.sin(lon1) + B * np.cos(lat2) * np.sin(lon2)
+            z = A * np.sin(lat1) + B * np.sin(lat2)
+            lat = np.arctan2(z, np.sqrt(x ** 2 + y ** 2))
+            lon = np.arctan2(y, x)
+            lats.append(np.degrees(lat))
+            lons.append(np.degrees(lon))
+
+        return lats, lons
+
+    # Calculate all paths and create a dictionary to hold interpolated points
+    paths = {}
+    num_points = 150  # Number of points for each path, to ensure smooth animation
+    for i, row in data.iterrows():
+        lats, lons = interpolate_points(
+            row["BirthCityNowLat"], row["BirthCityNowLon"],
+            row["Prize0_Affiliation0_CityLatitude"], row["Prize0_Affiliation0_CityLongitude"],
+            num_points=num_points
+        )
+        paths[i] = {'lats': lats, 'lons': lons}
+
+    # Initialize the figure with static elements (paths, birth markers, and affiliation markers)
+    fig = go.Figure()
+
+    # Add migration paths for each laureate with curvature (these are static elements)
+    # colors = [c_brown, c_darkmagenta, c_lightblue, c_orange, c_pink, c_red, c_teal, c_red_verydark, c_yellow, c_teal_verydark]
+    colors = colorscale_palette
+    for i, row in data.iterrows():
+        path = paths[i]
+        color = colors[i % len(colors)]  # Cycle through the colors list
+
+        # Add a trace for each migration path
+        fig.add_trace(go.Scattermapbox(
+            lon=path['lons'],
+            lat=path['lats'],
+            mode="lines",
+            line=dict(width=2, color=color),
+            opacity=0.5,
+            hoverinfo="text",
+            text=f"{row['AwardeeDisplayName']}<br>Birth: {row['BirthCityNow']}<br>Affiliation: {row['Prize0_Affiliation0_CityNow']}",
+            name=f"Path of {row['AwardeeDisplayName']}"
+        ))
+
+    # Add birth and affiliation markers
+    fig.add_trace(go.Scattermapbox(
+        lon=data["BirthCityNowLon"],
+        lat=data["BirthCityNowLat"],
+        text=data["AwardeeDisplayName"],
+        hoverinfo="text",
+        mode="markers",
+        marker=go.scattermapbox.Marker(
+            size=10,
+            color="darkgrey",
+            opacity=0.7
+        ),
+        name="Birth Cities"
+    ))
+
+    fig.add_trace(go.Scattermapbox(
+        lon=data["Prize0_Affiliation0_CityLongitude"],
+        lat=data["Prize0_Affiliation0_CityLatitude"],
+        text=data["AwardeeDisplayName"],
+        hoverinfo="text",
+        mode="markers",
+        marker=go.scattermapbox.Marker(
+            size=10,
+            color="darkgrey",
+            opacity=0.9
+        ),
+        name="Affiliation Cities"
+    ))
+
+    # Create moving traces for each point to be animated
+    for i, row in data.iterrows():
+        color = colors[i % len(colors)]
+        path = paths[i]
+
+        # Add initial position for each moving marker
+        trace = go.Scattermapbox(
+            lon=[path['lons'][0]],
+            lat=[path['lats'][0]],
+            mode="markers",
+            marker=go.scattermapbox.Marker(
+                size=10,
+                color=color,
+                opacity=0.8
+            ),
+            name=f"Moving Point {i}"  # Unique name for each point
+        )
+        fig.add_trace(trace)
+
+    # Create frames for animation where all points move together
+    frames = []
+    for frame_idx in range(num_points):
+        frame_data = []
+
+        # Add all migration paths to keep them visible in each frame
+        for i, row in data.iterrows():
+            path = paths[i]
+            color = colors[i % len(colors)]
+
+            # Migration paths (static in each frame)
+            frame_data.append(go.Scattermapbox(
+                lon=path['lons'],
+                lat=path['lats'],
+                mode="lines",
+                line=dict(width=5, color=color),
+                opacity=0.5,
+                hoverinfo="text",
+                showlegend=False
+            ))
+
+        # Add birth and affiliation markers to each frame to keep them visible
+        frame_data.append(go.Scattermapbox(
+            lon=data["BirthCityNowLon"],
+            lat=data["BirthCityNowLat"],
+            text=data["AwardeeDisplayName"],
+            hoverinfo="text",
+            mode="markers",
+            marker=go.scattermapbox.Marker(
+                size=10,
+                color="darkgrey",
+                opacity=0.7
+            ),
+            showlegend=False
+        ))
+
+        frame_data.append(go.Scattermapbox(
+            lon=data["Prize0_Affiliation0_CityLongitude"],
+            lat=data["Prize0_Affiliation0_CityLatitude"],
+            text=data["AwardeeDisplayName"],
+            hoverinfo="text",
+            mode="markers",
+            marker=go.scattermapbox.Marker(
+                size=10,
+                color="darkgrey",
+                opacity=0.9
+            ),
+            showlegend=False
+        ))
+
+        # Update each moving point position for the current frame
+        for i, row in df_movement_splines_2024.iterrows():
+            path = paths[i]
+
+            # Moving marker for each laureate in the current frame
+            frame_data.append(go.Scattermapbox(
+                lon=[path['lons'][frame_idx]],
+                lat=[path['lats'][frame_idx]],
+                mode="markers",
+                marker=go.scattermapbox.Marker(
+                    size=10,
+                    color=colors[i % len(colors)],
+                    opacity=0.8
+                ),
+                name=f"Moving Point {i}"  # Unique name for each point
+            ))
+
+        frames.append(go.Frame(data=frame_data, name=f"frame_{frame_idx}"))
+
+    # Add frames to the figure for animation
+    fig.frames = frames
+
+    # Update layout for the mapbox visualization
+    fig.update_layout(
+        showlegend=False,
+        mapbox=dict(
+            # accesstoken=mapbox_token,
+            style="carto-positron",  # Other styles: "streets", "dark", "light", "satellite", etc.
+            center=dict(lat=20, lon=0),  # Center the map globally
+            zoom=1.5
+        ),
+        # height=800,
+        updatemenus=[dict(
+            type="buttons",
+            direction="left",  # Arrange buttons in a row
+            showactive=False,
+            x=0.5,  # Horizontal positioning (0 to 1, where 0.5 is centered)
+            y=-0.1,  # Vertical positioning, set below the graph
+            xanchor="left",
+            yanchor="top",
+            buttons=[
+                dict(label="Play",
+                    method="animate",
+                    args=[None, dict(frame=dict(duration=30, redraw=True), fromcurrent=True, mode="immediate")]),
+                dict(label="Pause",
+                    method="animate",
+                    args=[[None], dict(frame=dict(duration=0), mode="immediate", transition=dict(duration=0))])
+            ]
+        )],
+
+        template="plotly_white",
+        plot_bgcolor=c_lightblue_superlight,
+
+        margin={"r":0,"t":60,"l":0,"b":0},
+
+        font=dict(
+            family = 'Rubik, sans-serif',
+            size = 11,
+            color = brand_color_main,
+        ),
+        
+        title=dict(
+            text = f"Place of Birth and Affiliation at Time of Award ({lastyearincluded})",
+            font=dict(size = 20),
+            x = 0,                            # Left align the title
+            xanchor = 'left',                 # Align to the left edge
+            y = 0.97,                         # Adjust Y to position title above the map
+            yanchor = 'top',                  # Anchor at the top of the title box
+        ),
+
+       autosize=True
+    )
+    return fig
+
+# fig_7b = generate_map_splines(df_movement_splines_2024)
+
+
 
 ##################################################################################################
 # Generate and Save Plots
@@ -1450,6 +1800,7 @@ if __name__ == "__main__":
         fig_4a = generate_migration_dwp(df_movement_dwp, "DegreeCountry", "WorkCountry", "PrizeCountry")
         fig_4b = generate_migration_bpd(df_movement_bpd, "BirthCountryNow", "Prize0_Affiliation0_Country", "DeathCountryNow")
         fig_6a = generate_prizemoney_linechart(df_prizemoney_rs)
+
         
         return {
             'fig_1b': fig_1b, 
@@ -1469,6 +1820,15 @@ if __name__ == "__main__":
             'fig_2c': fig_2c,
             'fig_2d': fig_2d,
             'fig_2e': fig_2e
+    }
+
+    def generate_plots_startpage():
+            fig_7a = generate_sunburst_gender_nationality(df_sunburst_gender_nationality_count)
+            fig_7b = generate_map_splines(df_movement_splines_2024)
+
+            return {
+            'fig_7a': fig_7a,
+            'fig_7b': fig_7b
             }
 
 
@@ -1477,5 +1837,10 @@ if __name__ == "__main__":
     with open('precomputed_plots.pkl', 'wb') as f:
         pickle.dump(precomputed_plots, f)
 
+
+    # Generate plots and save to a file
+    precomputed_plots_startpage = generate_plots_startpage()
+    with open('precomputed_plots_startpage.pkl', 'wb') as f:
+        pickle.dump(precomputed_plots_startpage, f)
 
     print("Plots precomputed.")
