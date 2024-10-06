@@ -52,7 +52,7 @@ c_teal_verydark = '#072124'
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background: linear-gradient(135deg, #C2EEF3, #186f77);
 
-    color: white;
+    color: #47382a;;
     font-family: 'Rubik', sans-serif;
     display: flex;
     flex-direction: column;
@@ -60,6 +60,37 @@ c_teal_verydark = '#072124'
     align-items: center;
     padding: 15px;
     text-align: center;
+}
+
+.info-box.medicine {
+    background: linear-gradient(135deg, #f0f0f0, #fafafa);
+    border-bottom-color: #91121d
+
+}
+
+.info-box.physics {
+    background: linear-gradient(135deg, #f0f0f0, #fafafa);
+    border-bottom-color: #186f77
+}
+
+.info-box.chemistry {
+    background: linear-gradient(135deg, #f0f0f0, #fafafa);
+    border-bottom-color: #ff7703
+}
+
+.info-box.literature{
+    background: linear-gradient(135deg, #f0f0f0, #fafafa);
+    border-bottom-color: #ffe74c
+}
+
+.info-box.peace{
+    background: linear-gradient(135deg, #f0f0f0, #fafafa);
+    border-bottom-color: #ff99c8
+}
+
+.info-box.economics{
+    background: linear-gradient(135deg, #f0f0f0, #fafafa);
+    border-bottom-color: #93bbdc
 }
 
 .info-box .large-number {
@@ -76,5 +107,22 @@ c_teal_verydark = '#072124'
 
 .info-box .description {
     font-size: 12px;
-    line-height: 1.2;
+}
+
+.info-box .category {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.info-box .announcement {
+    font-size: 24px;
+    font-weight: 400;
+    margin-bottom: 0px;
+}
+
+.info-box .laureates {
+    font-size: 18px;
+    font-weight: 200;
+    margin-bottom: 0px;
 }
