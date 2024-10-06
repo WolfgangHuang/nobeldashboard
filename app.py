@@ -70,6 +70,8 @@ c_peace = c_pink
 c_literature = c_yellow
 
 
+
+
 ##################################################################################################
 # Load Precomputed Plots
 ##################################################################################################
@@ -102,6 +104,12 @@ fig_4a = precomputed_plots['fig_4a']
 fig_4b = precomputed_plots['fig_4b']
 fig_6a = precomputed_plots['fig_6a']
 
+with open('precomputed_plots_startpage.pkl', 'rb') as f2:
+    precomputed_plots_startpage = pickle.load(f2)
+
+fig_7a = precomputed_plots_startpage['fig_7a']
+fig_7b = precomputed_plots_startpage['fig_7b']
+
 
 # Load tables
 
@@ -110,6 +118,7 @@ df_laureates = pd.read_csv('df_laureates_cleaned.csv', sep=';', encoding="UTF-8"
 
 # Same as laureates, but the two-time-winners are listed twice
 df_prizes = pd.read_csv('df_prizes_cleaned.csv', sep=';', encoding="UTF-8")
+# df_prizes= pcp.df_prizes
 
 # Timegap Seminal Paper and Prize
 df_timegap = pd.read_csv('df_prize-publication-timegap.csv', sep=';', encoding='UTF-8')
@@ -141,7 +150,7 @@ df_iso = pd.read_csv('countries_iso2_iso3.csv', sep=';', encoding="UTF-8")
 df_nobelprizes_percountry = pd.read_csv("df_nobelprizes_percountry.csv", sep=';', encoding="UTF-8")
 
 max_prize_count = df_nobelprizes_percountry['Count'].max()
-
+lastyearincluded = "2023"
 
 ##################################################################################################
 # Dashboard Main Setup
@@ -151,7 +160,7 @@ _dash_renderer._set_react_version("18.2.0")
 
 app = Dash(
     external_stylesheets=[
-        "assets/dmc_styles.css",  # Your custom CSS
+        "assets/dmc_styles.css",  # custom CSS
         dmc.styles.ALL           # Mantine styles
     ],
     title="Nobel Laureate Data Dashboard"
@@ -196,6 +205,182 @@ ag_df_religion = dag.AgGrid(
 ##################################################################################################
 
 # Contents of Tab 0
+
+tab2024_content = dmc.Paper(
+    children=[
+        dmc.Group(
+            children=[
+
+                html.Div(
+                    children=[
+                            html.Div(
+                                "Physiology or Medicine",
+                                className="category"
+                            ),
+                            html.Div(
+                                "07.10.2024",
+                                className="announcement"
+                            ),
+                            html.Div(
+                                "11.30",
+                                className="announcement"
+                            ),
+                    ],
+                    className="info-box medicine"
+                ),
+
+                html.Div(
+                    children=[
+                            html.Div(
+                                "Physics",
+                                className="category"
+                            ),
+                            html.Div(
+                                "08.10.2024",
+                                className="announcement"
+                            ),
+                            html.Div(
+                                "11.45",
+                                className="announcement"
+                            ),
+                            # html.Div(
+                            #     "Peter Miller",
+                            #     className="laureates"
+                            # ),
+                            # html.Div(
+                            #     "John Doe",
+                            #     className="laureates"
+                            # ),
+                            # html.Div(
+                            #     "Mary Johnson",
+                            #     className="laureates"
+                            # ),
+                            # html.Div(
+                            #     "for the discovery of somethign very cool that requires a lot of space to write about it",
+                            #     className="description"
+                            # )
+                    ],
+                    className="info-box physics"
+                ),
+
+               
+                html.Div(
+                    children=[
+                            html.Div(
+                                "Chemistry",
+                                className="category"
+                            ),
+                            html.Div(
+                                "09.10.2024",
+                                className="announcement"
+                            ),
+                            html.Div(
+                                "11.45",
+                                className="announcement"
+                            ),
+                    ],
+                    className="info-box chemistry"
+                )
+            ]
+        ),
+
+        dmc.Stack([dmc.Space(h="sm"), dmc.Space(h="sm")]),
+        
+        dmc.Group(
+            children=[
+
+                html.Div(
+                    children=[
+                            html.Div(
+                                "Literature",
+                                className="category"
+                            ),
+                            html.Div(
+                                "10.10.2024",
+                                className="announcement"
+                            ),
+                            html.Div(
+                                "13.00",
+                                className="announcement"
+                            ),
+                    ],
+                    className="info-box literature"
+                ),
+
+                html.Div(
+                    children=[
+                            html.Div(
+                                "Peace",
+                                className="category"
+                            ),
+                            html.Div(
+                                "11.10.2024",
+                                className="announcement"
+                            ),
+                            html.Div(
+                                "11.00",
+                                className="announcement"
+                            ),
+                    ],
+                    className="info-box peace"
+                ),
+               
+                html.Div(
+                    children=[
+                            html.Div(
+                                "Economic Sciences",
+                                className="category"
+                            ),
+                            html.Div(
+                                "15.10.2024",
+                                className="announcement"
+                            ),
+                            html.Div(
+                                "11.45",
+                                className="announcement"
+                            ),
+                    ],
+                    className="info-box economics"
+                )
+            ]
+        ),
+
+        dmc.Stack([dmc.Space(h="sm"), dmc.Space(h="sm")]),
+
+        dmc.Group(
+            children=[
+
+                dmc.Grid(
+                    children=[
+                        dmc.GridCol(dcc.Loading(dcc.Graph(id='fig_7a', figure=fig_7a, style={'width': '800px', 'height': '800px'})), span=8)
+                    ]
+                )
+            ]
+        ),
+
+        dmc.Stack([dmc.Space(h="sm"), dmc.Space(h="sm")]),
+
+        dmc.Group(
+            children=[
+
+                dmc.Grid(
+                    children=[
+                        dmc.GridCol(dcc.Loading(dcc.Graph(id='fig_7b', figure=fig_7b, style={'width': '800px', 'height': '600px'})), span=8)
+                    ]
+                )
+            ]
+        ),
+       
+
+    ],
+    shadow="md",
+    radius="md",
+    p="lg", 
+    className="mt-3",
+)
+
+
+
 
 tab0_content = dmc.Paper(
     children=[
@@ -271,7 +456,8 @@ tab0_content = dmc.Paper(
                 html.Div(dcc.Loading(dcc.Graph(id='fig_2e', figure=fig_2e)), style={'width': '265px', 'justify':'left'})
 
             ],             
-        )           
+        ),
+           
     ],
     shadow="md",
     radius="md",
@@ -290,7 +476,7 @@ tab1_content = dmc.Paper(
         dmc.Space(h="xl"),
         dmc.Group(
             [
-            dmc.Badge("1901 - 2023", variant="outline", color= brand_color_main),
+            dmc.Badge(f"1901 - {lastyearincluded}", variant="outline", color= brand_color_main),
             dmc.Badge("All Categories", variant="outline", color= brand_color_alt),
             ]
         ),
@@ -344,7 +530,7 @@ tab1_content = dmc.Paper(
 
         dmc.Group(
             [
-            dmc.Badge("1901 - 2023", variant="outline", color= brand_color_main),
+            dmc.Badge(f"1901 - {lastyearincluded}", variant="outline", color= brand_color_main),
             dmc.Badge("All Categories", variant="outline", color= brand_color_alt),
             ]
         ),
@@ -397,7 +583,7 @@ tab1_content = dmc.Paper(
 
         dmc.Group(
             [
-            dmc.Badge("1901 - 2023", variant="outline", color= brand_color_main),
+            dmc.Badge(f"1901 - {lastyearincluded}", variant="outline", color= brand_color_main),
             dmc.Badge("All Categories", variant="outline", color= brand_color_alt),
             ]
         ),
@@ -419,7 +605,7 @@ tab1_content = dmc.Paper(
 
         dmc.Group(
             [
-            dmc.Badge("1901 - 2023", variant="outline", color= brand_color_main),
+            dmc.Badge(f"1901 - {lastyearincluded}", variant="outline", color= brand_color_main),
             dmc.Badge("All Categories", variant="outline", color= brand_color_alt),
             ]
         ),
@@ -440,7 +626,7 @@ tab1_content = dmc.Paper(
 
         dmc.Group(
             [
-            dmc.Badge("1901 - 2023", variant="outline", color= brand_color_main),
+            dmc.Badge(f"1901 - {lastyearincluded}", variant="outline", color= brand_color_main),
             dmc.Badge("All Categories", variant="outline", color= brand_color_alt),
             ]
         ),
@@ -475,7 +661,7 @@ tab2_content = dmc.Paper(
 
         dmc.Group(
             [
-            dmc.Badge("1901 - 2023", variant="outline", color= brand_color_main),
+            dmc.Badge(f"1901 - {lastyearincluded}", variant="outline", color= brand_color_main),
             dmc.Badge("All Categories", variant="outline", color= brand_color_alt),
             ]
         ),
@@ -496,7 +682,7 @@ tab2_content = dmc.Paper(
 
         dmc.Group(
             [
-            dmc.Badge("1901 - 2023", variant="outline", color= brand_color_main),
+            dmc.Badge(f"1901 - {lastyearincluded}", variant="outline", color= brand_color_main),
             dmc.Badge("All Categories", variant="outline", color= brand_color_alt),
             ]
         ),
@@ -518,7 +704,7 @@ tab2_content = dmc.Paper(
 
         dmc.Group(
             [
-            dmc.Badge("1901 - 2023", variant="outline", color= brand_color_main),
+            dmc.Badge(f"1901 - {lastyearincluded}", variant="outline", color= brand_color_main),
             dmc.Badge("All Categories", variant="outline", color= brand_color_alt),
             ]
         ),
@@ -541,7 +727,7 @@ tab2_content = dmc.Paper(
 
         dmc.Group(
             [
-            dmc.Badge("1901 - 2023", variant="outline", color= brand_color_main),
+            dmc.Badge(f"1901 - {lastyearincluded}", variant="outline", color= brand_color_main),
             dmc.Badge("All Categories", variant="outline", color= brand_color_alt),
             ]
         ),
@@ -566,7 +752,7 @@ tab2_content = dmc.Paper(
 
         dmc.Group(
             [
-            dmc.Badge("1901 - 2023", variant="outline", color= brand_color_main),
+            dmc.Badge(f"1901 - {lastyearincluded}", variant="outline", color= brand_color_main),
             dmc.Badge("All Categories", variant="outline", color= brand_color_alt),
             ]
         ),
@@ -685,7 +871,7 @@ tab3_content = dmc.Paper(
 
         dmc.Group(
             [
-            dmc.Badge("1901 - 2023", variant="outline", color= brand_color_main),
+            dmc.Badge(f"1901 - {lastyearincluded}", variant="outline", color= brand_color_main),
             dmc.Badge("All Categories", variant="outline", color= brand_color_alt),
             ]
         ),
@@ -707,7 +893,7 @@ tab3_content = dmc.Paper(
 
         dmc.Group(
             [
-            dmc.Badge("1901 - 2023", variant="outline", color= brand_color_main),
+            dmc.Badge(f"1901 - {lastyearincluded}", variant="outline", color= brand_color_main),
             dmc.Badge("All Categories", variant="outline", color= brand_color_alt),
             ]
         ),
@@ -807,7 +993,7 @@ tab4_content = dmc.Paper(
 
         dmc.Group(
             [
-            dmc.Badge("1901 - 2023", variant="outline", color= brand_color_main),
+            dmc.Badge(f"1901 - {lastyearincluded}", variant="outline", color= brand_color_main),
             dmc.Badge("Natural Sciences", variant="outline", color= brand_color_alt),
             ]
         ),
@@ -934,63 +1120,32 @@ tabdata_content = dmc.Paper(
 
 
 ##################################################################################################
-# Layoit Definition
+# Layout Definition
 ##################################################################################################
 
 app.layout = dmc.MantineProvider(
-        theme={
-        "colors": {
-            "dmc_color1": [                
-                "#B59B82",
-                "#A78769",
-                "#927356",
-                "#795F47",
-                "#604B38",
-                "#47382A",
-                "#403225",
-                "#392C21",
-                "#31271D",
-                "#2A2119",               
-            ],
-            "dmc_color2": [                
-                "#67D6E0",
-                "#48CDDA",
-                "#2BC4D2",
-                "#25A8B3",
-                "#1F8B95",
-                "#186F77",
-                "#16646B",
-                "#13595F",
-                "#114D53",
-                "#0F4247",
-             
-            ],"dmc_color3": [                
-                "#EC6570",
-                "#E84653",
-                "#E42737",
-                "#CF1A29",
-                "#B01623",
-                "#91121D",
-                "#83101A",
-                "#740E17",
-                "#660D14",
-                "#570B11",             
-            ],
-        },
-    },
     children=[
         dmc.Container(
             children=[
                 dmc.Grid(
                     children=[
-                        dmc.GridCol(html.H1("Nobel Laureate Data Dashboard v01.22.15", className="text-left mt-5 mb-5"), span=12)
+                        dmc.GridCol(
+                            dmc.Group(
+                                [
+                                    html.Img(src="assets/logo-md.png", style={"width": "150px", "height": "50px"}),
+                                    html.H1("Nobel Laureate Data Dashboard v0.06.21", className="text-left mt-5 mb-5"),
+                                ]
+                            ),
+                        span=12)
                     ]
                 ),
+
                 dmc.Tabs(
                     [
                         dmc.TabsList(
                             [
-                                dmc.TabsTab("Quick Fun Facts", value="tab0"),
+                                dmc.TabsTab("2024 Prizes", value="tab2024"),
+                                dmc.TabsTab("Quick Facts", value="tab0"),
                                 dmc.TabsTab("Nationality & Country", value="tab1"),
                                 dmc.TabsTab("Gender, Ethnicity & Religion", value="tab2"),
                                 dmc.TabsTab("Time & Age", value="tab3"),
@@ -998,6 +1153,7 @@ app.layout = dmc.MantineProvider(
                                 dmc.TabsTab("Data & References", value="tabdata"),
                             ]
                         ),
+                        dmc.TabsPanel(tab2024_content, value="tab2024"),
                         dmc.TabsPanel(tab0_content, value="tab0"),
                         dmc.TabsPanel(tab1_content, value="tab1"),
                         dmc.TabsPanel(tab2_content, value="tab2"),
@@ -1005,7 +1161,7 @@ app.layout = dmc.MantineProvider(
                         dmc.TabsPanel(tab4_content, value="tab4"),
                         dmc.TabsPanel(tabdata_content, value="tabdata"),
                     ],
-                    value="tab0",  # Default selected tab
+                    value="tab2024",  # Default selected tab
                     id="tabs",
                 ),
             ],
@@ -1107,7 +1263,7 @@ def update_migration_parcat_2(loc1, loc2, loc3): # the passed value here is pass
 # --------------------
 # Run the app (locally)
 # if __name__ == "__main__":
-#     app.run(debug=True, port=5085)
+    # app.run(debug=True, port=5085)
 
 # Run the app on the server
 if __name__ == '__main__':
