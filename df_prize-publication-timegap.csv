@@ -1,4 +1,4 @@
-﻿ID_Laureate;AwardeeDisplayName;Prize0_Category;Prize0_AwardYear;ID_External;YearOfPublication;Source;Timegap
+﻿ID_Laureate;AwardeeDisplayName;Prize0_Category;Prize0_AwardYear;ID_External;PublicationYear;PublicationSource;PublicationTimegap
 16;Wilhelm Wien;Physics;1911;10189;1883;Harvard Dataverse;28
 193;Frederic Joliot;Chemistry;1935;20143;1934;Harvard Dataverse;1
 194;Irene Joliot-Curie;Chemistry;1935;20142;1934;Harvard Dataverse;1

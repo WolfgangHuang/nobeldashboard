@@ -1,0 +1,145 @@
+# Tab Overview
+
+    def generate_plots_tab_overview():
+        fig_donut_gender = generate_gender_donut(df_laureates)
+        fig_donut_ethnicity = generate_ethnicity_donut(df_laureates)
+        fig_donut_religion = generate_religion_donut(df_laureates)
+        fig_sunburst_gender_nationality = generate_sunburst_gender_nationality(df_laureates)
+        
+        return {
+        'fig_donut_gender': fig_donut_gender,
+        'fig_donut_ethnicity': fig_donut_ethnicity,
+        'fig_donut_religion': fig_donut_religion,
+        'fig_sunburst_gender_nationality': fig_sunburst_gender_nationality,
+        }
+    
+    pcp_tab_overview = generate_plots_tab_overview()
+    with open('pcp_tab_overview.pkl', 'wb') as f:
+        pickle.dump(pcp_tab_overview, f)
+
+    print("Plots for Tab Overview precomputed.")
+
+
+
+# Tab Current
+    def generate_plots_tab_current():
+        df_sunburst_gender_nationality_last = df_laureates[df_laureates['Prize0_AwardYear'] == lastyearincluded]
+
+        fig_sunburst_gender_nationality_last = generate_sunburst_gender_nationality(df_sunburst_gender_nationality_last)
+        fig_map_splines = generate_map_splines(df_movement_splines_2024)
+
+        return {
+        'fig_sunburst_gender_nationality_last': fig_sunburst_gender_nationality_last,
+        'fig_map_splines': fig_map_splines
+        }
+    
+    pcp_tab_current = generate_plots_tab_current()
+    with open('pcp_tab_current.pkl', 'wb') as f:
+        pickle.dump(pcp_tab_current, f)
+
+    print("Plots for Tab Current precomputed.")
+
+
+# Tab Geography
+
+    def generate_plots_tab_geography():
+        fig_scattermapbox_birth_death = generate_scattermapbox_birth_death(df_laureates)
+        fig_bar_prizespercountry_rs = generate_bar_prizespercountry_rs(df_pivot_rs)
+        fig_bar_prizespercountry = generate_bar_prizerpercountry(df_pivot)
+        fig_bubbles_population = generate_bubbles_population(df_nlpc_complete_population_log)
+        fig_choroplethglobe = generate_choroplethglobe(df_nobelprizes_percountry)
+
+        return {
+        'fig_scattermapbox_birth_death': fig_scattermapbox_birth_death,
+        'fig_bar_prizespercountry_rs': fig_bar_prizespercountry_rs,
+        'fig_bar_prizespercountry': fig_bar_prizespercountry,
+        'fig_bubbles_population': fig_bubbles_population,
+        'fig_choroplethglobe': fig_choroplethglobe
+        }
+    
+    pcp_tab_geography = generate_plots_tab_geography()
+    with open('pcp_tab_geography.pkl', 'wb') as f:
+        pickle.dump(pcp_tab_geography, f)
+
+    print("Plots for Tab Geography precomputed.")
+
+# Tab Demographics
+
+    def generate_plots_tab_demography():
+        fig_surface_prizesforwomen = generate_surface_plot(df_prizes_forwomen_perdecade)
+        fig_surface_prizesformenwomen = generate_surface_plot_mw(df_prizes_formen_perdecade, df_prizes_forwomen_perdecade)
+        fig_donut_gender = generate_gender_donut(df_laureates)
+        fig_donut_ethnicity = generate_ethnicity_donut(df_laureates)
+        fig_donut_religion = generate_religion_donut(df_laureates)
+
+
+        return {
+        'fig_surface_prizesforwomen': fig_surface_prizesforwomen,
+        'fig_surface_prizesformenwomen': fig_surface_prizesformenwomen,
+        'fig_donut_gender': fig_donut_gender,
+        'fig_donut_ethnicity': fig_donut_ethnicity,
+        'fig_donut_religion': fig_donut_religion
+        }
+    
+    pcp_tab_demography = generate_plots_tab_demography()
+    with open('pcp_tab_demography.pkl', 'wb') as f:
+        pickle.dump(pcp_tab_demography, f)
+
+    print("Plots for Tab Demographics precomputed.")
+
+# Tab Time
+
+    def generate_plots_tab_time():
+        fig_histogram_timegap = generate_timegap_histogram(df_timegap)
+        fig_scatter_timegap_trend = generate_timegap_trend(df_timegap, df_lifeexpectancy)
+        fig_scatter_age = generate_age_scatterbox(df_age_grouped)
+        fig_heatmap_age = generate_age_heatmap(df_age_pivot)
+
+
+        return {
+        'fig_histogram_timegap': fig_histogram_timegap,
+        'fig_scatter_timegap_trend': fig_scatter_timegap_trend,
+        'fig_scatter_age': fig_scatter_age,
+        'fig_heatmap_age': fig_heatmap_age
+        }
+    
+    pcp_tab_time = generate_plots_tab_time()
+    with open('pcp_tab_time.pkl', 'wb') as f:
+        pickle.dump(pcp_tab_time, f)
+
+    print("Plots for Tab Time precomputed.")
+
+# Tab Migration
+
+    def generate_plots_tab_migration():
+        fig_parcat_migration_dwp = generate_migration_dwp(df_movement_dwp, "DegreeCountry", "WorkCountry", "PrizeCountry")
+        fig_parcat_migration_bpd = generate_migration_bpd(df_movement_bpd, "BirthCountryNow", "Prize0_Affiliation0_Country", "DeathCountryNow")
+
+        return {
+        'fig_parcat_migration_dwp': fig_parcat_migration_dwp,
+        'fig_parcat_migration_bpd': fig_parcat_migration_bpd
+        }
+    
+    pcp_tab_migration = generate_plots_tab_migration()
+    with open('pcp_tab_migration.pkl', 'wb') as f:
+        pickle.dump(pcp_tab_migration, f)
+
+    print("Plots for Tab Migration precomputed.")
+
+
+  
+# Tab Misc
+
+    def generate_plots_tab_misc():
+        fig_line_prizemoney = generate_prizemoney_linechart(df_prizemoney_rs)
+        #fig_waffle_fields = generate_waffle_fields(df_fields)
+        return {
+        'fig_line_prizemoney': fig_line_prizemoney,
+        #'fig_waffle_fields': fig_waffle_fields
+        }
+    
+    pcp_tab_misc = generate_plots_tab_misc()
+    with open('pcp_tab_misc.pkl', 'wb') as f:
+        pickle.dump(pcp_tab_misc, f)
+
+    print("Plots for Tab Misc precomputed.")

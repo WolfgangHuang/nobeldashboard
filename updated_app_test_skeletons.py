@@ -465,10 +465,7 @@ app.layout = dmc.MantineProvider(
                         ),
 
                        dmc.TabsPanel(
-                            dcc.Loading(
-                                id="tab-content-loading-geography",
-                                children=html.Div(id="tab-content-geography")
-                            ),
+                            html.Div(id="tab-content-geography"),
                             value="tab_geography"
                         ),
 
@@ -828,20 +825,32 @@ def render_tab_current_content(active_tab):
 
                             ]
                         ),
-                        
-                        generate_plot_in_layout(   
-                            header = "Discipline - Gender - Country",
-                            subheader = f"Click on the segments to filter the data.",
-                            plot_id = "fig_sunburst_gender_nationality_last",
-                            figure = fig_sunburst_gender_nationality_last,
-                            footer = [
-                                dcc.Markdown("**Interesting Findings**: The 2024 prizes were mostly given to male researchers from the US or UK.")
-                                ],
+
+                        html.Div(
+                            [
+                                dmc.Skeleton(
+                                    id="skel_map_splines",
+                                    visible=True,  # Initially visible while loading
+                                    children=html.Div(id="skel_map_splines_container")
+                                ),
+                            ]
                         ),
+
+
+                        
+                        # generate_plot_in_layout(   
+                        #     header = "Discipline - Gender - Country",
+                        #     subheader = "Click on the segments to filter the data.",
+                        #     plot_id = "fig_sunburst_gender_nationality_last",
+                        #     figure = fig_sunburst_gender_nationality_last,
+                        #     footer = [
+                        #         dcc.Markdown("**Interesting Findings**: The 2024 prizes were mostly given to male researchers from the US or UK.")
+                        #         ],
+                        # ),
 
                         generate_plot_in_layout(   
                             header = "Life Paths (Birth - Work)",
-                            subheader = f"Some Laureates actually haven't moved and are represented as dots.",
+                            subheader = "Some Laureates actually haven't moved and are represented as dots.",
                             plot_id = "fig_map_splines",
                             figure = fig_map_splines,
                             footer = [
@@ -863,6 +872,35 @@ def render_tab_current_content(active_tab):
     else:
         return html.Div("No content available")
     
+
+@callback(
+    Output("skel_map_splines_container", "children"),
+    Output("skel_map_splines", "visible"),  # Control Skeleton visibility
+    Input("skel_map_splines_container", "id"),  # Trigger callback on app load
+)
+def update_graph(_):
+
+    # Load precomputed plots only if they haven't been loaded yet
+    with open('pcp_tab_current.pkl', 'rb') as f1:
+        pcp_tab_current = pickle.load(f1)
+    
+    # Extract the figures from the loaded pickle data
+    fig_map_splines = pcp_tab_current['fig_map_splines']
+
+    graph =  generate_plot_in_layout(   
+                            header = "Discipline - Gender - Country",
+                            subheader = "Click on the segments to filter the data.",
+                            # plot_id = "fig_sunburst_gender_nationality_last",
+                            # figure = fig_sunburst_gender_nationality_last,
+                            plot_id = "fig_map_splines",
+                            figure = fig_map_splines,
+                            footer = [
+                                dcc.Markdown("**Interesting Findings**: The 2024 prizes were mostly given to male researchers from the US or UK.")
+                                ],
+                        ),
+    return graph, False  # Return the graph and hide the skeleton
+
+
  
 # Tab Geography
 ##################################################################################################
@@ -873,15 +911,15 @@ def render_tab_current_content(active_tab):
 )
 def render_tab_geography_content(active_tab):
     if active_tab == 'tab_geography':
-        with open('pcp_tab_geography.pkl', 'rb') as f3:
-            pcp_tab_geography = pickle.load(f3)
+        # with open('pcp_tab_geography.pkl', 'rb') as f3:
+        #     pcp_tab_geography = pickle.load(f3)
         
-        # Extract the figures from the loaded pickle data
-        fig_choroplethglobe = pcp_tab_geography['fig_choroplethglobe']
-        fig_scattermapbox_birth_death = pcp_tab_geography['fig_scattermapbox_birth_death']
-        fig_bubbles_population = pcp_tab_geography['fig_bubbles_population']
-        fig_bar_prizespercountry = pcp_tab_geography['fig_bar_prizespercountry']
-        fig_bar_prizespercountry_rs = pcp_tab_geography['fig_bar_prizespercountry_rs']
+        # # Extract the figures from the loaded pickle data
+        # fig_choroplethglobe = pcp_tab_geography['fig_choroplethglobe']
+        # fig_scattermapbox_birth_death = pcp_tab_geography['fig_scattermapbox_birth_death']
+        # fig_bubbles_population = pcp_tab_geography['fig_bubbles_population']
+        # fig_bar_prizespercountry = pcp_tab_geography['fig_bar_prizespercountry']
+        # fig_bar_prizespercountry_rs = pcp_tab_geography['fig_bar_prizespercountry_rs']
         
         
 
@@ -894,100 +932,120 @@ def render_tab_geography_content(active_tab):
                 dmc.Stack(
                     children=[
                         
-                        # PLOT: Rotatable Globe
-                        generate_plot_in_layout(   
-                            header = "Nobel Prizes by Country of Birth",
-                            subheader = f"This plot shows the distribution of country of birth of the laureates; you may rotate the globe, and zoom in and out. The slider lets you select minimum and maximum number of laureates, e.g.\"*less than 5 laureates*\".",
-                            plot_id = "fig_choroplethglobe",
-                            figure = fig_choroplethglobe,
-                            footer = [
-                                dcc.Markdown("**Interesting Findings**: The US dominance is clearly visible; apart from Africa, there are surprisingly few white spots.")
-                                ],
-                            code= dmc.Grid(
-                                children=[
-                                    dmc.GridCol(
-                                        dcc.RangeSlider(
-                                            id='prize-slider',
-                                            min=0,
-                                            max=max_prize_count,  # Dynamic maximum value based on data
-                                            step=1,
-                                            value=[0, max_prize_count],  # Default range from 0 to max
-                                            marks={i: str(i) for i in range(0, int(max_prize_count) + 1, 50)}, 
-                                            tooltip={"placement": "bottom", "always_visible": True},
-                                            className="dmc-bar dmc-thumb",
-                                        ),
-                                        span=6
-                                    ),
-                                ],
-                                justify="left",
-                                style={"margin-top": "20px"}
-                            ),
-                        ),
+                        # # PLOT: Rotatable Globe
+                        # generate_plot_in_layout(   
+                        #     header = "Nobel Prizes by Country of Birth",
+                        #     subheader = f"This plot shows the distribution of country of birth of the laureates; you may rotate the globe, and zoom in and out. The slider lets you select minimum and maximum number of laureates, e.g.\"*less than 5 laureates*\".",
+                        #     plot_id = "fig_choroplethglobe",
+                        #     figure = fig_choroplethglobe,
+                        #     footer = [
+                        #         dcc.Markdown("**Interesting Findings**: The US dominance is clearly visible; apart from Africa, there are surprisingly few white spots.")
+                        #         ],
+                        #     code= dmc.Grid(
+                        #         children=[
+                        #             dmc.GridCol(
+                        #                 dcc.RangeSlider(
+                        #                     id='prize-slider',
+                        #                     min=0,
+                        #                     max=max_prize_count,  # Dynamic maximum value based on data
+                        #                     step=1,
+                        #                     value=[0, max_prize_count],  # Default range from 0 to max
+                        #                     marks={i: str(i) for i in range(0, int(max_prize_count) + 1, 50)}, 
+                        #                     tooltip={"placement": "bottom", "always_visible": True},
+                        #                     className="dmc-bar dmc-thumb",
+                        #                 ),
+                        #                 span=6
+                        #             ),
+                        #         ],
+                        #         justify="left",
+                        #         style={"margin-top": "20px"}
+                        #     ),
+                        # ),
 
        
-                        # PLOT: Map: Places of Birth and Death
-                        generate_plot_in_layout(   
-                            header = "Places of Birth and Death",
-                            subheader = f"This map shows the cities of birth and death of the laureates. Note that the points of the map are given as center points of the respective cities, not as the actual places of birth (e.g. hospitals). You can zoom in to quite some detail; the map data is provided via OpenStreetMap.",
-                            plot_id = "fig_scattermapbox_birth_death",
-                            figure = fig_scattermapbox_birth_death,
-                            code=   dmc.Group(
-                                        children=[
-                                            html.P("Please select location:", style={"margin-top": "5px", "font-weight": "bold"}),
-                                            dcc.Dropdown(
-                                                id='city-dropdown',
-                                                options=[
-                                                    {'label': 'City of Birth', 'value': 'birth'},
-                                                    {'label': 'City of Death', 'value': 'death'}
-                                                ],
-                                                value='birth',  # Default value
-                                                clearable=False,
-                                                style={"width": "200px"}
-                                            ),
-                                        ],
-                                    gap="md",  # Adjusts the space between the label and the dropdown
-                                    align="flex-start",  # Align items to the left
-                                    style={"margin-top": "20px"}
+                        # # PLOT: Map: Places of Birth and Death
+                        # generate_plot_in_layout(   
+                        #     header = "Places of Birth and Death",
+                        #     subheader = f"This map shows the cities of birth and death of the laureates. Note that the points of the map are given as center points of the respective cities, not as the actual places of birth (e.g. hospitals). You can zoom in to quite some detail; the map data is provided via OpenStreetMap.",
+                        #     plot_id = "fig_scattermapbox_birth_death",
+                        #     figure = fig_scattermapbox_birth_death,
+                        #     code=   dmc.Group(
+                        #                 children=[
+                        #                     html.P("Please select location:", style={"margin-top": "5px", "font-weight": "bold"}),
+                        #                     dcc.Dropdown(
+                        #                         id='city-dropdown',
+                        #                         options=[
+                        #                             {'label': 'City of Birth', 'value': 'birth'},
+                        #                             {'label': 'City of Death', 'value': 'death'}
+                        #                         ],
+                        #                         value='birth',  # Default value
+                        #                         clearable=False,
+                        #                         style={"width": "200px"}
+                        #                     ),
+                        #                 ],
+                        #             gap="md",  # Adjusts the space between the label and the dropdown
+                        #             align="flex-start",  # Align items to the left
+                        #             style={"margin-top": "20px"}
+                        #         ),
+                        # ),     
+
+
+                        html.Div(
+                            id="graph-container",
+                            children=[
+                                dmc.Loader(
+                                    id="loader-bubbles-population",
+                                    color="red",
+                                    size="md",  # Available sizes: xs, sm, md, lg, xl
+                                    variant="oval",  # Available variants: oval, dots, bars
                                 ),
-                        ),     
-
-
-                        # PLOT: Bubbles: Nobel Prizes by Country of Birth and Population
-                        generate_plot_in_layout(   
-                            header = "Nobel Prizes by Country of Birth and Population",
-                            subheader = f"This plot shows the number of prizes by country of birth, but in relation to the population size of the country in the respective year. You can use the slider or play button to see the animation of the years. \n How to Read: The actual number of prizes is shown as a number after the country name. The size of the bubble relates to the population size, but is adjusted to make smaller populations appear bigger, and bigger populations smaller; otherwise, China and India would overlap everything else. The x-axis shows the population on a log scale, again as otherwise the large countries would push the small countries to the far left edge. The y-axis shows the number of prizes per 1 million inhabitants. The scale is ajusted to the 4th root of that value, which makes the range/visible area from 0-1 very large, and that from 10-20 relatively small. Otherwise, the tiny countries with one or two laureates would push the rest to the bottom.",
-                            plot_id = "fig_bubbles_population",
-                            figure = fig_bubbles_population,
-                            footer = [
-                                dcc.Markdown("**Interesting Findings**: The visualization shows, for exampe, that countries like the USA only start to play an important role after World War II; also, in relation to their population number, they did not get unusually many Nobel Prizes. Small population numbers and a few prizes bring you to the top of the chart, as St. Lucia and Iceland show. On the other hand, large countries like India and China still have a bad prize-population ratio, partly simply due to their large population.")
-                                ],
-                            style={'width': 'auto', 'height': '70vh'},
+                                html.Div(
+                                    id="graph-bubbles-population",
+                                    style={"display": "none"},  # Initially hidden
+                                ),
+                            ],
+                            style={"position": "relative", "width": "100%", "height": "70vh"},
                         ),
 
 
+                       html.Div(
+                            [
+                                dmc.Skeleton(
+                                    h=200,
+                                    id="skel_bubbles_population",
+                                    visible=True,  # Initially visible while loading
+                                    style={'width': 'auto', 'height': '70vh'},
+                                    children=html.Div(id="skel_bubbles_population_container"),
+                                    mb=20
+                                ),
+                            ]
+                        ),
 
-                        # PLOT: Stacked Bar: Nobel Prizes by Country of Birth per Year
-                        generate_plot_in_layout(   
-                            header = "Nobel Prizes by Country of Birth per Year",
-                            subheader = f"This plot shows the number of prizes per country of birth of laureates by year. You may deselect and reselect countries from the legend to customize your plot.",
-                            plot_id = "fig_bar_prizespercountry",
-                            figure = fig_bar_prizespercountry,
-                            footer = [
-                                dcc.Markdown("**Interesting Findings**: The many pink lines on top in the right part of the plot emphasize our earlier finding that the number of prizes given to the USA has increased tremendously only after World War II.")
-                                ],
+                       html.Div(
+                            [
+                                dmc.Skeleton(
+                                    h=200,
+                                    id="skel_bar_prizespercountry",
+                                    visible=True,  # Initially visible while loading
+                                    style={"height": "100", "width": "100"},
+                                    children=html.Div(id="skel_bar_prizespercountry_container")
+                                ),
+                            ]
                         ),
 
 
-                        # PLOT: Stacked Bar Running Sum: Nobel Prizes by Country of Birth per Year
-                        generate_plot_in_layout(   
-                            header = "Nobel Prizes by Country of Birth per Year (Running Sum)",
-                            subheader = f"This plot shows the running sum of prizes per country of birth of laureates by year. You may deselect and reselect countries from the legend to customize your plot.",
-                            plot_id = "fig_bar_prizespercountry_rs",
-                            figure = fig_bar_prizespercountry_rs,
-                            footer = [
-                                dcc.Markdown("**Interesting Findings**: See above plot.")
-                                ],
+                       html.Div(
+                            [
+                                dmc.Skeleton(
+                                    id="skel_bar_prizespercountry_rs",
+                                    visible=True,  # Initially visible while loading
+                                    style={"height": "100px", "width": "100px"},
+                                    children=html.Div(id="skel_bar_prizespercountry_rs_container")
+                                ),
+                            ]
                         ),
+
+
 
                     ],
                     gap="sm"
@@ -997,11 +1055,120 @@ def render_tab_geography_content(active_tab):
         )
 
     else:
-        return html.Div("No content available")
+        return html.Div("Data is loading.")
+
+
+@callback(
+    Output("graph-bubbles-population", "children"),
+    Output("loader-bubbles-population", "style"),  # Hide loader
+    Output("graph-bubbles-population", "style"),  # Show graph
+    Input("graph-bubbles-population", "id"),  # Trigger on app load
+)
+def display_fig_bubbles_population2(_):
+    
+    # Load your precomputed figure
+    with open('pcp_tab_geography.pkl', 'rb') as f1:
+        pcp_tab_geography = pickle.load(f1)
+    fig_bubbles_population = pcp_tab_geography['fig_bubbles_population']
+
+    # Generate the graph layout
+    graph = dcc.Graph(
+        id="fig_bubbles_population",
+        figure=fig_bubbles_population,
+        style={'width': 'auto', 'height': '70vh'},
+    )
+
+    # Hide the loader and show the graph
+    return graph, {"display": "none"}, {"display": "block"}
 
 
 
-# Tab Demographics
+
+# PLOT: Bubbles: Nobel Prizes by Country of Birth and Population
+@callback(
+    Output("skel_bubbles_population_container", "children"),
+    Output("skel_bubbles_population", "visible"),  # Control Skeleton visibility
+    Input("skel_bubbles_population_container", "id"),  # Trigger callback on app load
+)
+def display_fig_bubbles_population(_):
+
+    # Load precomputed plots only if they haven't been loaded yet
+    with open('pcp_tab_geography.pkl', 'rb') as f1:
+        pcp_tab_geography = pickle.load(f1)
+    
+    # Extract the figures from the loaded pickle data
+    fig_bubbles_population = pcp_tab_geography['fig_bubbles_population']
+
+    graph =  generate_plot_in_layout(   
+                            header = "Nobel Prizes by Country of Birth and Population",
+                            subheader = "This plot shows the number of prizes by country of birth, but in relation to the population size of the country in the respective year. You can use the slider or play button to see the animation of the years. \n How to Read: The actual number of prizes is shown as a number after the country name. The size of the bubble relates to the population size, but is adjusted to make smaller populations appear bigger, and bigger populations smaller; otherwise, China and India would overlap everything else. The x-axis shows the population on a log scale, again as otherwise the large countries would push the small countries to the far left edge. The y-axis shows the number of prizes per 1 million inhabitants. The scale is ajusted to the 4th root of that value, which makes the range/visible area from 0-1 very large, and that from 10-20 relatively small. Otherwise, the tiny countries with one or two laureates would push the rest to the bottom.",
+                            plot_id = "fig_bubbles_population",
+                            figure = fig_bubbles_population,
+                            footer = [
+                                dcc.Markdown("**Interesting Findings**: The visualization shows, for exampe, that countries like the USA only start to play an important role after World War II; also, in relation to their population number, they did not get unusually many Nobel Prizes. Small population numbers and a few prizes bring you to the top of the chart, as St. Lucia and Iceland show. On the other hand, large countries like India and China still have a bad prize-population ratio, partly simply due to their large population.")
+                                ],
+                            style={'width': 'auto', 'height': '70vh'},
+                        ),
+    return graph, False  # Return the graph and hide the skeleton
+
+
+
+# PLOT: Stacked Bar: Nobel Prizes by Country of Birth per Year
+@callback(
+    Output("skel_bar_prizespercountry_container", "children"),
+    Output("skel_bar_prizespercountry", "visible"),  # Control Skeleton visibility
+    Input("skel_bar_prizespercountry_container", "id"),  # Trigger callback on app load
+)
+def display_fig_bar_prizespercountry(_):
+
+    # Load precomputed plots only if they haven't been loaded yet
+    with open('pcp_tab_geography.pkl', 'rb') as f1:
+        pcp_tab_geography = pickle.load(f1)
+    
+    # Extract the figures from the loaded pickle data
+    fig_bar_prizespercountry = pcp_tab_geography['fig_bar_prizespercountry']
+
+    graph =  generate_plot_in_layout(   
+                            header = "Nobel Prizes by Country of Birth per Year",
+                            subheader = "This plot shows the number of prizes per country of birth of laureates by year. You may deselect and reselect countries from the legend to customize your plot.",
+                            plot_id = "fig_bar_prizespercountry",
+                            figure = fig_bar_prizespercountry,
+                            footer = [
+                                dcc.Markdown("**Interesting Findings**: The many pink lines on top in the right part of the plot emphasize our earlier finding that the number of prizes given to the USA has increased tremendously only after World War II.")
+                                ],
+                        ),
+    return graph, False  # Return the graph and hide the skeleton
+
+
+
+# PLOT: Stacked Bar: Nobel Prizes by Country of Birth per Year Running Sum
+@callback(
+    Output("skel_bar_prizespercountry_rs_container", "children"),
+    Output("skel_bar_prizespercountry_rs", "visible"),  # Control Skeleton visibility
+    Input("skel_bar_prizespercountry_rs_container", "id"),  # Trigger callback on app load
+)
+def display_fig_bar_prizespercountry_rs(_):
+
+    # Load precomputed plots only if they haven't been loaded yet
+    with open('pcp_tab_geography.pkl', 'rb') as f1:
+        pcp_tab_geography = pickle.load(f1)
+    
+    # Extract the figures from the loaded pickle data
+    fig_bar_prizespercountry_rs = pcp_tab_geography['fig_bar_prizespercountry_rs']
+
+    graph =  generate_plot_in_layout(   
+                            header = "Nobel Prizes by Country of Birth per Year",
+                            subheader = "This plot shows the number of prizes per country of birth of laureates by year. You may deselect and reselect countries from the legend to customize your plot.",
+                            plot_id = "fig_bar_prizespercountry_rs",
+                            figure = fig_bar_prizespercountry_rs,
+                            footer = [
+                                dcc.Markdown("**Interesting Findings**: The many pink lines on top in the right part of the plot emphasize our earlier finding that the number of prizes given to the USA has increased tremendously only after World War II.")
+                                ],
+                        ),
+    return graph, False  # Return the graph and hide the skeleton
+                        
+
+# Tab Demography
 ##################################################################################################
 
 @app.callback(
@@ -1947,12 +2114,12 @@ def update_migration_parcat_2(loc1, loc2, loc3): # the passed value here is pass
 
 # --------------------
 # Run the app (locally)
-# if __name__ == "__main__":
-#     app.run(debug=True, port=5085)
+if __name__ == "__main__":
+    app.run(debug=True, port=5085)
 
-# # Run the app on the server
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 8050))  # Fallback to port 8050 if PORT isn't set
-    app.run_server(host='0.0.0.0', port=port, debug=True)
+# # # Run the app on the server
+# if __name__ == '__main__':
+#     port = int(os.environ.get('PORT', 8050))  # Fallback to port 8050 if PORT isn't set
+#     app.run_server(host='0.0.0.0', port=port, debug=False)
 
 
