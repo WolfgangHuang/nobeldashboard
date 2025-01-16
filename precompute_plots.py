@@ -192,6 +192,10 @@ replacement_dict = {
 # Call the function
 df_laureates = replace_values_in_columns(df_laureates_import, columns_to_modify, replacement_dict)
 
+# Replace "Physiology or Medicine" with "Medicine" for consistency
+df_laureates['Prize0_Category'] = df_laureates['Prize0_Category'].replace('Physiology or Medicine', 'Medicine')
+df_laureates['Prize1_Category'] = df_laureates['Prize1_Category'].replace('Physiology or Medicine', 'Medicine')
+df_laureates['Prize2_Category'] = df_laureates['Prize2_Category'].replace('Physiology or Medicine', 'Medicine')
 
 
 ##################################################################################################
@@ -403,8 +407,8 @@ def count_per_country(data=df_laureates, country="BirthCountryNow"):
 
 
 #df_nobelprizes_percountry.to_csv("df_nobelprizes_percountry.csv", sep=';', encoding="UTF-8")
-df=count_per_country()
-max_prize_count = df['Count'].max()
+df_max_prize_count=count_per_country()
+max_prize_count = df_max_prize_count['Count'].max()
 
 
 ##################################################################################################
@@ -415,7 +419,7 @@ def define_category_states(chip_medicine, chip_physics, chip_chemistry, chip_eco
 
         # Map chip states to categories
         chip_states = {
-            "Physiology or Medicine": chip_medicine,
+            "Medicine": chip_medicine,
             "Physics": chip_physics,
             "Chemistry": chip_chemistry,
             "Economic Sciences": chip_economics,
@@ -429,23 +433,33 @@ def define_category_states(chip_medicine, chip_physics, chip_chemistry, chip_eco
 
         return selected_categories
 
+def define_gender_states(chip_female, chip_male):
+
+    # Determine the gender filter based on the chip states
+    if chip_female and chip_male:
+        return "all"
+    elif chip_male:
+        return "male"
+    elif chip_female:
+        return "female"
+    else:
+        return ""
 
 
 def standard_filter(data, categories="all", gender="all", timerange=None, timerange_field="award"):
 
     # Replace short handles with lists
     if categories == "all":
-        categories=["Physiology or Medicine", "Physics", "Chemistry", "Economic Sciences", "Literature", "Peace"]
+        categories=["Medicine", "Physics", "Chemistry", "Economic Sciences", "Literature", "Peace"]
     elif categories == "sci":
-        categories=["Physiology or Medicine", "Physics", "Chemistry", "Economic Sciences"]
+        categories=["Medicine", "Physics", "Chemistry", "Economic Sciences"]
     elif categories == "natsci":
-        categories=["Physiology or Medicine", "Physics", "Chemistry"]
+        categories=["Medicine", "Physics", "Chemistry"]
     else:
         categories = categories
 
-    # Appyl category filter
+    # Apply category filter
     df_filtered = data[data["Prize0_Category"].isin(categories)]
-
 
     # Apply gender filter if not "all"
     if gender.lower() != "all":
@@ -456,7 +470,6 @@ def standard_filter(data, categories="all", gender="all", timerange=None, timera
     # Apply year range Filter if not empty
     if timerange is None:
         df_filtered = df_filtered
-
     else:
         if timerange_field == "birth":
             datefield = pd.to_datetime(data['BirthDate'], errors='coerce').dt.year.astype(int)
@@ -490,7 +503,7 @@ def replace_country_designations(country):
 # Plot: Choropleth Globe Countries
 # ================================================================================================
 
-def generate_choroplethglobe(data=df_laureates, country="birth", category="all", gender="all", year_range=None, year_range_field="award"):
+def generate_choroplethglobe(data=df_laureates, country="birth", categories="all", gender="all", year_range=None, year_range_field="award"):
     """
     Generates a 3D globe with the number of Nobel Laureates per Country.
 
@@ -500,11 +513,11 @@ def generate_choroplethglobe(data=df_laureates, country="birth", category="all",
         - "birth"
         - "affiliation"
         - "death"
-    - category (str): The Nobel Prize category to filter by. Allowed values:
+    - categories (str): The Nobel Prize categories to filter by. Allowed values:
         - "all" (no filtering)
         - "Physics"
         - "Chemistry"
-        - "Physiology or Medicine"
+        - "Medicine"
         - "Literature"
         - "Peace"
         - "Economic Sciences"
@@ -527,7 +540,7 @@ def generate_choroplethglobe(data=df_laureates, country="birth", category="all",
     """
 
     # Filter
-    df_filtered = standard_filter(data, category, gender, year_range, year_range_field)
+    df_filtered = standard_filter(data, categories, gender, year_range, year_range_field)
 
     # Count
     country = replace_country_designations(country)
@@ -584,7 +597,7 @@ def generate_choroplethglobe(data=df_laureates, country="birth", category="all",
 # Plot: Scatter Mapbox Cities
 # ================================================================================================
 
-def generate_map_cities(data=df_laureates, city="birth", gender="all", category="all"):
+def generate_scattermapbox_cities(data=df_laureates, city="birth", gender="all", categories="all"):
     """
     Generates a Scatter Mapbox with the number of Nobel Laureates per City.
 
@@ -594,11 +607,11 @@ def generate_map_cities(data=df_laureates, city="birth", gender="all", category=
         - "birth"
         - "affiliation"
         - "death"
-    - category (str): The Nobel Prize category to filter by. Allowed values:
+    - categories (str): The Nobel Prize categories to filter by. Allowed values:
         - "all" (no filtering)
         - "Physics"
         - "Chemistry"
-        - "Physiology or Medicine"
+        - "Medicine"
         - "Literature"
         - "Peace"
         - "Economic Sciences"
@@ -613,7 +626,7 @@ def generate_map_cities(data=df_laureates, city="birth", gender="all", category=
     - fig (plotly.graph_objs._figure.Figure): The Plotly figure object representing the globe.
     """
     # Filter
-    data = standard_filter(data, category, gender)
+    data = standard_filter(data, categories, gender)
 
     # Function to add small jitter to coordinates to avoid overlap
     def add_jitter(coordinates, scale=0.05):
@@ -883,12 +896,12 @@ def prepare_data_bubbles_population(df_nlpc_complete, df_pop=df_pop, interval=5)
 
 # generate the plot
 
-def generate_bubbles_population(data=df_prizes, country="birth", gender="all", category="all", df_pop=df_pop, interval=5):
+def generate_bubbles_perpopulation(data=df_prizes, country="birth", gender="all", categories="all", df_pop=df_pop, interval=5):
     """
     Generates a population-based bubble chart of Nobel Prize data, using Plotly for interactive visualization.
     
     This function:
-      1. Applies a standard filter on the input data using `standard_filter()` to limit rows by category and gender.
+      1. Applies a standard filter on the input data using `standard_filter()` to limit rows by categories and gender.
       2. Prepares the data for bubble plotting by calling `prepare_data_bubbles_population()`; this step merges 
          cumulative prize counts per country/year with population data, and computes numeric transformations 
          (log, min-max normalization).
@@ -898,7 +911,7 @@ def generate_bubbles_population(data=df_prizes, country="birth", gender="all", c
     Args:
         data (pd.DataFrame, optional):
             Nobel Prize data in a pandas DataFrame. Defaults to `df_prizes` (a global variable in this script). 
-            Must contain columns appropriate for filtering by category/gender and merging with population data.
+            Must contain columns appropriate for filtering by categories/gender and merging with population data.
         country (str, optional):
             Country type for merging Nobel data: 
               - "birth" (BirthCountryNow), 
@@ -908,9 +921,9 @@ def generate_bubbles_population(data=df_prizes, country="birth", gender="all", c
         gender (str, optional):
             Filter the data for a specific gender ("male", "female", etc.). Using "all" applies no gender filter.
             Defaults to "all".
-        category (str, optional):
-            Filter the data for a specific Nobel category ("physics", "chemistry", etc.). Using "all" applies 
-            no category filter. Defaults to "all".
+        categories (str, optional):
+            Filter the data for a specific Nobel categories ("physics", "chemistry", etc.). Using "all" applies 
+            no categories filter. Defaults to "all".
         df_pop (pd.DataFrame, optional):
             A DataFrame containing population data by country and year. Defaults to `df_pop` (global variable).
         interval(str):
@@ -921,7 +934,7 @@ def generate_bubbles_population(data=df_prizes, country="birth", gender="all", c
             A Plotly figure object representing the bubble chart, with an animation slider to step through years.
     
     Notes:
-        - Internally calls `standard_filter()` to reduce the dataset based on category/gender.
+        - Internally calls `standard_filter()` to reduce the dataset based on categories/gender.
         - Uses `prepare_data_bubbles_population()` to merge population data, compute transformations (log scale, 
           min-max normalization, etc.), and obtain the bubble sizes.
         - The x-axis is log-transformed population; the y-axis is the 4th root of the "prizes per 1M population."
@@ -930,7 +943,7 @@ def generate_bubbles_population(data=df_prizes, country="birth", gender="all", c
     
     """
 
-    data = standard_filter(data, category, gender)
+    data = standard_filter(data, categories, gender)
     df_nlpc_complete = prepare_data_prizespercountry(data, country)
     data, y_range_max, bubblesize = prepare_data_bubbles_population(df_nlpc_complete, df_pop, interval)
 
@@ -1000,19 +1013,19 @@ def generate_bubbles_population(data=df_prizes, country="birth", gender="all", c
 # Plot: Prizes per Country Stacked Bar Chart
 # ================================================================================================
 
-def generate_bar_prizerpercountry(data=df_prizes, country="birth", gender="all", category="all", runningsum=False):
+def generate_bar_percountry(data=df_prizes, country="birth", gender="all", categories="all", runningsum=False):
     """
     Generates a stacked bar chart of Nobel Prizes per country per year.
     
     This function:
-      1. Applies a standard filter on the input data using `standard_filter()` to limit rows by category and gender.
+      1. Applies a standard filter on the input data using `standard_filter()` to limit rows by categories and gender.
       2. Prepares the data by calling `prepare_data_stacked_bar()`
       3. Creates a Plotly bar chart. 
     
     Args:
         data (pd.DataFrame, optional):
             Nobel Prize data in a pandas DataFrame. Defaults to `df_prizes` (a global variable in this script). 
-            Must contain columns appropriate for filtering by category/gender and merging with population data.
+            Must contain columns appropriate for filtering by categories/gender and merging with population data.
         country (str, optional):
             Country type for merging Nobel data: 
               - "birth" (BirthCountryNow), 
@@ -1022,9 +1035,9 @@ def generate_bar_prizerpercountry(data=df_prizes, country="birth", gender="all",
         gender (str, optional):
             Filter the data for a specific gender ("male", "female", etc.). Using "all" applies no gender filter.
             Defaults to "all".
-        category (str, optional):
-            Filter the data for a specific Nobel category ("physics", "chemistry", etc.). Using "all" applies 
-            no category filter. Defaults to "all".
+        categories (str, optional):
+            Filter the data for a specific Nobel categories ("physics", "chemistry", etc.). Using "all" applies 
+            no categories filter. Defaults to "all".
         runningsum (boolean):
             True: returns a plot with a running sum
             False: returns a plot with individual values per year (default)
@@ -1034,13 +1047,13 @@ def generate_bar_prizerpercountry(data=df_prizes, country="birth", gender="all",
             A Plotly figure object representing the bar chart.
     
     Notes:
-        - Internally calls `standard_filter()` to reduce the dataset based on category/gender.
+        - Internally calls `standard_filter()` to reduce the dataset based on categories/gender.
         - Returns a fully configured Plotly figure ready for interactive display or further styling.
     
     """
 
     # Filter
-    data = standard_filter(data, category, gender)
+    data = standard_filter(data, categories, gender)
 
     # Prepare
     df_nlpc_complete = prepare_data_prizespercountry(data, country)
@@ -1090,7 +1103,7 @@ def generate_bar_prizerpercountry(data=df_prizes, country="birth", gender="all",
 # Prizes per Country Stacked Bar Chart (Running Sum)
 # ================================================================================================
 
-# fig=generate_bar_prizerpercountry(runningsum=True)
+# fig=generate_bar_percountry(runningsum=True)
 
 
 
@@ -1102,7 +1115,7 @@ def generate_bar_prizerpercountry(data=df_prizes, country="birth", gender="all",
 # Plot: Prizes to Women and Men per Decade, 3D surface
 # ================================================================================================
 
-def prepare_data_3dsurface(data):
+def prepare_data_3dsurface(data, categories, gender):
     """
     Prepares data for a 3D surface plot.
     
@@ -1121,6 +1134,15 @@ def prepare_data_3dsurface(data):
         df_prizes_women, df_prizes_men (Pandas Dataframe)
             Two dfs allowing to show two surfaces in the plot.    
     """
+
+    data = standard_filter(data, categories, gender)
+
+    # To ensure that we don't accidentally modify the passed original dataframe.
+    data = data.copy()
+
+    # Replace catgeory names with abbreviations so they fit better in the plot
+    data.loc[:,"Prize0_Category"] = data["Prize0_Category"].replace({"Medicine": "Med", "Physics": "Phys", "Chemistry": "Chem", "Economic Sciences": "Eco", "Literature": "Lit", "Peace": "Pea"})
+
 
     # Get required data from main df
     df_prizes_pergender_perdecade_a = data[['LaureateGender', 'Prize0_AwardYear', 'Prize0_Category']].copy()
@@ -1149,7 +1171,7 @@ def prepare_data_3dsurface(data):
     return df_prizes_women, df_prizes_men
 
 
-def generate_surface_plot_mw(data=df_prizes, gender="female"):
+def generate_3dsurface_pergender(data=df_prizes, categories="all",  gender="female", width=1000, height=600):
     """
     Generates 3D surface plot, showing prizes to men and women.
     
@@ -1174,52 +1196,48 @@ def generate_surface_plot_mw(data=df_prizes, gender="female"):
         - Returns a fully configured Plotly figure ready for interactive display or further styling.
     
     """
-    # prepare data
-    data_w, data_m = prepare_data_3dsurface(data)
+    # Prepare data
+    data_w, data_m = prepare_data_3dsurface(data, categories, gender)
 
-    # set axes
-    y = ["Chem", "Eco", "Lit", "Peace", "Phys", "Med"]
-    x = ["1900", "1910", "1920", "1930", "1940", "1950", "1960", "1970", "1980", "1990", "2000", "2010", "2020"]
+    # Define axes dynamically
+    x = list(data_w.columns)  # Decades from the pivoted DataFrame columns
+    y = list(data_w.index)    # Categories from the pivoted DataFrame index
 
-    # filter gender
+    # Filter gender and determine surfaces
     if gender == "all":
-        data=[go.Surface(z=data_w.values, y=y, x=x, colorscale=brand_colorscale_main, showscale=False, opacity=0.7),
-              go.Surface(z=data_m.values, y=y, x=x, colorscale=brand_colorscale_main, showscale=False, opacity=0.7)]
-    elif gender =="female":
-        data=[go.Surface(z=data_w.values, y=y, x=x, colorscale=brand_colorscale_main, showscale=False, opacity=0.7)]
+        data = [
+            go.Surface(z=data_w.values, y=y, x=x, colorscale=brand_colorscale_main, showscale=False, opacity=0.7),
+            go.Surface(z=data_m.values, y=y, x=x, colorscale=brand_colorscale_main, showscale=False, opacity=0.7)
+        ]
+    elif gender == "female":
+        data = [
+            go.Surface(z=data_w.values, y=y, x=x, colorscale=brand_colorscale_main, showscale=False, opacity=0.7)
+        ]
     elif gender == "male":
-        data=[go.Surface(z=data_m.values, y=y, x=x, colorscale=brand_colorscale_main, showscale=False, opacity=0.7)]
+        data = [
+            go.Surface(z=data_m.values, y=y, x=x, colorscale=brand_colorscale_main, showscale=False, opacity=0.7)
+        ]
 
-    # initiatie figure
+    # Initiate figure
     fig = go.Figure(data=data)
 
-    # add some layout details
+    # Add layout details
     fig.update_layout(
-        # title='Nobel Prizes to Men and Women per Discipline and Decade',
         autosize=True,
-        # width=1000, 
-        # height=800,
-
         template='plotly_white',
-        scene=dict(                             
-            xaxis=dict(
-                tickvals=x,
-                ticktext=x,
-                title='Decades',
-                autorange='reversed' 
-            ),
-            yaxis=dict(
-                title='Categories'  
-            ),
-            zaxis=dict(
-                title='Prizes'  
-            ),
+        scene=dict(
+            xaxis=dict(tickvals=x, ticktext=x, title='Decades', autorange='reversed'),
+            yaxis=dict(title='Categories'),
+            zaxis=dict(title='Prizes'),
             camera=dict(
-                eye=dict(x=1.5, y=1.5, z=1.5), 
-                center=dict(x=0, y=0, z=-0.3),       
-                up=dict(x=0, y=0, z=2)           
+                eye=dict(x=1.5, y=1.5, z=1.5),
+                center=dict(x=0, y=0, z=-0.3),
+                up=dict(x=0, y=0, z=2)
             ),
-        )
+        ),
+        width = width,
+        height = height,
+        margin=dict(l=10, r=10, t=10, b=10)
     )
     return fig
 
@@ -1227,14 +1245,14 @@ def generate_surface_plot_mw(data=df_prizes, gender="female"):
 # Plot: Donuts Gender/Ethnicity/Religion
 # ================================================================================================
 
-def prepare_data_donuts(data, category, gender, characteristic):
+def prepare_data_donuts(data, categories, gender, characteristic):
     """
     Prepares data for a donut chart by filtering and aggregating counts 
     based on the specified characteristic.
 
     Args:
         data (DataFrame): The input dataset containing laureate information.
-        category (str): The category filter (e.g., 'physics', 'chemistry', or 'all').
+        categories (str): The categories filter (e.g., 'physics', 'chemistry', or 'all').
         gender (str): The gender filter (e.g., 'male', 'female', or 'all').
         characteristic (str): The characteristic to aggregate by 
             ('gender', 'ethnicity', or 'religion').
@@ -1246,7 +1264,7 @@ def prepare_data_donuts(data, category, gender, characteristic):
     """
 
     # Standard filter
-    data = standard_filter(data, category, gender)
+    data = standard_filter(data, categories, gender)
 
     if characteristic == "gender":
         # Data for gender
@@ -1272,14 +1290,14 @@ def prepare_data_donuts(data, category, gender, characteristic):
         return df_empty
 
 
-def generate_donut(data=df_laureates, category="all", gender="all", characteristic="gender"):
+def generate_donut(data=df_laureates, categories="all", gender="all", characteristic="gender"):
     """
     Generates a donut chart visualizing the distribution of a specified 
     characteristic (e.g., gender, ethnicity, or religion) among Nobel laureates.
 
     Args:
         data (DataFrame): The input dataset containing laureate information (default: df_laureates).
-        category (str): The category filter (e.g., 'physics', 'chemistry', or 'all').
+        categories (str): The categories filter (e.g., 'physics', 'chemistry', or 'all').
         gender (str): The gender filter (e.g., 'male', 'female', or 'all').
         characteristic (str): The characteristic to visualize 
             ('gender', 'ethnicity', 'religion').
@@ -1290,7 +1308,7 @@ def generate_donut(data=df_laureates, category="all", gender="all", characterist
     """
 
     # Prepare data
-    data = prepare_data_donuts(data, category, gender, characteristic)
+    data = prepare_data_donuts(data, categories, gender, characteristic)
 
     # Extract labels and values
     labels = data['Label'].tolist()
@@ -1342,13 +1360,13 @@ def generate_donut(data=df_laureates, category="all", gender="all", characterist
 # Plot: Timegap
 # ================================================================================================
 
-def prepare_data_timegap_histogram(data, category, gender, datasource):
+def prepare_data_histogram_timegap(data, categories, gender, datasource):
     """
     Filters and prepares data for a timegap histogram.
 
     Args:
         data (DataFrame): The input data containing a 'PublicationSource' column. Usually df_laureates passed from the calling function.
-        category (str): The category filter to apply.
+        categories (str): The categories filter to apply.
         gender (str): The gender filter to apply.
         datasource (str): The data source to filter by 
             ('paper', 'chatgpt', or other).
@@ -1358,14 +1376,11 @@ def prepare_data_timegap_histogram(data, category, gender, datasource):
         is not empty and matches the specified filters.
     """
 
+    data = standard_filter(data, categories, gender)
+
     # delete rows where there is no info on the timegap
-    data = data[data['PublicationSource'].notna() & (data['PublicationSource'].str.strip() != "")]
+    df_filtered = data[data['PublicationSource'].notna() & (data['PublicationSource'].str.strip() != "")]
 
-    # replace category
-    data.loc[:,'Prize0_Category'] = data['Prize0_Category'].replace('Physiology or Medicine', 'Medicine')
-
-    df_filtered = standard_filter(data, category, gender)
-    
     if datasource == "paper":
         df_filtered = df_filtered[(df_filtered['PublicationSource']) == "Harvard Dataverse"]
 
@@ -1377,23 +1392,23 @@ def prepare_data_timegap_histogram(data, category, gender, datasource):
     return df_filtered
 
 
-def generate_histogram_timegap(data=df_prizes, category="all", gender="all", datasource="all"):
+def generate_histogram_timegap(data=df_prizes, categories="all", gender="all", datasource="all"):
     """
     Generates a histogram visualizing the time gap between seminal papers 
     and Nobel Prizes.
 
     Args:
         data (DataFrame): The input dataset (default: df_prizes).
-        category (str): Category filter (e.g., 'Physics', 'Chemistry', or 'all').
+        categories (str): categories filter (e.g., 'Physics', 'Chemistry', or 'all').
         gender (str): Gender filter (e.g., 'male', 'female', or 'all').
         datasource (str): Data source filter (e.g., 'paper', 'chatgpt', or 'all').
 
     Returns:
         plotly.graph_objects.Figure: A histogram of time gaps, colored by 
-        prize category, with custom styling and layout.
+        prize categories, with custom styling and layout.
     """    
-    
-    data = prepare_data_timegap_histogram(data, category, gender, datasource)
+
+    data = prepare_data_histogram_timegap(data, categories, gender, datasource)
 
     fig = px.histogram(
         data,
@@ -1409,7 +1424,7 @@ def generate_histogram_timegap(data=df_prizes, category="all", gender="all", dat
         #title="Histogram of Timegap Between Seminal Paper and Nobel Prize",
         labels={
             "Timegap": "Time Gap (years)",   # X-axis label
-            "count": "Number of Prizes"   # Y-axis label
+            "Count": "Number of Prizes"   # Y-axis label
         },
             barmode="group"
     )
@@ -1435,7 +1450,7 @@ def generate_histogram_timegap(data=df_prizes, category="all", gender="all", dat
         # height = 600,
         autosize=True
         ),
-    
+
     return fig
 
 
@@ -1443,7 +1458,7 @@ def generate_histogram_timegap(data=df_prizes, category="all", gender="all", dat
 # Plot: Timegap with Trendlines
 # ================================================================================================
 
-def generate_scatterbox_timegaptrend(data=df_laureates, df_lifeexpectancy=df_lifeexpectancy, category="all", gender="all"):
+def generate_scatterbox_timegaptrend(data=df_laureates, df_lifeexpectancy=df_lifeexpectancy, categories="all", gender="all", datasource="both"):
     """
     Generates a trend visualization of the time gap between seminal papers 
     and Nobel Prizes, including trendlines and life expectancy comparisons.
@@ -1451,7 +1466,7 @@ def generate_scatterbox_timegaptrend(data=df_laureates, df_lifeexpectancy=df_lif
     Args:
         data (DataFrame): The input dataset of laureates (default: df_laureates).
         df_lifeexpectancy (DataFrame): Life expectancy data (default: df_lifeexpectancy).
-        category (str): Category filter (e.g., 'Physics', 'Chemistry', or 'all').
+        categories (str): categories filter (e.g., 'Physics', 'Chemistry', or 'all').
         gender (str): Gender filter (e.g., 'male', 'female', or 'all').
 
     Returns:
@@ -1459,7 +1474,7 @@ def generate_scatterbox_timegaptrend(data=df_laureates, df_lifeexpectancy=df_lif
         categorized by prize, and overlaid with life expectancy trends.
     """
 
-    data = prepare_data_timegap_histogram(data, category, gender, datasource="notapplicable")
+    data = prepare_data_histogram_timegap(data, categories, gender, datasource)
     
     fig = go.Figure()
 
@@ -1468,8 +1483,7 @@ def generate_scatterbox_timegaptrend(data=df_laureates, df_lifeexpectancy=df_lif
     colors = {
         "Physics": c_physics, 
         "Chemistry":c_chemistry, 
-        "Medicine": c_medicine,
-        "Peace": c_peace
+        "Medicine": c_medicine
     }
 
     # Adding scatter points for each category
@@ -1553,7 +1567,7 @@ def generate_scatterbox_timegaptrend(data=df_laureates, df_lifeexpectancy=df_lif
 # ================================================================================================
 
 
-def prepare_data_age(data, gender, category):
+def prepare_data_age(data, gender, categories):
     """
     Prepares data for analyzing the average age of Nobel laureates at the time 
     of receiving their award.
@@ -1561,15 +1575,15 @@ def prepare_data_age(data, gender, category):
     Args:
         data (DataFrame): The input dataset of laureates.
         gender (str): Gender filter (e.g., 'male', 'female', or 'all').
-        category (str): Category filter (e.g., 'physics', 'chemistry', or 'all').
+        categories (str): categories filter (e.g., 'physics', 'chemistry', or 'all').
 
     Returns:
         DataFrame: A grouped DataFrame with average age at award by year 
-        and prize category.
+        and prize categories.
     """
 
     # standard filter
-    df_filtered = standard_filter(data, category, gender)
+    df_filtered = standard_filter(data, categories, gender)
 
     # Copy the relevant columns to avoid warnings
     df_age = df_filtered[["Prize0_AwardYear", "Prize0_Category", "BirthDate", "Prize0_DateAwarded"]].copy()
@@ -1590,31 +1604,28 @@ def prepare_data_age(data, gender, category):
     # Remove rows where Age_at_Award_Years is 0 or empty
     df_age = df_age[df_age["Age_at_Award_Years"] != 0]
 
-    # Replace phs/med with med
-    df_age["Prize0_Category"] = df_age["Prize0_Category"].replace("Physiology or Medicine", "Medicine")
-
     # Group by Award Year and Category, and calculate the mean age
     df_age_grouped = df_age.groupby(["Prize0_AwardYear", "Prize0_Category"]).agg(Avg_Age_at_Award_Years=("Age_at_Award_Years", "mean")).reset_index()
 
     return df_age_grouped
 
 
-def generate_scatterbox_age(data=df_laureates, gender="all", category="all"):
+def generate_scatterbox_age(data=df_laureates, gender="all", categories="all"):
     """
     Generates a scatter plot with trendlines showing the average age of Nobel 
-    laureates at the time of award, grouped by year and prize category.
+    laureates at the time of award, grouped by year and prize categories.
 
     Args:
         data (DataFrame): The input dataset of laureates (default: df_laureates).
         gender (str): Gender filter (e.g., 'male', 'female', or 'all').
-        category (str): Category filter (e.g., 'physics', 'chemistry', or 'all').
+        categories (str): categories filter (e.g., 'physics', 'chemistry', or 'all').
 
     Returns:
         plotly.graph_objects.Figure: A scatter plot with trendlines, 
         categorized by prize type, showing average age trends.
     """
 
-    data = prepare_data_age(data, gender, category)
+    data = prepare_data_age(data, gender, categories)
 
     colors = {
         "Physics": c_physics, 
@@ -1665,7 +1676,7 @@ def generate_scatterbox_age(data=df_laureates, gender="all", category="all"):
 # Plot: Age Heatmap
 # ================================================================================================
 
-def generate_heatmap_age(data=df_laureates, gender="all", category="all"):
+def generate_heatmap_age(data=df_laureates, gender="all", categories="all"):
     """
     Generates a heatmap showing the average age of Nobel laureates at the 
     time of award, categorized by prize and year.
@@ -1673,14 +1684,14 @@ def generate_heatmap_age(data=df_laureates, gender="all", category="all"):
     Args:
         data (DataFrame): The input dataset of laureates (default: df_laureates).
         gender (str): Gender filter (e.g., 'male', 'female', or 'all').
-        category (str): Category filter (e.g., 'physics', 'chemistry', or 'all').
+        categories (str): categories filter (e.g., 'physics', 'chemistry', or 'all').
 
     Returns:
         plotly.graph_objects.Figure: A heatmap showing average laureate 
-        ages by award year and prize category.
+        ages by award year and prize categories.
     """
 
-    data = prepare_data_age(data, gender, category)
+    data = prepare_data_age(data, gender, categories)
 
     data = data.pivot_table(
         index="Prize0_Category", 
@@ -1727,7 +1738,7 @@ def generate_heatmap_age(data=df_laureates, gender="all", category="all"):
 # Plot: Movement Degree - Work - Prize
 # ================================================================================================
 
-def generate_parcat_migration(data=df_laureates, loc1="ParCatDegreeCountry", loc2="ParCatWorkCountry", loc3="ParCatPrizeCountry", category="all", gender="all", width=1600, height=1400):
+def generate_parcat_migration(data=df_laureates, loc1="ParCatDegreeCountry", loc2="ParCatWorkCountry", loc3="ParCatPrizeCountry", categories="all", gender="all", width=1000, height=1400):
     """
     Generates a parallel categories diagram visualizing Nobel laureates' movement 
     via three locations (Degree/WorkPrize or Birth/Prize/Death)
@@ -1747,7 +1758,7 @@ def generate_parcat_migration(data=df_laureates, loc1="ParCatDegreeCountry", loc
         loc1="BirthCountryNow", loc2="Prize0_Affiliation0_Country", loc3="DeathCountryNow"
         width=1400, height=1800
         
-        category (str): Category filter (e.g., 'physics', 'chemistry', or 'all').
+        categories (str): categories filter (e.g., 'physics', 'chemistry', or 'all').
         gender (str): Gender filter (e.g., 'male', 'female', or 'all').
 
     Returns:
@@ -1755,8 +1766,9 @@ def generate_parcat_migration(data=df_laureates, loc1="ParCatDegreeCountry", loc
         movement paths, with customizable dimensions and color-coded categories.
     """
 
-    data = standard_filter(data, category, gender)
+    data = standard_filter(data, categories, gender)
 
+    # .copy() to ensure we don't modify the original dataframe
     data = data[data['ParCatDegreeCountry'].notna() & (data['ParCatDegreeCountry'].str.strip() != "")].copy()
 
     data.loc[:,'color_value'] = data['ParCatPrizeCountry'].factorize()[0]  # Factorize converts categories to unique integers
@@ -1779,7 +1791,7 @@ def generate_parcat_migration(data=df_laureates, loc1="ParCatDegreeCountry", loc
     )])
 
     fig.update_layout(
-        margin={"r":35,"t":0,"l":50,"b":0},
+        #margin={"r":35,"t":0,"l":50,"b":0},
         font=dict(
             family = 'Rubik, sans-serif',
             size = 14,
@@ -1796,126 +1808,11 @@ def generate_parcat_migration(data=df_laureates, loc1="ParCatDegreeCountry", loc
         # ),
         width = width,
         height = height,
+        margin=dict(l=60, r=60, t=30, b=10)
         ),
 
     return fig
 
-
-# def generate_parcat_migration_dwp(data=df_laureates, loc1="ParCatDegreeCountry", loc2="ParCatWorkCountry", loc3="ParCatPrizeCountry", category="all", gender="all"):
-#     """
-#     Generates a parallel categories diagram visualizing Nobel laureates' movement 
-#     from degree locations to work locations and prize locations.
-
-#     Args:
-#         data (DataFrame): The input dataset of laureates (default: df_laureates).
-#         loc1 (str): Column representing the degree location (default: "ParCatDegreeCountry").
-#         loc2 (str): Column representing the work location (default: "ParCatWorkCountry").
-#         loc3 (str): Column representing the prize location (default: "ParCatPrizeCountry").
-#         category (str): Category filter (e.g., 'physics', 'chemistry', or 'all').
-#         gender (str): Gender filter (e.g., 'male', 'female', or 'all').
-
-#     Returns:
-#         plotly.graph_objects.Figure: A parallel categories diagram showing 
-#         movement paths, with customizable dimensions and color-coded categories.
-#     """
-
-#     data = standard_filter(data, category, gender)
-
-#     data = data[data['ParCatDegreeCountry'].notna() & (data['ParCatDegreeCountry'].str.strip() != "")]
-
-#     data.loc[:,'color_value'] = data['ParCatPrizeCountry'].factorize()[0]  # Factorize converts categories to unique integers
-
-#     fig = go.Figure(data=[go.Parcats(
-#         dimensions=[
-#             {'label': 'Degree', 'values': data[loc1]},
-#             {'label': 'Work', 'values': data[loc2]},
-#             {'label': 'Prize', 'values': data[loc3]}
-#         ],
-#         line={
-#             'color': data['color_value'],  # Use the mapped numerical values for coloring
-#             'colorscale': colorscale_palette,
-#             'shape': 'hspline'  # hspline is the attribute for curved lines
-#         },
-#         hoveron='color', # Hover on color
-#         hoverinfo='all', # Display all available information on hover
-#         arrangement='freeform' # Allows for dragging categories without snapping to a grid
-        
-#     )])
-
-#     fig.update_layout(
-#         margin={"r":35,"t":0,"l":50,"b":0},
-#         font=dict(
-#             family = 'Rubik, sans-serif',
-#             size = 14,
-#             color = brand_color_main,
-#         ),
-#         # title=dict(
-#         #     text = "4.a: Movement from Locations of Degree / Achievement / Prize",
-#         #     font=dict(size = 20),
-#         #     x = 0,                            # Left align the title
-#         #     xanchor = 'left',                 # Align to the left edge
-#         #     y = 1,                         # Adjust Y to position title above the map
-#         #     yanchor = 'top',                  # Anchor at the top of the title box
-#         #     pad=dict(t = 20, b = 20)
-#         # ),
-#         width = 1600,
-#         height = 1400,
-#         ),
-
-#     return fig
-
-# # Plot: Movement Birth - Prize -  Death
-# # ==============================================================================================
-
-# def generate_parcat_migration_bpd(data=df_laureates, loc1="BirthCountryNow", loc2="Prize0_Affiliation0_Country", loc3="DeathCountryNow", gender="all", category="all"):
-#     """
-#     Generates a parallel categories diagram visualizing Nobel laureates' migration 
-#     paths across birth, work, and death locations.
-
-#     Args:
-#         data (DataFrame): The input dataset of laureates (default: df_laureates).
-#         loc1 (str): Column representing the birth location (default: "BirthCountryNow").
-#         loc2 (str): Column representing the work location (default: "Prize0_Affiliation0_Country").
-#         loc3 (str): Column representing the death location (default: "DeathCountryNow").
-#         gender (str): Gender filter (e.g., 'male', 'female', or 'all').
-#         category (str): Category filter (e.g., 'physics', 'chemistry', or 'all').
-
-#     Returns:
-#         plotly.graph_objects.Figure: A parallel categories diagram showing 
-#         migration paths, with customizable dimensions and color-coded categories.
-#     """
-
-#     df_filtered = standard_filter(data, category, gender)
-
-#     data = df_filtered[["BirthCityNow", "BirthCountryNow","BirthContinent","Prize0_Affiliation0_CityNow", "Prize0_Affiliation0_Country","Prize0_Affiliation0_Continent", "DeathCityNow", "DeathCountryNow", "DeathContinent"]]
-#     data = data.fillna('None')
-
-#     data['color_value'] = data[loc1].factorize()[0]  # Factorize converts categories to unique integers
-
-#     fig = go.Figure(data=[go.Parcats(
-#             dimensions=[
-#                 {'label': 'Birth', 'values': data[loc1]},
-#                 {'label': 'Work', 'values': data[loc2]},
-#                 {'label': 'Death', 'values': data[loc3]}
-#             ],
-#             line={
-#                 'color': data['color_value'],  # Use the mapped numerical values for coloring
-#                 'colorscale': colorscale_palette,
-#                 'shape': 'hspline'  # hspline is the attribute for curved lines
-#             },
-#             hoveron='color', # Hover on color
-#             hoverinfo='all', # Display all available information on hover
-#             arrangement='freeform', # Allows for dragging categories without snapping to a grid
-#         )])
-
-#     fig.update_layout(
-#         # title="Nobel Laureate Migration (Countries)", 
-#         width=1400, 
-#         height=1800,
-#         # autosize=True
-#     )
-
-#     return fig
 
 
 # Misc
@@ -2064,7 +1961,7 @@ def generate_line_prizemoney(data=df_prizes, currency="EUR"):
 # Plot Sunburst 2024
 #=================================================================================================
 
-def prepare_data_sunburst(data, year, path):
+def prepare_data_sunburst(data, year, path, categories, gender):
     """
     Prepares data for a sunburst chart by grouping and counting based on the specified path.
 
@@ -2077,6 +1974,8 @@ def prepare_data_sunburst(data, year, path):
         DataFrame: A DataFrame containing the grouped counts with the specified path columns 
         and a 'count' column representing the number of occurrences.
     """
+   
+    data = standard_filter(data, categories, gender)
 
     if year=="last":
         data = data[data['Prize0_AwardYear'] == lastyearincluded]
@@ -2085,12 +1984,12 @@ def prepare_data_sunburst(data, year, path):
  
     # Group by Category and Gender to get the counts
     data_count = data.groupby(path).size().reset_index(name='count')
-    data_count.replace({'Physiology or Medicine': 'Medicine', 'Economic Sciences': 'Economics', 'United States': 'USA'}, inplace=True)
+    data_count.replace({'Economic Sciences': 'Economics', 'United States': 'USA'}, inplace=True)
 
     return data_count
 
 
-def generate_sunburst(data=df_laureates, year="all", path=['Prize0_Category', 'LaureateGender', 'BirthCountryNow']):
+def generate_sunburst(data=df_laureates, year="all", path=['Prize0_Category', 'LaureateGender', 'BirthCountryNow'], categories="all", gender="all"):
     """
     Generates a sunburst chart visualizing the distribution of Nobel laureates 
     based on the specified hierarchical path.
@@ -2105,7 +2004,7 @@ def generate_sunburst(data=df_laureates, year="all", path=['Prize0_Category', 'L
         with customized colors based on prize categories.
     """
 
-    data = prepare_data_sunburst(data, year, path)
+    data = prepare_data_sunburst(data, year, path, categories, gender)
 
     fig = px.sunburst(
         data, 
@@ -2128,7 +2027,7 @@ def generate_sunburst(data=df_laureates, year="all", path=['Prize0_Category', 'L
 # Plot Movement Splines on Map/Globe
 #=================================================================================================
 
-def prepare_data_splines(data, year, category, gender):
+def prepare_data_splines(data, year, categories, gender):
    """
    Filters and formats Nobel laureates' data for visualizing movement splines.
 
@@ -2138,8 +2037,8 @@ def prepare_data_splines(data, year, category, gender):
       Input DataFrame with laureates' details.
    year : str or int
       Award year to filter by; use "last" for the most recent year, or 'all'. Individual years won't work.
-   category : str
-      Nobel Prize category (e.g., 'physics', 'all').
+   categories : str
+      Nobel Prize categories (e.g., 'physics', 'all').
    gender : str
       Gender filter ('male', 'female', 'all').
 
@@ -2150,7 +2049,7 @@ def prepare_data_splines(data, year, category, gender):
    """
 
    # standard filter
-   data = standard_filter(data, category, gender)
+   data = standard_filter(data, categories, gender)
 
    # get required columns
    df_movement_splines = data[["AwardeeDisplayName", "Prize0_AwardYear", "BirthCityNow", "BirthCountryNow","BirthContinent", "BirthCityNowLat", "BirthCityNowLon",
@@ -2177,7 +2076,7 @@ def prepare_data_splines(data, year, category, gender):
 
 
 
-def generate_globe_movemment(data=df_laureates, year="last", category="all", gender="all"):
+def generate_globe_movement(data=df_laureates, year="all", categories="all", gender="all"):
     """
     Creates a globe visualization showing Nobel laureates' migration paths.
 
@@ -2187,8 +2086,8 @@ def generate_globe_movemment(data=df_laureates, year="last", category="all", gen
         Input DataFrame containing laureates' data (default is `df_laureates`).
     year : str or int, optional
         Award year to filter by; use "last" for the most recent year, or 'all'. Individual years won't work. (default is "last").
-    category : str, optional
-        Nobel Prize category to filter (e.g., 'physics', default is "all").
+    categories : str, optional
+        Nobel Prize categories to filter (e.g., 'physics', default is "all").
     gender : str, optional
         Gender filter ('male', 'female', default is "all").
 
@@ -2205,7 +2104,7 @@ def generate_globe_movemment(data=df_laureates, year="last", category="all", gen
 
     colors = colorscale_palette
 
-    data = prepare_data_splines(data, year, category, gender)
+    data = prepare_data_splines(data, year, categories, gender)
 
     # Initialize the figure
     fig = go.Figure()
@@ -2267,7 +2166,7 @@ def generate_globe_movemment(data=df_laureates, year="last", category="all", gen
     return fig
 
 
-def generate_map_movement(data=df_laureates, year="last", category="all", gender="all"):
+def generate_map_movement(data=df_laureates, year="last", categories="all", gender="all"):
     """
     Creates an interactive map visualizing Nobel laureates' migration paths with curved lines.
 
@@ -2277,8 +2176,8 @@ def generate_map_movement(data=df_laureates, year="last", category="all", gender
         Input DataFrame containing laureates' data (default is `df_laureates`).
     year : str or int, optional
         Award year to filter by; use "last" for the most recent year, or 'all'. Individual years won't work. (default is "last").
-    category : str, optional
-        Nobel Prize category to filter (e.g., 'physics', default is "all").
+    categories : str, optional
+        Nobel Prize categories to filter (e.g., 'physics', default is "all").
     gender : str, optional
         Gender filter ('male', 'female', default is "all").
 
@@ -2290,7 +2189,7 @@ def generate_map_movement(data=df_laureates, year="last", category="all", gender
     
     # colors = colorscale_palette
 
-    data = prepare_data_splines(data, year, category, gender)
+    data = prepare_data_splines(data, year, categories, gender)
 
 
     # Function to interpolate points for curved paths
@@ -2440,25 +2339,25 @@ if __name__ == "__main__":
 
         # Tab Geography
         fig_choroplethglobe_prizespercountry = generate_choroplethglobe(df_laureates)
-        fig_map_cities = generate_map_cities(df_laureates)
-        fig_bubbles_population = generate_bubbles_population(df_prizes)
-        fig_bar_prizespercountry = generate_bar_prizerpercountry(df_prizes)
-        fig_bar_prizespercountry_rs = generate_bar_prizerpercountry(df_prizes, runningsum=True)
+        fig_map_cities = generate_scattermapbox_cities(df_laureates)
+        fig_bubbles_population = generate_bubbles_perpopulation(df_prizes)
+        fig_bar_prizespercountry = generate_bar_percountry(df_prizes)
+        fig_bar_prizespercountry_rs = generate_bar_percountry(df_prizes, runningsum=True)
         
         # Tab Demography
-        fig_surface_prizesforwomen = generate_surface_plot_mw(df_prizes, gender="female")
-        fig_surface_prizesformenwomen = generate_surface_plot_mw(df_prizes, gender="all")
+        fig_surface_prizesforwomen = generate_3dsurface_pergender(df_prizes, gender="female")
+        fig_surface_prizesformenwomen = generate_3dsurface_pergender(df_prizes, gender="all")
 
         # Tab Time
-        fig_histogram_timegap = generate_histogram_timegap(df_prizes)
-        fig_scatter_timegaptrend = generate_scatterbox_timegaptrend(df_prizes)
+        fig_histogram_timegap = generate_histogram_timegap(df_prizes, categories="natsci")
+        fig_scatter_timegaptrend = generate_scatterbox_timegaptrend(df_prizes, categories="natsci")
         fig_scatterbox_age = generate_scatterbox_age(df_laureates)
         fig_heatmap_age = generate_heatmap_age(df_laureates)
 
         # Tab Migration
         fig_parcat_migration_dwp = generate_parcat_migration(df_laureates)
         fig_parcat_migration_bpd = generate_parcat_migration(df_laureates, loc1="BirthCountryNow", loc2="Prize0_Affiliation0_Country", loc3="DeathCountryNow", width=1400, height=1800)
-        fig_globe_movement = generate_globe_movemment(df_laureates)
+        fig_globe_movement = generate_globe_movement(df_laureates)
 
         # Tab Misc
         fig_line_prizemoney, totalprizeamount = generate_line_prizemoney(df_prizes)
@@ -2502,12 +2401,6 @@ if __name__ == "__main__":
         'totalprizeamount' : totalprizeamount
         }
  
-    # pcp_plots = generate_plots()
-    # with open('pcp_plots.pkl', 'wb') as f:
-    #     pickle.dump(pcp_plots, f)
-
-    # print("All plots precomputed.")
-
 
     # Save plots to a pickle file
 
@@ -2530,3 +2423,4 @@ if __name__ == "__main__":
 
     print(f"All plots precomputed in {elapsed_time:.2f} seconds.")
     print(f"Pickle file size: {file_size:.2f} MB.")
+
