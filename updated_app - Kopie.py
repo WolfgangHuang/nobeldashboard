@@ -67,7 +67,7 @@ import precompute_plots as pcp
 
 
 ##################################################################################################
-# General Settings
+# Color Settings
 ##################################################################################################
 
 brand_color_plot_background='#FEFEFA'
@@ -153,6 +153,8 @@ max_prize_count = df['Count'].max()
 lastyearincluded = 2024
 numberofprizes = df_prizes.shape[0]
 
+totalprizeamount = pcp.generate_var_prizeamount()
+
 ##################################################################################################
 # Dashboard Main Setup
 ##################################################################################################
@@ -168,11 +170,549 @@ app = Dash(
     suppress_callback_exceptions=True
 )
 
+##################################################################################################
+# Plot Class
+##################################################################################################
+
+class PlotConfig:
+    def __init__(
+        self,
+        plot_id,
+        header="Generic Plot Title",
+        subheader="",
+        data_range=("1901", lastyearincluded),
+        show_filters={"categories": True, "gender": True, "custom-filter": None},
+        badges=None,
+        plot_generator=None,
+        plot_generator_kwargs=None,
+        footer=None,
+        style=None,
+    ):
+        self.plot_id = plot_id
+        self.header = header
+        self.subheader = subheader
+        self.data_range = data_range
+        self.show_filters = show_filters
+        self.badges = badges or [dmc.Badge("All Categories", variant="outline", color=brand_color_alt)]
+        self.plot_generator = plot_generator
+        self.plot_generator_kwargs = plot_generator_kwargs or {}
+        self.footer = footer or []
+        self.style = style or {'width': '100%', 'height': '100%'}
+
+    def get_plot_generator(self):
+        if not self.plot_generator:
+            raise ValueError("Plot generator function not defined.")
+        return getattr(pcp, self.plot_generator, None)
+
+    def generate_layout(self):
+        return generate_plot_in_layout_class(self)
 
 ##################################################################################################
-# Function to generate plots in the layout
+# Individual Plot Parameters
 ##################################################################################################
-  
+
+plot_configs = {
+    # Choropleth Globe
+    "fig_choroplethglobe_prizespercountry": PlotConfig(
+        plot_id="fig_choroplethglobe_prizespercountry",
+        header="Nobel Prizes by Country of Birth",
+        subheader="This plot shows the distribution of country of birth of the laureates; you may rotate the globe and zoom in and out.",
+        plot_generator="generate_choroplethglobe",
+        plot_generator_kwargs={"data": df_laureates},
+        footer=[
+            dcc.Markdown("**Interesting Findings**: The US dominance is clearly visible; apart from Africa, there are surprisingly few white spots.")
+        ],
+    ),
+
+    # Scatter Mapbox Cities
+    "fig_map_cities": PlotConfig(
+        plot_id="fig_map_cities",
+        header="Places of Birth and Death",
+        subheader="This map shows the cities of birth and death of the laureates.",
+        plot_generator="generate_scattermapbox_cities",
+        plot_generator_kwargs={"data": df_laureates},
+        show_filters={
+            "categories": True,
+            "gender": True,
+            "custom-filter": dmc.Stack(
+                children=[
+                    html.Div("Type of city:"),
+                    dcc.Dropdown(
+                        id={
+                            "type": "custom-filter",
+                            "index": "fig_map_cities",
+                            "filter": "city"
+                        },
+                        options=[
+                            {'label': 'City of Birth', 'value': 'birth'},
+                            {'label': 'City of Affiliation at Time of Award', 'value': 'affiliation'},
+                            {'label': 'City of Death', 'value': 'death'}
+                        ],
+                        value='birth',
+                        clearable=False,
+                        style={"width": "400px"}
+                    ),
+                ],
+                gap="xs",
+                align="flex-start",
+                style={"margin-top": "0px"}
+            )
+        },
+        footer=[
+            dcc.Markdown("**Interesting Findings**: The map reveals significant global patterns in birth and death locations.")
+        ],
+    ),
+
+    # Bubbles Per Population
+    "fig_bubbles_population": PlotConfig(
+        plot_id="fig_bubbles_population",
+        header="Nobel Prizes by Country of Birth and Population",
+        subheader="This plot shows the number of prizes by country of birth, but in relation to the population size of the country in the respective year.",
+        plot_generator="generate_bubbles_perpopulation",
+        plot_generator_kwargs={"data": df_prizes},
+        footer=[
+            dcc.Markdown("**Interesting Findings**: The visualization shows that countries like the USA only start to play an important role after World War II.")
+        ],
+    ),
+
+    # Bar Per Country
+    "fig_bar_prizespercountry": PlotConfig(
+        plot_id="fig_bar_prizespercountry",
+        header="Nobel Prizes by Country of Birth per Year",
+        subheader="This plot shows the number of prizes per country of birth of laureates by year. You may deselect and reselect countries from the legend to customize your plot.",
+        plot_generator="generate_bar_percountry",
+        plot_generator_kwargs={"data": df_prizes},
+        footer=[
+            dcc.Markdown("**Interesting Findings**: The many pink lines on top in the right part of the plot emphasize our earlier finding that the number of prizes given to the USA has increased tremendously only after World War II.")
+        ],
+    ),
+
+    "fig_bar_prizespercountry_rs": PlotConfig(
+        plot_id="fig_bar_prizespercountry_rs",
+        header="Nobel Prizes by Country of Birth per Year (Running Sum)",
+        subheader="This plot shows the running sum of prizes by country of birth per year.",
+        plot_generator="generate_bar_percountry",
+        plot_generator_kwargs={"data": df_prizes, "runningsum": True},
+        footer=[
+            dcc.Markdown("**Interesting Findings**: This view highlights the cumulative advantage enjoyed by some countries over time.")
+        ],
+    ),
+
+    # 3D Surface Per Gender
+    "fig_surface_prizesforwomen": PlotConfig(
+        plot_id="fig_surface_prizesforwomen",
+        header = "Nobel Prizes Awarded to Women",
+        subheader = "This plot shows the number of prizes for women in all of the disciplines per decade. It allows you to see when and in which disciplines the most prizes were awarded to women. Feel free to rotate the plot and zoom.",
+        plot_generator="generate_3dsurface_pergender",
+        plot_generator_kwargs={"data": df_laureates, "gender": "female"},
+        show_filters={"categories": True, "gender": False, "custom-filter": False},
+        footer=[
+            dcc.Markdown("**Interesting Findings**: Although it looks like an impressively high mountain range in the more recent decades, note that the maximum value on the y-axis is 5, meaning that at the most 5 out of 30 possible prizes per decade/category went to women.")
+        ],
+    ),
+
+    "fig_surface_prizesformenwomen": PlotConfig(
+        plot_id="fig_surface_prizesformenwomen",
+        header = "Nobel Prizes Awarded to Men and Women",
+        subheader = "This plot is identical to the above, but here, men and women are both shown as two surfaces.",
+        plot_generator="generate_3dsurface_pergender",
+        plot_generator_kwargs={"data": df_laureates, "gender": "all"},
+        show_filters={"categories": True, "gender": False, "custom-filter": False},
+        footer=[
+            dcc.Markdown("**Interesting Findings**: It is not much of a surprise that much many prizes were given to men than to women. Disciplines that perform particularly poorly are economics sciences and physics. The plot also clearly shows that the number of laureates (per year/decade) increases, i.e. prizes are more often given to two or three laureates instead of just one.")
+        ],
+    ),
+
+    # Donut Charts
+    "fig_donut_gender": PlotConfig(
+        plot_id="fig_donut_gender",
+        header="Gender Distribution",
+        subheader = "The labels female and male are taken directly from the official Nobel Prize Outreach API. It would be interesting to learn how they get/set those values, or if they are simply based on perception. In any case, the cases where perception differs from self-identification may exist, but they will not substantially change the findings.",
+        plot_generator="generate_donut",
+        plot_generator_kwargs={"data": df_laureates, "characteristic": "gender"},
+        show_filters={"categories": True, "gender": False, "custom-filter": False},
+        footer = [
+            dcc.Markdown("**Interesting Findings**: This plain old pie chart reaffirms what we found already above.")
+            ],
+    ),
+
+        "fig_donut_ethnicity": PlotConfig(
+        plot_id="fig_donut_ethnicity",
+        header="Ethnicity Distribution",
+        subheader = "This plot shows the distribution of ethnicities among Nobel Laureates. I am aware that notions of ethnicity or even race can be considered problematic. There are some who suggest to not use these categorizations at all. However, I think we may loose analytical power if we do; this chart is the successor to an earlier one that showed that there are exactly zero Black Nobel laureates in the natural sciences. This certainly is an interesing finding, how ever one may interpret it.",
+        plot_generator="generate_donut",
+        plot_generator_kwargs={"data": df_laureates, "characteristic": "ethnicity"},
+        footer = [
+            dcc.Markdown("**Assignment Process**: For additional transparency, here is how I have assigned the labels. Feel free to constructively critizice it. First, I started by geography: Everyone born in Europe was assigned *European*. As a starting point, everyone born in the USA or Canada was also assigned *European*. Similarly for all other continents. That process so far already raises difficult questions as to what ethnicity is, exactly. There is a myriad of publications on this topic, so my working definition was: Where someone's family originated from, going back to before Columbus. That then introduces two new categories for North America: *African-American*, and *North American*. Why not native American? Because even the native people of almost every country immigrated at some point in human history, as far as we know. Consequently, we then have *South American*, and then again *European* for all the (mostly) Spanish and Portuguese immigrants to South America. You may miss some categories like Central America, American Indians, Alaska Natives, etc - but there are simply no laureates in these ethnicities yet, so no need for further distinction. Israel is a special case: geographically, one would have to attribute *Asian*, but historically, most Israeli (laureates) have migrated there from parts of Europe. This is also an example for the next step (after categorization by continent), where I checked various lists available on the internet (mostly Wikipedia), such as \"List of Black Nobel Laureates\", \"List of Latin American Nobel Laureates\", and so on. Whenever appropriate, I changed the label. Next, I went through all the names one by one. Due to my former occupation, I know about 60 percent of them and also know the basics of their biographies. For the remaining ones, I checked their Wikipedia pages. You may note that there is also the category *Various*, which is a more subtle version of \"Mixed\". If it said, for example, on a laureate's Wikipedia page, that he had a British father and Korean mother, then I assigned *Various*.")
+            ],
+    ),
+
+    "fig_donut_religion": PlotConfig(
+        plot_id="fig_donut_religion",
+        header="Religion Distribution",
+        subheader = "This plot shows the distribution of religion among Nobel Laureates.",
+        plot_generator="generate_donut",
+        plot_generator_kwargs={"data": df_laureates, "characteristic": "religion"},
+        footer = [
+            html.Div(dcc.Markdown(["**Note**: Yet another sightly problematic categorization, for various reasons. One of them is data availability. There are lists on Wikipedia for Jewish, Muslim and Christian laureates, which I used. My suspicion here is though that the list of Jewish laureates is more or less complete, while that of Muslim laureates is not. For the list of Christian laureates, it states that it only lists laureates that have professed their faith. So this graph is actually somewhat misleading: First of all, it is unclear wether it is about \"firm faith\" or just religious upbringing. Second, we know little about what laureates really believe, which may be different from their religion. In any case: If we were to look at religion as stated in some official documents, then I suppose the number for Muslims should be higher, the number for Christians should be much higher (close to all of European Ethnicity), and we also have to add those religions completely lacking at the moment, e.g. Asian religions (and others)."])),
+            html.Div(dcc.Markdown(["**Interesting Findings**: Even with the necessary changes described above, there still is a large number of Jewish Nobel laureates: 17.6 percent. According to Wikipedia, the Jewish religion has share among all religions in the world of 0.2 percent."]))   
+        ],
+    ),
+
+    # Histogram Time Gap
+    "fig_histogram_timegap": PlotConfig(
+        plot_id="fig_histogram_timegap",
+        header = "Timegap Between Discovery and Prize (Histogram)",
+        subheader = "This histogram shows how often a value appears. For example, a waiting time of 11 years happened most often (=highest bar)",
+        badges = [dmc.Badge("Natural Sciences", variant="outline", color=brand_color_alt)],
+        plot_generator_kwargs={"data":df_prizes, "categories":"natsci"},
+        plot_generator = "generate_histogram_timegap",
+        show_filters={
+            "categories": True, 
+            "gender": True,
+            "custom-filter": dmc.Stack(
+                    children=[
+                        html.Div("Data source:"),
+                        dcc.Dropdown(
+                            id={
+                                "type": "custom-filter", # custom filters must have 'custom-filter'
+                                "index": "fig_histogram_timegap",  # must match the plot_id
+                                "filter": "datasource"  # must match a plot generator function kwarg so it will be passed properly
+                            },
+                            options=[
+                                {'label': '1901 - 2014 (Nature paper)', 'value': 'paper'},
+                                {'label': '2015 - 2023 (ChatGPT)', 'value': 'chatgpt'},
+                                {'label': '1901 - 2023 (both)', 'value': 'both'}
+                            ],
+                            value='both',  # Default value
+                            clearable=False,
+                            style={"width": "400px"}
+                        ),
+                    ],
+                gap="xs",  # space between the label and the dropdown
+                align="flex-start",  # Align items to the left
+                style={"margin-top": "0px"}
+            )
+        },
+        footer = [
+            dcc.Markdown("**Interesting Findings**: Most scientists who got the Nobel prize had to wait between 1 and 30 years, with a peak around 11 years. Very long waiting times don't appear very often.")
+        ]
+    ),
+
+    # Scatterbox Time Gap Trend
+    "fig_scatter_timegap_trend": PlotConfig(
+        plot_id = "fig_scatter_timegap_trend",
+        header = "Timegap Between Discovery and Prize (Trendlines)",
+        subheader = "This is basically the same data, but presented differently. Here, you see the time gap for all prizes (averaged in case of multiple winners) in all years. The plot also shows the trendlines (going up), as well as the average life expectancy (also going up).",
+        badges = [dmc.Badge("Natural Sciences", variant="outline", color=brand_color_alt)],
+        plot_generator_kwargs={"data":df_prizes, "categories":"natsci"},
+        plot_generator = "generate_scatterbox_timegaptrend",
+        show_filters={
+            "categories": True, 
+            "gender": True,
+            "custom-filter": dmc.Stack(
+                    children=[
+                        html.Div("Data source:"),
+                        dcc.Dropdown(
+                            id={
+                                "type": "custom-filter", # custom filters must have 'custom-filter'
+                                "index": "fig_scatter_timegap_trend",  # must match the plot_id
+                                "filter": "datasource"  # must match a plot generator function kwarg so it will be passed properly
+                            },
+                            options=[
+                                {'label': '1901 - 2014 (Nature paper)', 'value': 'paper'},
+                                {'label': '2015 - 2023 (ChatGPT)', 'value': 'chatgpt'},
+                                {'label': '1901 - 2023 (both)', 'value': 'both'}
+                            ],
+                            value='both',  # Default value
+                            clearable=False,
+                            style={"width": "400px"}
+                        ),
+                    ],
+                gap="xs",  # space between the label and the dropdown
+                align="flex-start",  # Align items to the left
+                style={"margin-top": "0px"}
+            )
+        },
+        footer = [
+            dcc.Markdown("**Interesting Findings**: It seems that the time gap increases in a pretty similar fashion as the life expectancy.")
+            ],
+    ),
+
+
+    # Scatterbox Age
+    "fig_scatterbox_age": PlotConfig(
+        plot_id="fig_scatterbox_age",
+        header = "Laureate Age at Time of Award",
+        subheader = "This is basically the same data, but presented differently. Here, you see the time gap for all prizes (averaged in case of multiple winners) in all years. The plot also shows the trendlines (going up), as well as the average life expectancy (also going up).",
+        plot_generator="generate_scatterbox_age",
+        plot_generator_kwargs={"data": df_laureates},
+        footer = [dcc.Markdown("**Interesting Findings**: In the early years, the average age in the natural sciences was around 45, whereas nowadays it is close to 65. This fits well to the earlier finding that the timegap has increased by - on average - 25 years. Interestingly enough, peace prize awardees get younger.")],
+    ),
+
+    # Heatmap Age
+    "fig_heatmap_age": PlotConfig(
+        plot_id="fig_heatmap_age",
+        header = "Laureate Age at Time of Award (Heatmap)",
+        subheader = "Same data as above, but displayed as heatmap.",
+        plot_generator="generate_heatmap_age",
+        plot_generator_kwargs={"data": df_laureates},
+        footer=[],
+    ),
+
+    # Parcat Migration
+    "fig_parcat_migration_dwp": PlotConfig(
+        plot_id="fig_parcat_migration_dwp",
+        header = "Movement: Place of Main Degree / Main Discovery / Prize",
+        subheader = [
+            dcc.Markdown("This plot shows the movement between three locations: where did the laureates get their main university degree (or similar), where did they do their main work that led to the discovery, and where did they work at the time when they received the prize? This plot is based on the Nature paper \"At what institutions did Nobel laureates do their prize-winning work?\" (see References), which unfortunately only covers the years 1994 - 2014."),
+            dcc.Markdown("**How to Read:**: The three vertical pillars stand for the three points and places in time: **degree, work, prize**. The lines show the flow from one place to the next. The on-hover infobox also shows you the overall percentage of the selected group. If you like, you may also re-arrange the bar sections via drag and drop. The dropdowns let you choose between *City* (many), *Country* (less), and the combination of both, which distinguishes Cambridge UK from Cambridge USA (etc.)")
+        ],
+        badges = [dmc.Badge("Natural Sciences", variant="outline", color=brand_color_alt)],
+        plot_generator="generate_parcat_migration",
+        plot_generator_kwargs={"data": df_laureates},
+        show_filters={
+            "categories": True, 
+            "gender": True,
+            "custom-filter": dmc.Stack(
+                    children=[
+                        html.Div("Type of city:"),
+                        dmc.Group(
+                            children=[
+                                dcc.Dropdown(
+                                    id={
+                                        "type": "custom-filter", # custom filters must have 'custom-filter'
+                                        "index": "fig_parcat_migration_dwp",  # must match the plot_id
+                                        "filter": "loc1"  # must match a plot generator function kwarg so it will be passed properly
+                                    },
+                                    options=[
+                                        {'label': 'City', 'value': 'ParCatDegreeCity'},
+                                        {'label': 'Country', 'value': 'ParCatDegreeCountry'},
+                                        {'label': 'City+Country', 'value': 'ParCatDegreeCityCountry'}
+                                    ],
+                                    value='ParCatDegreeCountry',  # Default value
+                                    clearable=False,
+                                    style={"width": "200px"}
+                                ),
+                                dcc.Dropdown(
+                                    id={
+                                        "type": "custom-filter", # custom filters must have 'custom-filter'
+                                        "index": "fig_parcat_migration_dwp",  # must match the plot_id
+                                        "filter": "loc2"  # must match a plot generator function kwarg so it will be passed properly
+                                    },
+                                    options=[
+                                        {'label': 'City', 'value': 'ParCatWorkCity'},
+                                        {'label': 'Country', 'value': 'ParCatWorkCountry'},
+                                        {'label': 'City+Country', 'value': 'ParCatWorkCityCountry'}
+                                    ],
+                                    value='ParCatWorkCountry',  # Default value
+                                    clearable=False,
+                                    style={"width": "200px"}
+                                ),
+                                dcc.Dropdown(
+                                    id={
+                                        "type": "custom-filter", # custom filters must have 'custom-filter'
+                                        "index": "fig_parcat_migration_dwp",  # must match the plot_id
+                                        "filter": "loc3"  # must match a plot generator function kwarg so it will be passed properly
+                                    },
+                                    options=[
+                                        {'label': 'City', 'value': 'ParCatPrizeCity'},
+                                        {'label': 'Country', 'value': 'ParCatPrizeCountry'},
+                                        {'label': 'City+Country', 'value': 'ParCatPrizeCityCountry'}
+                                    ],
+                                    value='ParCatPrizeCountry',  # Default value
+                                    clearable=False,
+                                    style={"width": "200px"}
+                                ),
+                            ]
+                        )
+                    ],
+                gap="xs",  # space between the label and the dropdown
+                align="flex-start",  # Align items to the left
+                style={"margin-top": "0px"}
+            )
+        },
+        footer = [
+            dcc.Markdown("**Interesting Findings**: There are many findings to be made: For example, US laureates tend to be very immobile; however, not as immobile as the French. German researchers, on the other hand, love to go abroad - however you may want to interpret that. Finally, it is an interesting exercise to speculate if the period 1994-2014 is significantly different from other periods.")
+        ],
+    ),
+    "fig_parcat_migration_bpd": PlotConfig(
+        plot_id="fig_parcat_migration_bpd",
+        header = "Movement: Birth / Prize / Death",
+        subheader = "This plot works the same way, but has slightly diffferent data: place of birth, place of organisation when the prize was awarded, place of death. Note that this dataset, unlike the previous one, spans the full time range. (Selecting *City* may lead to incorrect visuals, as there are simply too many to display.)",
+        badges = [dmc.Badge("Natural Sciences", variant="outline", color=brand_color_alt)],
+        plot_generator="generate_parcat_migration",
+        plot_generator_kwargs={"data": df_laureates},
+        show_filters={
+            "categories": True, 
+            "gender": True,
+            "custom-filter": dmc.Stack(
+                    children=[
+                        html.Div("Type of city:"),
+                        dmc.Group(
+                            children=[
+                                dcc.Dropdown(
+                                    id={
+                                        "type": "custom-filter", # custom filters must have 'custom-filter'
+                                        "index": "fig_parcat_migration_bpd",  # must match the plot_id
+                                        "filter": "loc1"  # must match a plot generator function kwarg so it will be passed properly
+                                    },
+                                    options=[
+                                        {'label': 'City', 'value': 'BirthCityNow'},
+                                        {'label': 'Country', 'value': 'BirthCountryNow'},
+                                        {'label': 'Continent', 'value': 'BirthContinent'},
+                                    ],
+                                    value='BirthContinent',  # Default value
+                                    clearable=False,
+                                    style={"width": "200px"}
+                                ),
+                                dcc.Dropdown(
+                                    id={
+                                        "type": "custom-filter", # custom filters must have 'custom-filter'
+                                        "index": "fig_parcat_migration_bpd",  # must match the plot_id
+                                        "filter": "loc2"  # must match a plot generator function kwarg so it will be passed properly
+                                    },
+                                    options=[
+                                        {'label': 'City', 'value': 'Prize0_Affiliation0_CityNow'},
+                                        {'label': 'Country', 'value': 'Prize0_Affiliation0_Country'},
+                                        {'label': 'Continent', 'value': 'Prize0_Affiliation0_Continent'}
+                                    ],
+                                    value='Prize0_Affiliation0_Country',  # Default value
+                                    clearable=False,
+                                    style={"width": "200px"}
+                                ),
+                                dcc.Dropdown(
+                                    id={
+                                        "type": "custom-filter", # custom filters must have 'custom-filter'
+                                        "index": "fig_parcat_migration_bpd",  # must match the plot_id
+                                        "filter": "loc3"  # must match a plot generator function kwarg so it will be passed properly
+                                    },
+                                    options=[
+                                        {'label': 'City', 'value': 'DeathCityNow'},
+                                        {'label': 'Country', 'value': 'DeathCountryNow'},
+                                        {'label': 'Continent', 'value': 'DeathContinent'}
+                                    ],
+                                    value='DeathCityNow',  # Default value
+                                    clearable=False,
+                                    style={"width": "200px"}
+                                ),
+                            ]
+                        )
+                    ],
+                gap="xs",  # space between the label and the dropdown
+                align="flex-start",  # Align items to the left
+                style={"margin-top": "0px"}
+            )
+        },
+        footer = [
+            dcc.Markdown("**Interesting Findings**: There are many findings to be made: For example, US laureates tend to be very immobile; however, not as immobile as the French. German researchers, on the other hand, love to go abroad - however you may want to interpret that. Finally, it is an interesting exercise to speculate if the period 1994-2014 is significantly different from other periods.")
+        ],
+    ),
+
+     # Line Prize Money
+    "fig_line_prizemoney": PlotConfig(
+        plot_id="fig_line_prizemoney",
+        header="Prize Money Over the Years",
+        subheader = f"In SEK; total amount paid up until today: {(totalprizeamount * 0.088):,.0f} EUR",
+        plot_generator="generate_line_prizemoney",
+        plot_generator_kwargs={"data": df_laureates},
+        footer=[
+            dcc.Markdown("**Interesting Findings**: Prize money has increased significantly in recent decades.")
+        ],
+    ),
+
+    # Sunburst
+    "fig_sunburst_last": PlotConfig(
+        plot_id="fig_sunburst_last",
+        header="Discipline - Gender - Country",
+        subheader="Click on the segments to filter the data.",
+        plot_generator="generate_sunburst",
+        plot_generator_kwargs={"data": df_laureates, "year": "last"},
+        footer=[
+            dcc.Markdown("**Interesting Findings**: The 2024 prizes were mostly given to male researchers from the US or UK.")
+        ],
+    ),
+
+    # Globe Movement
+    "fig_globe_movement": PlotConfig(
+        plot_id="fig_globe_movement",
+        header = "Movement: Birth / Prize",
+        subheader = "This globe shows the movement from place of birth to place of affiliation at the time of the award.)",
+        badges = [dmc.Badge("All Categories", variant="outline", color=brand_color_alt)],
+        plot_generator="generate_globe_movement",
+        plot_generator_kwargs={"data": df_laureates},
+        footer=[
+            dcc.Markdown("**Interesting Findings**: Isn't it nice to look at?")
+        ],
+    ),
+
+    # Map Movement
+    "fig_map_movement": PlotConfig(
+        plot_id="fig_map_movement",
+        header="Life Paths (Birth - Work)",
+        subheader="Some laureates haven't moved and are represented as dots.",
+        plot_generator="generate_map_movement",
+        plot_generator_kwargs={"data": df_laureates},
+        footer=[
+            dcc.Markdown("**Interesting Findings**: Common patterns: European researchers move to the US, the Americans switch coasts at most, and the Asians stay where they are. No South Americans or Africans.")
+        ],
+    ),
+
+}
+
+
+##################################################################################################
+# Functions to generate plots in the layout
+##################################################################################################
+
+# All functions get their parameters from the PlotConfig instance provided to them (as id). A list is provided further up.
+# If you want to change the plot parameters, you need to change the plot_configs dictionary.
+
+#1: Create loading-spinners (placeholders) for the plots while they are being generated
+def generate_loader_spinner(id):
+    return html.Div(
+        id={'type':'outer-container', 'index':id},
+        children=[
+            dmc.Loader(
+                id={'type':'spinner', 'index':id},
+                color= c_brown,
+                size="md",  # Available sizes: xs, sm, md, lg, xl
+                variant="bars",  # Available variants: oval, dots, bars
+            ),
+            html.Div(
+                id={'type':'inner-container', 'index':id},
+                style={"display": "none"},  # Initially hidden
+            ),
+        ],
+        #style={"position": "relative", "width": "100%", "height": "20vh"},
+    )
+
+# Callback to display the plots once they are generated
+@app.callback(
+    Output({'type': 'inner-container', 'index': MATCH}, "children"),
+    Output({'type': 'spinner', 'index': MATCH}, "style"),  # Hide loader
+    Output({'type': 'inner-container', 'index': MATCH}, "style"),  # Show graph
+    Input({'type': 'inner-container', 'index': MATCH}, "id"),  # Trigger on app load
+)
+def display_plot(triggered_id):
+    # Extract the plot_id from the triggered ID
+    plot_id = triggered_id["index"]
+    # print("Loader: Plot ID:", plot_id)
+    # Look up the corresponding plot configuration
+    config = plot_configs.get(plot_id)
+
+    if not config:
+        raise ValueError(f"Plot configuration for ID {plot_id} not found.")
+
+    # Generate the layout for the plot
+    # fig = generate_plot_in_layout_class(config)
+    fig_in_layout = plot_configs[plot_id].generate_layout()
+    # Hide the loader and show the graph
+
+    return fig_in_layout, {"display": "none"}, {"display": "block"}
+
+
+#2: Create the layout for the plots. Once the plots are generated, the spinner will be replaced by the actual plot.
 def generate_plot_in_layout(
     cols={"base": 1, "sm": 1},
     header="Generic Plot Title",
@@ -323,13 +863,167 @@ def generate_plot_in_layout(
                     ) if footer else None,
 
                     # Store the plot generator function directly
-                    dcc.Store(id={"type": "plot-generator", "index": plot_id}, data=plot_generator),
-                    dcc.Store(id={"type": "plot-generator-kwargs", "index": plot_id}, data=plot_generator_kwargs)
+                    # dcc.Store(id={"type": "plot-generator", "index": plot_id}, data=plot_generator),
+                    # dcc.Store(id={"type": "plot-generator-kwargs", "index": plot_id}, data=plot_generator_kwargs)
                 ],
                 className="widget-container",
             ),
         ],
     )
+
+def generate_plot_in_layout_class(plot_config):
+    """
+    Generates the layout for a plot using the provided PlotConfig instance.
+    """
+    plot_generator = plot_config.get_plot_generator()
+
+    if not plot_generator:
+        raise ValueError(f"Plot generator '{plot_config.plot_generator}' not found in module.")
+
+    # Generate the initial figure using the resolved generator
+    figure = plot_generator(**plot_config.plot_generator_kwargs)
+
+    return dmc.SimpleGrid(
+        cols={"base": 1, "sm": 1},
+        spacing="sm",
+        verticalSpacing="sm",
+        children=[
+            html.Div(
+                [
+                    # Header
+                    html.Div(
+                        [
+                            html.H3(plot_config.header),
+                            html.P(plot_config.subheader) if plot_config.subheader else None,
+                        ]
+                    ),
+
+                    # Badges
+                    dmc.Stack(
+                        children=[
+                            html.Div(plot_config.badges)
+                        ],
+                        style={
+                            "marginBottom": "10px",
+                        }
+                    ),
+
+                    # Filter Modal
+                    html.Div(
+                        [
+                            dmc.Button(
+                                "Filter", 
+                                variant="gradient", 
+                                gradient={"from": c_lightblue, "to": c_teal}, 
+                                size="xs", 
+                                id={"type": "filter-button", "index": plot_config.plot_id}
+                            ),
+                            dmc.Modal(
+                                title="Filter",
+                                centered=True,
+                                id={"type": "filter-modal", "index": plot_config.plot_id},
+                                size="80%",
+                                style={"display": "block"},
+                                children=[
+                                    # Selection Area
+                                    dmc.Stack(
+                                        [
+                                            # Category filter
+                                            dmc.Stack(
+                                                children=[
+                                                    html.Div("Prize Categories"),
+                                                    html.Div(
+                                                        dmc.Group(
+                                                            [
+                                                                dmc.Chip("Medicine", size="xs", variant="outline", checked=True, color=c_brown, id={"type": "chip-medicine", "index": plot_config.plot_id}),
+                                                                dmc.Chip("Physics", size="xs", variant="outline", checked=True, color=c_brown, id={"type": "chip-physics", "index": plot_config.plot_id}),
+                                                                dmc.Chip("Chemistry", size="xs", variant="outline", checked=True, color=c_brown, id={"type": "chip-chemistry", "index": plot_config.plot_id}),
+                                                                dmc.Chip("Economics", size="xs", variant="outline", checked=True, color=c_brown, id={"type": "chip-economics", "index": plot_config.plot_id}),
+                                                                dmc.Chip("Literature", size="xs", variant="outline", checked=True, color=c_brown, id={"type": "chip-literature", "index": plot_config.plot_id}),
+                                                                dmc.Chip("Peace", size="xs", variant="outline", checked=True, color=c_brown, id={"type": "chip-peace", "index": plot_config.plot_id}),
+                                                            ]
+                                                        )
+                                                    ),
+                                                ],
+                                                style={
+                                                    "marginRight": "30px",
+                                                    "display": "block" if plot_config.show_filters.get("categories", False) else "none"
+                                                }
+                                            ),
+                                            # Gender Filter
+                                            dmc.Stack(
+                                                children=[
+                                                    html.Div("Gender"),
+                                                    html.Div(
+                                                        dmc.Group(
+                                                            [
+                                                                dmc.Chip("female", size="xs", variant="outline", checked=True, color=c_brown, id={"type": "chip-female", "index": plot_config.plot_id}),
+                                                                dmc.Chip("male", size="xs", variant="outline", checked=True, color=c_brown, id={"type": "chip-male", "index": plot_config.plot_id}),
+                                                            ]
+                                                        )
+                                                    ),
+                                                ],
+                                                style={
+                                                    "display": "block" if plot_config.show_filters.get("gender", False) else "none"
+                                                }
+                                            ),
+
+                                            # Custom Filter (if provided)
+                                            html.Div(
+                                                plot_config.show_filters.get("custom-filter"),
+                                                style={
+                                                    "display": "block" if plot_config.show_filters.get("custom-filter") else "none"
+                                                }
+                                            ),
+                                        ],
+                                        gap="sm",
+                                        className="selection-area",
+                                    ),
+                                    # Filter modal buttons
+                                    dmc.Group(
+                                        [
+                                            dmc.Button("Submit", id={"type": "submit-button", "index": plot_config.plot_id}),
+                                            dmc.Button(
+                                                "Close",
+                                                color="red",
+                                                variant="outline",
+                                                id={"type": "close-button", "index": plot_config.plot_id},
+                                            ),
+                                        ],
+                                        justify="flex-end",
+                                    ),
+                                ],
+                            ),
+                        ]
+                    ),
+
+                    # Plot
+                    html.Div(
+                        dcc.Loading(
+                            dcc.Graph(
+                                id={"type": "plot", "index": plot_config.plot_id},
+                                figure=figure,
+                                style=plot_config.style,
+                            )
+                        ),
+                        className="widget-content",
+                    ),
+
+                    # Footer
+                    html.Div(
+                        plot_config.footer,
+                        className="widget-footer",
+                    ) if plot_config.footer else None,
+
+                    # # Store the plot generator function directly
+                    # dcc.Store(id={"type": "plot-generator", "index": plot_config.plot_id}, data=plot_config.plot_generator),
+                    # dcc.Store(id={"type": "plot-generator-kwargs", "index": plot_config.plot_id}, data=plot_config.plot_generator_kwargs),
+                ],
+                className="widget-container",
+            ),
+        ],
+    )
+
 
 # # Callback to toggle the modal (close it)
 @app.callback(
@@ -362,82 +1056,56 @@ def toggle_modal(nc1, nc2, nc3, opened):
         Input({"type": "submit-button", "index": MATCH}, "n_clicks"),
         Input({"type": "custom-filter", "index": MATCH, "filter": ALL}, "value")
     ],
-    [
-        State({"type": "plot", "index": MATCH}, "figure"),
-        State({"type": "plot-generator", "index": MATCH}, "data"),
-        State({"type": "plot-generator-kwargs", "index": MATCH}, "data")
-    ]
+    [State({"type": "plot", "index": MATCH}, "id")]
 )
-def update_plot(chip_medicine, chip_physics, chip_chemistry, chip_economics, chip_literature, chip_peace, chip_female, chip_male, n_clicks, custom_filter_values, current_figure, plot_generator_name, plot_generator_kwargs=None):
+def update_plot(
+    chip_medicine, chip_physics, chip_chemistry, chip_economics, chip_literature, chip_peace,
+    chip_female, chip_male, n_clicks, custom_filter_values, plot_id
+):
     # Ensure the callback is only triggered when the submit button is clicked
-
     ctx = dash.callback_context
-    
-    if not ctx.triggered:
+    if not any('"type":"submit-button"' in trigger['prop_id'] for trigger in ctx.triggered):
         raise PreventUpdate
 
-    # Check if the callback was triggered by the submit button
-    trigger_id = ctx.triggered[0]['prop_id'].split('.')[0]
-    if '"type":"submit-button"' not in trigger_id:
-        raise PreventUpdate
+    # Extract the plot configuration
+    plot_id = plot_id["index"]
+    plot_config = plot_configs.get(plot_id)
+    if not plot_config:
+        raise ValueError(f"Plot configuration for ID {plot_id} not found.")
 
-    # Debug prints
-    # print("Debug - Triggered by:", ctx.triggered[0])
-    # print("Debug - Custom filter values:", custom_filter_values)
-    # print("Debug - All inputs:", ctx.inputs)
-    # print(f"Updater: callback triggered with {n_clicks} clicks")
-    # print("Updater: Category states:", chip_medicine, chip_physics, chip_chemistry, chip_economics, chip_literature, chip_peace)
-    # print("Updater: Gender states:", chip_female, chip_male)
-    # print("")
-    # print("### Plot update triggered by filter modal###")
-    # print("Updater: Plot Generator:", plot_generator_name)
-    # print("Updater: Custom filter values:", custom_filter_values)
-
-    selected_categories = pcp.define_category_states(chip_medicine, chip_physics, chip_chemistry, chip_economics, chip_literature, chip_peace)
+    # Extract and update filter states
+    selected_categories = pcp.define_category_states(
+        chip_medicine, chip_physics, chip_chemistry, chip_economics, chip_literature, chip_peace
+    )
     selected_genders = pcp.define_gender_states(chip_female, chip_male)
-    
-    # More Debug Prints
-    # print("Updater: Selected categories:", selected_categories)
-    # print ("Updater: Selected gender:", selected_genders)
 
-    # Gets the plot generator function based on the name stored in the State, which is set in the layout generator function
-    if plot_generator_name:
-        plot_generator = getattr(pcp, plot_generator_name, None)
-        if not plot_generator:
-            raise ValueError(f"Function {plot_generator_name} not found in module!")
-    else:
-        raise ValueError("No plot generator name provided.")
-
-    # Combine standard kwargs with custom filter values
-    kwargs = plot_generator_kwargs or {}
-    kwargs.update({
+    # Combine standard kwargs with filter values
+    plot_generator_kwargs = plot_config.plot_generator_kwargs or {}
+    plot_generator_kwargs.update({
         "categories": selected_categories,
         "gender": selected_genders
     })
 
-    # Add any custom filter values if they exist
+    # Add custom filters
     if custom_filter_values:
-        # Get all input IDs
-        input_ids = [
-            key for key in ctx.inputs.keys() 
-            if isinstance(json.loads(key.split('.')[0]), dict) and 
-            json.loads(key.split('.')[0]).get("type") == "custom-filter"
-        ]
-        
-        # Parse the pattern IDs to get filter names
-        custom_filter_patterns = [json.loads(input_id.split('.')[0]) for input_id in input_ids]
-        
-        # Add custom filter values to kwargs using the filter name from the pattern
-        for pattern, value in zip(custom_filter_patterns, custom_filter_values):
-            if value is not None:  # Only add non-None values
-                filter_name = pattern["filter"]  # This gets "city" from the pattern
-                kwargs[filter_name] = value
+        for pattern, value in zip(ctx.inputs.keys(), custom_filter_values):
+            if value is not None:
+                filter_name = json.loads(pattern.split('.')[0]).get("filter")
+                plot_generator_kwargs[filter_name] = value
 
-    print("Updater: kwargs:", kwargs)
+    # print("Updater: kwargs:", plot_generator_kwargs)
 
     # Generate the updated figure
-    updated_figure = plot_generator(**kwargs)
+    try:
+        plot_generator = plot_config.get_plot_generator()
+        updated_figure = plot_generator(**plot_generator_kwargs)
+    except Exception as e:
+        print(f"Error generating plot for {plot_id}: {e}")
+        updated_figure = {"data": [], "layout": {"title": "Error generating plot"}}
+
     return updated_figure
+
+
 
 
 
@@ -879,7 +1547,7 @@ def update_overview_content(chip_medicine, chip_physics, chip_chemistry, chip_ec
                         # Bottom part (Content)
                         html.Div(
                             dcc.Loading(
-                                dcc.Graph(id="fig_donut_gender", figure=pcp.generate_donut(data=df_filtered_laureates, characteristic="gender"), style={'width': '100%', 'height':'100%'}),
+                                dcc.Graph(id="fig_donut_gender_overview", figure=pcp.generate_donut(data=df_filtered_laureates, characteristic="gender"), style={'width': '100%', 'height':'100%'}),
                             ),                                 
                             className="widget-content-ar1",
                         ),
@@ -899,7 +1567,7 @@ def update_overview_content(chip_medicine, chip_physics, chip_chemistry, chip_ec
                         ),
                         # Bottom part (Content)
                         html.Div(
-                            dcc.Graph(id="fig_donut_gender", figure=pcp.generate_donut(data=df_filtered_laureates, characteristic="ethnicity"), style={'width': '100%', 'height':'100%'}),
+                            dcc.Graph(id="fig_donut_ethnicity_overview", figure=pcp.generate_donut(data=df_filtered_laureates, characteristic="ethnicity"), style={'width': '100%', 'height':'100%'}),
                             className="widget-content-ar1",
                         ),
                     ],
@@ -918,7 +1586,7 @@ def update_overview_content(chip_medicine, chip_physics, chip_chemistry, chip_ec
                         ),
                         # Bottom part (Content)
                         html.Div(
-                            dcc.Graph(id="fig_donut_religion", figure=pcp.generate_donut(data=df_filtered_laureates, characteristic="religion"), style={'width': '100%', 'height':'100%'}),
+                            dcc.Graph(id="fig_donut_religion_overview", figure=pcp.generate_donut(data=df_filtered_laureates, characteristic="religion"), style={'width': '100%', 'height':'100%'}),
                             className="widget-content-ar1",
                         ),
                     ],
@@ -946,7 +1614,7 @@ def update_overview_content(chip_medicine, chip_physics, chip_chemistry, chip_ec
                         ),
                         # Bottom part (Content)
                         html.Div(
-                            dcc.Graph(id="fig_sunburst", figure=pcp.generate_sunburst(data=df_filtered_laureates), style={'width': '100%', 'height':'100%'}),
+                            dcc.Graph(id="fig_sunburst_overview", figure=pcp.generate_sunburst(data=df_filtered_laureates), style={'width': '100%', 'height':'100%'}),
                             className="widget-content",
                         ),
                     ],
@@ -1214,27 +1882,9 @@ def render_tab_current_content(active_tab):
                         ),
 
                         
-                        generate_plot_in_layout(   
-                            header = "Discipline - Gender - Country",
-                            subheader = "Click on the segments to filter the data.",
-                            plot_id = "fig_sunburst_last",
-                            figure = pcp.generate_sunburst(df_laureates, year="last"),
-                            plot_generator = "generate_sunburst",
-                            footer = [
-                                dcc.Markdown("**Interesting Findings**: The 2024 prizes were mostly given to male researchers from the US or UK.")
-                                ],
-                        ),
+                        generate_loader_spinner("fig_sunburst_last"),
 
-                        generate_plot_in_layout(   
-                            header = "Life Paths (Birth - Work)",
-                            subheader = "Some Laureates actually haven't moved and are represented as dots.",
-                            plot_id = "fig_map_movement",
-                            figure = pcp.generate_map_movement(df_laureates, year="last"),
-                            plot_generator = "generate_map_movement",
-                            footer = [
-                                dcc.Markdown("**Interesting Findings**: Common patterns: European researchers move to the US, the Americans switch coasts at most, and the Asians stay where they are. No South Americans or Africans.")
-                                ],
-                        ),
+                        generate_loader_spinner("fig_map_movement"),
 
                     ],
                     gap="sm"
@@ -1260,7 +1910,7 @@ def render_tab_current_content(active_tab):
     Output("tab-content-geography", "children"),  # Output for the tab content
     Input("tabs", "value"),  # Active tab
 )
-def render_geography_tab(active_tab):
+def render_tab_geography(active_tab):
     if active_tab == 'tab_geography':
 
         # Return the content for tab Nationality
@@ -1269,107 +1919,15 @@ def render_geography_tab(active_tab):
                 dmc.Stack(
                     children=[
                         
-                        # PLOT: Rotatable Globe
-                        generate_plot_in_layout(   
-                            header = "Nobel Prizes by Country of Birth",
-                            subheader = "This plot shows the distribution of country of birth of the laureates; you may rotate the globe, and zoom in and out. The slider lets you select minimum and maximum number of laureates, e.g.\"*less than 5 laureates*\".",
-                            plot_id = "fig_choroplethglobe_prizespercountry",
-                            figure = pcp.generate_choroplethglobe(df_laureates),
-                            plot_generator = "generate_choroplethglobe",
-                            footer = [
-                                dcc.Markdown("**Interesting Findings**: The US dominance is clearly visible; apart from Africa, there are surprisingly few white spots.")
-                                ],
-                        ),
-
+                        generate_loader_spinner("fig_choroplethglobe_prizespercountry"),
        
-                        # PLOT: Map: Places of Birth and Death
-                        generate_plot_in_layout(   
-                            header = "Places of Birth and Death",
-                            subheader = "This map shows the cities of birth and death of the laureates. Note that the points of the map are given as center points of the respective cities, not as the actual places of birth (e.g. hospitals). You can zoom in to quite some detail; the map data is provided via OpenStreetMap.",
-                            plot_id = "fig_map_cities",
-                            figure = pcp.generate_scattermapbox_cities(df_laureates),
-                            plot_generator = "generate_scattermapbox_cities",
-                            show_filters={
-                                "categories": True, 
-                                "gender": True,
-                                "custom-filter": dmc.Stack(
-                                        children=[
-                                            html.Div("Type of city:"),
-                                            dcc.Dropdown(
-                                                id={
-                                                    "type": "custom-filter", # custom filters must have 'custom-filter'
-                                                    "index": "fig_map_cities",  # must match the plot_id
-                                                    "filter": "city"  # must match a plot generator function kwarg so it will be passed properly
-                                                },
-                                                options=[
-                                                    {'label': 'City of Birth', 'value': 'birth'},
-                                                    {'label': 'City of Affiliation at Time of Award', 'value': 'affiliation'},
-                                                    {'label': 'City of Death', 'value': 'death'}
-                                                ],
-                                                value='birth',  # Default value
-                                                clearable=False,
-                                                style={"width": "400px"}
-                                            ),
-                                        ],
-                                    gap="xs",  # space between the label and the dropdown
-                                    align="flex-start",  # Align items to the left
-                                    style={"margin-top": "0px"}
-                                )
-                            }
-                        ),     
+                        generate_loader_spinner("fig_map_cities"),
 
+                        generate_loader_spinner("fig_bubbles_population"),
 
-                        html.Div(
-                            id={'type':'outer-container', 'index':'bubbles-population'},
-                            children=[
-                                dmc.Loader(
-                                    id={'type':'spinner', 'index':'bubbles-population'},
-                                    color= c_brown,
-                                    size="md",  # Available sizes: xs, sm, md, lg, xl
-                                    variant="bars",  # Available variants: oval, dots, bars
-                                ),
-                                html.Div(
-                                    id={'type':'inner-container', 'index':'bubbles-population'},
-                                    style={"display": "none"},  # Initially hidden
-                                ),
-                            ],
-                            #style={"position": "relative", "width": "100%", "height": "70vh"},
-                        ),
+                        generate_loader_spinner("fig_bar_prizespercountry"),
 
-                        html.Div(
-                            id={'type':'outer-container', 'index':'bar-prizespercountry'},
-                            children=[
-                                dmc.Loader(
-                                    id={'type':'spinner', 'index':'bar-prizespercountry'},
-                                    color= c_brown,
-                                    size="md",  # Available sizes: xs, sm, md, lg, xl
-                                    variant="bars",  # Available variants: oval, dots, bars
-                                ),
-                                html.Div(
-                                    id={'type':'inner-container', 'index':'bar-prizespercountry'},
-                                    style={"display": "none"},  # Initially hidden
-                                ),
-                            ],
-                            #style={"position": "relative", "width": "100%", "height": "70vh"},
-                        ),
-
-                        html.Div(
-                            id={'type':'outer-container', 'index':'bar-prizespercountry-rs'},
-                            children=[
-                                dmc.Loader(
-                                    id={'type':'spinner', 'index':'bar-prizespercountry-rs'},
-                                    color= c_brown,
-                                    size="md",  # Available sizes: xs, sm, md, lg, xl
-                                    variant="bars",  # Available variants: oval, dots, bars
-                                ),
-                                html.Div(
-                                    id={'type':'inner-container', 'index':'bar-prizespercountry-rs'},
-                                    style={"display": "none"},  # Initially hidden
-                                ),
-                            ],
-                            #style={"position": "relative", "width": "100%", "height": "70vh"},
-                        ),
-
+                        generate_loader_spinner("fig_bar_prizespercountry_rs"),
 
                     ],
                     gap="lg"
@@ -1381,90 +1939,6 @@ def render_geography_tab(active_tab):
     else:
         return html.Div("Data is loading.")
 
-# Loader Callbacks
-#######################################################################################
-
-
-@callback(
-    Output({'type':'inner-container', 'index': MATCH}, "children"),
-    Output({'type':'spinner', 'index': MATCH}, "style"),  # Hide loader
-    Output({'type':'inner-container', 'index': MATCH}, "style"),  # Show graph
-    Input({'type':'inner-container', 'index': MATCH}, "id"),  # Trigger on app load
-)
-def display_fig_bubbles_population(triggered_id):
-    # Generate the graph layout
-    fig = generate_plot_in_layout(
-        header="Nobel Prizes by Country of Birth and Population",
-        subheader=(
-            "This plot shows the number of prizes by country of birth, but in relation to the population size "
-            "of the country in the respective year. You can use the slider or play button to see the animation of "
-            "the years."
-        ),
-        plot_id="fig_bubbles_population",
-        figure=pcp.generate_bubbles_perpopulation(df_prizes),
-        plot_generator="generate_bubbles_perpopulation",
-        footer=[
-            dcc.Markdown(
-                "**Interesting Findings**: The visualization shows, for example, that countries like the USA only "
-                "start to play an important role after World War II; also, in relation to their population number, "
-                "they did not get unusually many Nobel Prizes."
-            )
-        ],
-        style={'width': 'auto', 'height': '70vh'},
-    )
-
-    # Hide the loader and show the graph
-    return fig, {"display": "none"}, {"display": "block"}
-
-
-
-@callback(
-    Output("inner-container-bar-prizespercountry", "children"),
-    Output("loader-bar-prizespercountry", "style"),  # Hide loader
-    Output("inner-container-bar-prizespercountry", "style"),  # Show graph
-    Input("inner-container-bar-prizespercountry", "id"),  # Trigger on app load
-)
-def display_fig_bar_prizespercountry(triggered_id):
-
-    # Generate the graph layout
-    fig = generate_plot_in_layout(   
-                            header = "Nobel Prizes by Country of Birth per Year",
-                            subheader = "This plot shows the number of prizes per country of birth of laureates by year. You may deselect and reselect countries from the legend to customize your plot.",
-                            plot_id = "fig_bar_prizespercountry",
-                            figure = pcp.generate_bar_percountry(df_prizes),
-                            plot_generator="generate_bar_percountry",
-                            footer = [
-                                dcc.Markdown("**Interesting Findings**: The many pink lines on top in the right part of the plot emphasize our earlier finding that the number of prizes given to the USA has increased tremendously only after World War II.")
-                                ],
-                        ),
-
-    # Hide the loader and show the graph
-    return fig, {"display": "none"}, {"display": "block"}
-
-
-@callback(
-    Output("inner-container-bar-prizespercountry-rs", "children"),
-    Output("loader-bar-prizespercountry-rs", "style"),  # Hide loader
-    Output("inner-container-bar-prizespercountry-rs", "style"),  # Show graph
-    Input("inner-container-bar-prizespercountry-rs", "id"),  # Trigger on app load
-)
-def display_fig_bar_prizespercountry_rs(triggered_id):
-    
-    # Generate the graph layout
-    fig = generate_plot_in_layout(   
-                            header = "Nobel Prizes by Country of Birth per Year",
-                            subheader = "This plot shows the number of prizes per country of birth of laureates by year. You may deselect and reselect countries from the legend to customize your plot.",
-                            plot_id = "fig_bar_prizespercountry_rs",
-                            figure = pcp.generate_bar_percountry(df_prizes, runningsum=True),
-                            plot_generator="generate_bar_percountry",
-                            plot_generator_kwargs = {"runningsum":True},
-                            footer = [
-                                dcc.Markdown("**Interesting Findings**: The many pink lines on top in the right part of the plot emphasize our earlier finding that the number of prizes given to the USA has increased tremendously only after World War II.")
-                                ],
-                        ),
-
-    # Hide the loader and show the graph
-    return fig, {"display": "none"}, {"display": "block"}
 
 
 
@@ -1484,75 +1958,15 @@ def render_tab_demography_content(active_tab):
                 dmc.Stack(
                     children=[
 
+                        generate_loader_spinner("fig_surface_prizesforwomen"),
 
-                        # PLOT: 3D Surface: Nobel Prizes Awarded to Women
-                        dcc.Loading(
-                        generate_plot_in_layout(   
-                            header = "Nobel Prizes Awarded to Women",
-                            subheader = "This plot shows the number of prizes for women in all of the disciplines per decade. It allows you to see when and in which disciplines the most prizes were awarded to women. Feel free to rotate the plot and zoom.",
-                            plot_id = "fig_surface_prizesforwomen",
-                            figure = pcp.generate_3dsurface_pergender(df_prizes, gender="female"),
-                            plot_generator = "generate_3dsurface_pergender",
-                            show_filters={"categories": True, "gender": False, "custom-filter": False},
-                            footer = [
-                                dcc.Markdown("**Interesting Findings**: Although it looks like an impressively high mountain range in the more recent decades, note that the maximum value on the y-axis is 5, meaning that at the most 5 out of 30 possible prizes per decade/category went to women.")
-                                ],
-                        )),
+                        generate_loader_spinner("fig_surface_prizesformenwomen"),
 
-                        # PLOT: 3D Surface: Nobel Prizes Awarded to Men and Women
-                        generate_plot_in_layout(   
-                            header = "Nobel Prizes Awarded to Men and Women",
-                            subheader = "This plot is identical to the above, but here, men and women are both shown as two surfaces.",
-                            plot_id = "fig_surface_prizesformenwomen",
-                            figure = pcp.generate_3dsurface_pergender(df_prizes, gender="all"),
-                            plot_generator = "generate_3dsurface_pergender",
-                            show_filters={"categories": True, "gender": False, "custom-filter": False},
-                            footer = [
-                                dcc.Markdown("**Interesting Findings**: It is not much of a surprise that much many prizes were given to men than to women. Disciplines that perform particularly poorly are economics sciences and physics. The plot also clearly shows that the number of laureates (per year/decade) increases, i.e. prizes are more often given to two or three laureates instead of just one.")
-                                ],
-                        ),
+                        generate_loader_spinner("fig_donut_gender"),
 
-                        # PLOT: Pie Chart: Gender
-                        generate_plot_in_layout(   
-                            header = "Overall Gender Distribution",
-                            subheader = "The labels female and male are taken directly from the official Nobel Prize Outreach API. It would be interesting to learn how they get/set those values, or if they are simply based on perception. In any case, the cases where perception differs from self-identification may exist, but they will not substantially change the findings.",
-                            plot_id = "fig_donut_gender2",
-                            figure = pcp.generate_donut(df_laureates, characteristic="gender"),
-                            plot_generator = "generate_donut",
-                            show_filters={"categories": True, "gender": False, "custom-filter": False},
-                            # style={'width': '50vw', 'height': '50vh'}
-                            footer = [
-                                dcc.Markdown("**Interesting Findings**: This plain old pie chart reaffirms what we found already above.")
-                                ],
-                        ),
+                        generate_loader_spinner("fig_donut_ethnicity"),
 
-                        # PLOT: Pie Chart: Ethnicity
-                        generate_plot_in_layout(   
-                            header = "Overall Ethnicity Distribution",
-                            subheader = "This plot shows the distribution of ethnicities among Nobel Laureates. I am aware that notions of ethnicity or even race can be considered problematic. There are some who suggest to not use these categorizations at all. However, I think we may loose analytical power if we do; this chart is the successor to an earlier one that showed that there are exactly zero Black Nobel laureates in the natural sciences. This certainly is an interesing finding, how ever one may interpret it.",
-                            plot_id = "fig_donut_ethnicity2",
-                            figure = pcp.generate_donut(df_laureates, characteristic="ethnicity"),
-                            plot_generator = "generate_donut",
-                            plot_generator_kwargs = {"characteristic":"ethnicity"},
-                            # style={'width': '50vw', 'height': '50vh'}
-                            footer = [
-                                dcc.Markdown("**Assignment Process**: For additional transparency, here is how I have assigned the labels. Feel free to constructively critizice it. First, I started by geography: Everyone born in Europe was assigned *European*. As a starting point, everyone born in the USA or Canada was also assigned *European*. Similarly for all other continents. That process so far already raises difficult questions as to what ethnicity is, exactly. There is a myriad of publications on this topic, so my working definition was: Where someone's family originated from, going back to before Columbus. That then introduces two new categories for North America: *African-American*, and *North American*. Why not native American? Because even the native people of almost every country immigrated at some point in human history, as far as we know. Consequently, we then have *South American*, and then again *European* for all the (mostly) Spanish and Portuguese immigrants to South America. You may miss some categories like Central America, American Indians, Alaska Natives, etc - but there are simply no laureates in these ethnicities yet, so no need for further distinction. Israel is a special case: geographically, one would have to attribute *Asian*, but historically, most Israeli (laureates) have migrated there from parts of Europe. This is also an example for the next step (after categorization by continent), where I checked various lists available on the internet (mostly Wikipedia), such as \"List of Black Nobel Laureates\", \"List of Latin American Nobel Laureates\", and so on. Whenever appropriate, I changed the label. Next, I went through all the names one by one. Due to my former occupation, I know about 60 percent of them and also know the basics of their biographies. For the remaining ones, I checked their Wikipedia pages. You may note that there is also the category *Various*, which is a more subtle version of \"Mixed\". If it said, for example, on a laureate's Wikipedia page, that he had a British father and Korean mother, then I assigned *Various*.")
-                                ],
-                        ),
-
-                        # PLOT: Pie Chart: Religion
-                        generate_plot_in_layout(   
-                            header = "Overall Religion Distribution",
-                            subheader = "This plot shows the distribution of religion among Nobel Laureates.",
-                            plot_id = "fig_donut_religion2",
-                            figure = pcp.generate_donut(df_laureates, characteristic="religion"),
-                            plot_generator = "generate_donut",
-                            plot_generator_kwargs = {"characteristic":"religion"},
-                            # style={'width': '50vw', 'height': '50vh'}
-                            footer = [
-                                html.Div(dcc.Markdown(["**Note**: Yet another sightly problematic categorization, for various reasons. One of them is data availability. There are lists on Wikipedia for Jewish, Muslim and Christian laureates, which I used. My suspicion here is though that the list of Jewish laureates is more or less complete, while that of Muslim laureates is not. For the list of Christian laureates, it states that it only lists laureates that have professed their faith. So this graph is actually somewhat misleading: First of all, it is unclear wether it is about \"firm faith\" or just religious upbringing. Second, we know little about what laureates really believe, which may be different from their religion. In any case: If we were to look at religion as stated in some official documents, then I suppose the number for Muslims should be higher, the number for Christians should be much higher (close to all of European Ethnicity), and we also have to add those religions completely lacking at the moment, e.g. Asian religions (and others)."])),
-                                html.Div(dcc.Markdown(["**Interesting Findings**: Even with the necessary changes described above, there still is a large number of Jewish Nobel laureates: 17.6 percent. According to Wikipedia, the Jewish religion has share among all religions in the world of 0.2 percent."]))                                ],
-                        ),
+                        generate_loader_spinner("fig_donut_religion"),
 
                     ],
                     gap="sm"
@@ -1588,107 +2002,13 @@ def render_tab_time_content(active_tab):
                 dmc.Stack(
                     children=[
 
-                        # PLOT: Histogram Timegap
-                        generate_plot_in_layout(   
-                            header = "Timegap Between Discovery and Prize (Histogram)",
-                            subheader = "This histogram shows how often a value appears. For example, a waiting time of 11 years happened most often (=highest bar)",
-                            datato = "1914/2023",
-                            badges = [dmc.Badge("Natural Sciences", variant="outline", color=brand_color_alt)],
-                            plot_id = "fig_histogram_timegap",
-                            figure = pcp.generate_histogram_timegap(df_prizes, categories="natsci"),
-                            plot_generator = "generate_histogram_timegap",
-                            show_filters={
-                                "categories": True, 
-                                "gender": True,
-                                "custom-filter": dmc.Stack(
-                                        children=[
-                                            html.Div("Data source:"),
-                                            dcc.Dropdown(
-                                                id={
-                                                    "type": "custom-filter", # custom filters must have 'custom-filter'
-                                                    "index": "fig_histogram_timegap",  # must match the plot_id
-                                                    "filter": "datasource"  # must match a plot generator function kwarg so it will be passed properly
-                                                },
-                                                options=[
-                                                    {'label': '1901 - 2014 (Nature paper)', 'value': 'paper'},
-                                                    {'label': '2015 - 2023 (ChatGPT)', 'value': 'chatgpt'},
-                                                    {'label': '1901 - 2023 (both)', 'value': 'both'}
-                                                ],
-                                                value='both',  # Default value
-                                                clearable=False,
-                                                style={"width": "400px"}
-                                            ),
-                                        ],
-                                    gap="xs",  # space between the label and the dropdown
-                                    align="flex-start",  # Align items to the left
-                                    style={"margin-top": "0px"}
-                                )
-                            },
-                            footer = [
-                                dcc.Markdown("**Interesting Findings**: Most scientists who got the Nobel prize had to wait between 1 and 30 years, with a peak around 11 years. Very long waiting times don't appear very often.")
-                                ]
-                        ),
+                        generate_loader_spinner("fig_histogram_timegap"),
 
-                        # PLOT: Scatterbox with Trendlines
-                        generate_plot_in_layout(   
-                            header = "Timegap Between Discovery and Prize (Trendlines)",
-                            subheader = "This is basically the same data, but presented differently. Here, you see the time gap for all prizes (averaged in case of multiple winners) in all years. The plot also shows the trendlines (going up), as well as the average life expectancy (also going up).",
-                            datafrom= "1994",
-                            datato = "2014",
-                            badges = [dmc.Badge("Natural Sciences", variant="outline", color=brand_color_alt)],
-                            plot_id = "fig_scatter_timegap_trend",
-                            figure = pcp.generate_scatterbox_timegaptrend(df_prizes, categories="natsci"),
-                            plot_generator = "generate_scatterbox_timegaptrend",
-                            show_filters={
-                                "categories": True, 
-                                "gender": True,
-                                "custom-filter": dmc.Stack(
-                                        children=[
-                                            html.Div("Data source:"),
-                                            dcc.Dropdown(
-                                                id={
-                                                    "type": "custom-filter", # custom filters must have 'custom-filter'
-                                                    "index": "fig_scatter_timegap_trend",  # must match the plot_id
-                                                    "filter": "datasource"  # must match a plot generator function kwarg so it will be passed properly
-                                                },
-                                                options=[
-                                                    {'label': '1901 - 2014 (Nature paper)', 'value': 'paper'},
-                                                    {'label': '2015 - 2023 (ChatGPT)', 'value': 'chatgpt'},
-                                                    {'label': '1901 - 2023 (both)', 'value': 'both'}
-                                                ],
-                                                value='both',  # Default value
-                                                clearable=False,
-                                                style={"width": "400px"}
-                                            ),
-                                        ],
-                                    gap="xs",  # space between the label and the dropdown
-                                    align="flex-start",  # Align items to the left
-                                    style={"margin-top": "0px"}
-                                )
-                            },
-                            footer = [
-                                dcc.Markdown("**Interesting Findings**: It seems that the time gap increases in a pretty similar fashion as the life expectancy.")
-                                ],
-                        ),
+                        generate_loader_spinner("fig_scatter_timegap_trend"),
 
-                        # PLOT: Age at Award Scatter Trend
-                        generate_plot_in_layout(   
-                            header = "Laureate Age at Time of Award",
-                            subheader = "This is basically the same data, but presented differently. Here, you see the time gap for all prizes (averaged in case of multiple winners) in all years. The plot also shows the trendlines (going up), as well as the average life expectancy (also going up).",
-                            plot_id = "fig_scatterbox_age",
-                            figure = pcp.generate_scatterbox_age(df_laureates),
-                            plot_generator = "generate_scatterbox_age",
-                            footer = [dcc.Markdown("**Interesting Findings**: In the early years, the average age in the natural sciences was around 45, whereas nowadays it is close to 65. This fits well to the earlier finding that the timegap has increased by - on average - 25 years. Interestingly enough, peace prize awardees get younger.")],
-                        ),
-
-                        # PLOT: Age at Award Heatmap
-                        generate_plot_in_layout(   
-                            header = "Laureate Age at Time of Award (Heatmap)",
-                            subheader = "Same data as above, but displayed as heatmap.",
-                            plot_id = "fig_heatmap_age",
-                            figure = pcp.generate_heatmap_age(df_laureates),
-                            plot_generator= "generate_heatmap_age",
-                        ),
+                        generate_loader_spinner("fig_scatterbox_age"),
+                        
+                        generate_loader_spinner("fig_heatmap_age"),
 
                     ],
                     gap="sm"
@@ -1732,17 +2052,7 @@ def render_tab_misc_content(active_tab):
                                 ],
                         ),
 
-                        # PLOT: Prize Money
-                        generate_plot_in_layout(   
-                            header = "Prize Money",
-                            subheader = f"In SEK; total amount paid up until today: {(pcp.totalprizeamount * 0.088):,.0f} EUR",
-                            plot_id = "fig_line_prizemoney",
-                            figure = pcp.generate_line_prizemoney(df_prizes),
-                            plot_generator = "generate_line_prizemoney",
-                            footer = [
-                                dcc.Markdown("**Interesting Findings**: Starting in the mid-1980s, the total prize amount goes up. The main reason herefore: the yearly prize amounts gets increased several times.")
-                                ],
-                        ),
+                        generate_loader_spinner("fig_line_prizemoney")
                     ],
                     gap="sm"
                 )
@@ -1774,180 +2084,11 @@ def render_tab_migration_content(active_tab):
                 dmc.Stack(
                     children=[
 
-                        # PLOT: Movement DWP
-                        dmc.Loader(
-                            generate_plot_in_layout(   
-                                header = "Movement: Place of Main Degree / Main Discovery / Prize",
-                                subheader = [
-                                    dcc.Markdown("This plot shows the movement between three locations: where did the laureates get their main university degree (or similar), where did they do their main work that led to the discovery, and where did they work at the time when they received the prize? This plot is based on the Nature paper \"At what institutions did Nobel laureates do their prize-winning work?\" (see References), which unfortunately only covers the years 1994 - 2014."),
-                                    dcc.Markdown("**How to Read:**: The three vertical pillars stand for the three points and places in time: **degree, work, prize**. The lines show the flow from one place to the next. The on-hover infobox also shows you the overall percentage of the selected group. If you like, you may also re-arrange the bar sections via drag and drop. The dropdowns let you choose between *City* (many), *Country* (less), and the combination of both, which distinguishes Cambridge UK from Cambridge USA (etc.)")
-                                ],
-                                badges = [dmc.Badge("Natural Sciences", variant="outline", color=brand_color_alt)],
-                                plot_id = "fig_parcat_migration_dwp",
-                                figure = pcp.generate_parcat_migration(df_laureates), # fig_parcat_migration_dwp,
-                                plot_generator = "generate_parcat_migration",
-                                #style= {'width':'80vw', 'height':'80vh'},
-                                show_filters={
-                                    "categories": True, 
-                                    "gender": True,
-                                    "custom-filter": dmc.Stack(
-                                            children=[
-                                                html.Div("Type of city:"),
-                                                dmc.Group(
-                                                    children=[
-                                                        dcc.Dropdown(
-                                                            id={
-                                                                "type": "custom-filter", # custom filters must have 'custom-filter'
-                                                                "index": "fig_parcat_migration_dwp",  # must match the plot_id
-                                                                "filter": "loc1"  # must match a plot generator function kwarg so it will be passed properly
-                                                            },
-                                                            options=[
-                                                                {'label': 'City', 'value': 'ParCatDegreeCity'},
-                                                                {'label': 'Country', 'value': 'ParCatDegreeCountry'},
-                                                                {'label': 'City+Country', 'value': 'ParCatDegreeCityCountry'}
-                                                            ],
-                                                            value='ParCatDegreeCountry',  # Default value
-                                                            clearable=False,
-                                                            style={"width": "200px"}
-                                                        ),
-                                                        dcc.Dropdown(
-                                                            id={
-                                                                "type": "custom-filter", # custom filters must have 'custom-filter'
-                                                                "index": "fig_parcat_migration_dwp",  # must match the plot_id
-                                                                "filter": "loc2"  # must match a plot generator function kwarg so it will be passed properly
-                                                            },
-                                                            options=[
-                                                                {'label': 'City', 'value': 'ParCatWorkCity'},
-                                                                {'label': 'Country', 'value': 'ParCatWorkCountry'},
-                                                                {'label': 'City+Country', 'value': 'ParCatWorkCityCountry'}
-                                                            ],
-                                                            value='ParCatWorkCountry',  # Default value
-                                                            clearable=False,
-                                                            style={"width": "200px"}
-                                                        ),
-                                                        dcc.Dropdown(
-                                                            id={
-                                                                "type": "custom-filter", # custom filters must have 'custom-filter'
-                                                                "index": "fig_parcat_migration_dwp",  # must match the plot_id
-                                                                "filter": "loc3"  # must match a plot generator function kwarg so it will be passed properly
-                                                            },
-                                                            options=[
-                                                                {'label': 'City', 'value': 'ParCatPrizeCity'},
-                                                                {'label': 'Country', 'value': 'ParCatPrizeCountry'},
-                                                                {'label': 'City+Country', 'value': 'ParCatPrizeCityCountry'}
-                                                            ],
-                                                            value='ParCatPrizeCountry',  # Default value
-                                                            clearable=False,
-                                                            style={"width": "200px"}
-                                                        ),
-                                                    ]
-                                                )
-                                            ],
-                                        gap="xs",  # space between the label and the dropdown
-                                        align="flex-start",  # Align items to the left
-                                        style={"margin-top": "0px"}
-                                    )
-                                },
-                                footer = [
-                                    dcc.Markdown("**Interesting Findings**: There are many findings to be made: For example, US laureates tend to be very immobile; however, not as immobile as the French. German researchers, on the other hand, love to go abroad - however you may want to interpret that. Finally, it is an interesting exercise to speculate if the period 1994-2014 is significantly different from other periods.")
-                                ],
-                            ),
-                        ),
+                        generate_loader_spinner("fig_parcat_migration_dwp"),
 
-                        # PLOT: Movement BPD
-                        dcc.Loading(
-                            generate_plot_in_layout(   
-                                header = "Movement: Birth / Prize / Death",
-                                subheader = "This plot works the same way, but has slightly diffferent data: place of birth, place of organisation when the prize was awarded, place of death. Note that this dataset, unlike the previous one, spans the full time range. (Selecting *City* may lead to incorrect visuals, as there are simply too many to display.)",
-                                badges = [dmc.Badge("Natural Sciences", variant="outline", color=brand_color_alt)],
-                                plot_id = "fig_parcat_migration_bpd",
-                                figure = pcp.generate_parcat_migration(df_laureates, loc1="BirthCountryNow", loc2="Prize0_Affiliation0_Country", loc3="DeathCountryNow", width=1400, height=1800), #fig_parcat_migration_bpd,
-                                plot_generator = "generate_parcat_migration",
-                                #style= {'width':'1000px', 'height':'auto'},
-                                show_filters={
-                                    "categories": True, 
-                                    "gender": True,
-                                    "custom-filter": dmc.Stack(
-                                            children=[
-                                                html.Div("Type of city:"),
-                                                dmc.Group(
-                                                    children=[
-                                                        dcc.Dropdown(
-                                                            id={
-                                                                "type": "custom-filter", # custom filters must have 'custom-filter'
-                                                                "index": "fig_parcat_migration_bpd",  # must match the plot_id
-                                                                "filter": "loc1"  # must match a plot generator function kwarg so it will be passed properly
-                                                            },
-                                                            options=[
-                                                                {'label': 'City', 'value': 'BirthCityNow'},
-                                                                {'label': 'Country', 'value': 'BirthCountryNow'},
-                                                                {'label': 'Continent', 'value': 'BirthContinent'},
-                                                            ],
-                                                            value='BirthContinent',  # Default value
-                                                            clearable=False,
-                                                            style={"width": "200px"}
-                                                        ),
-                                                        dcc.Dropdown(
-                                                            id={
-                                                                "type": "custom-filter", # custom filters must have 'custom-filter'
-                                                                "index": "fig_parcat_migration_bpd",  # must match the plot_id
-                                                                "filter": "loc2"  # must match a plot generator function kwarg so it will be passed properly
-                                                            },
-                                                            options=[
-                                                                {'label': 'City', 'value': 'Prize0_Affiliation0_CityNow'},
-                                                                {'label': 'Country', 'value': 'Prize0_Affiliation0_Country'},
-                                                                {'label': 'Continent', 'value': 'Prize0_Affiliation0_Continent'}
-                                                            ],
-                                                            value='Prize0_Affiliation0_Country',  # Default value
-                                                            clearable=False,
-                                                            style={"width": "200px"}
-                                                        ),
-                                                        dcc.Dropdown(
-                                                            id={
-                                                                "type": "custom-filter", # custom filters must have 'custom-filter'
-                                                                "index": "fig_parcat_migration_bpd",  # must match the plot_id
-                                                                "filter": "loc3"  # must match a plot generator function kwarg so it will be passed properly
-                                                            },
-                                                            options=[
-                                                                {'label': 'City', 'value': 'DeathCityNow'},
-                                                                {'label': 'Country', 'value': 'DeathCountryNow'},
-                                                                {'label': 'Continent', 'value': 'DeathContinent'}
-                                                            ],
-                                                            value='DeathCityNow',  # Default value
-                                                            clearable=False,
-                                                            style={"width": "200px"}
-                                                        ),
-                                                    ]
-                                                )
-                                            ],
-                                        gap="xs",  # space between the label and the dropdown
-                                        align="flex-start",  # Align items to the left
-                                        style={"margin-top": "0px"}
-                                    )
-                                },
-                                footer = [
-                                    dcc.Markdown("**Interesting Findings**: There are many findings to be made: For example, US laureates tend to be very immobile; however, not as immobile as the French. German researchers, on the other hand, love to go abroad - however you may want to interpret that. Finally, it is an interesting exercise to speculate if the period 1994-2014 is significantly different from other periods.")
-                                ],
-                            ),
-                        ),
+                        generate_loader_spinner("fig_parcat_migration_bpd"),
 
-
-
-                        # PLOT: Globe Movement
-                        dcc.Loading(
-                            generate_plot_in_layout(   
-                                header = "Movement: Birth / Prize",
-                                subheader = "This globe shows the movement from place of birth to place of affiliation at the time of the award.)",
-                                badges = [dmc.Badge("All Categories", variant="outline", color=brand_color_alt)],
-                                plot_id = "fig_globe_movement",
-                                figure = pcp.generate_globe_movement(df_laureates), #fig_globe_movement,
-                                plot_generator = "generate_globe_movement",
-                                #style= {'width':'1000px', 'height':'auto'},
-                                footer = [
-                                    dcc.Markdown("**Interesting Findings**: Isn't it nice to look at?")
-                                    ],
-                            )
-                        )
+                        generate_loader_spinner('fig_globe_movement')
                     ],
                     gap="sm"
                 )
@@ -2087,7 +2228,7 @@ if __name__ == "__main__":
     # ps.print_stats()
     # print(s.getvalue())
 
-    app.run(debug=True, port=5085, use_reloader=False)
+    app.run(debug=True, port=5085) #, use_reloader=False)
 
 # # # Run the app on the server
 # if __name__ == '__main__':

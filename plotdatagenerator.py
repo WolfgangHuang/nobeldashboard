@@ -8,10 +8,8 @@ import pandas as pd
 import os
 import numpy as np
 from sklearn.linear_model import LinearRegression
-import pickle
-# import matplotlib.pyplot as plt
 import yfinance as yf
-import time
+
 
 ##################################################################################################
 # Color Settings
@@ -1835,7 +1833,7 @@ def get_conversion_rates():
 
     return sek_to_eur_rate, sek_to_usd_rate
 
-def generate_line_prizemoney(data=df_prizes, currency="EUR"):
+def generate_line_prizemoney(data=df_prizes, categories="all", gender="all", currency="EUR"):
     """
     Generates a line chart showing the cumulative Nobel Prize money awarded 
     over time, optionally converted to a specified currency.
@@ -1862,6 +1860,7 @@ def generate_line_prizemoney(data=df_prizes, currency="EUR"):
         conversionrate = 1
         currencyname = "SEK"
     
+    data = standard_filter(data, categories, gender)
 
     # Create a deep copy of the relevant columns to avoid the SettingWithCopyWarning
     df_prizemoney = data[["Prize0_AwardYear", "Prize0_Category", "Prize0_Portion", "Prize0_Amount", "Prize0_AmountAdjusted_"]].copy(deep=True)
@@ -1885,7 +1884,6 @@ def generate_line_prizemoney(data=df_prizes, currency="EUR"):
     df_prizemoney_rs["CumulativePrizeAmountAdjustedShared"] = df_prizemoney_rs["PrizeAmountAdjustedShared"].cumsum()
 
     data = df_prizemoney_rs
-    totalprizeamount = data["CumulativePrizeAmountAdjustedShared"].iloc[-1]
 
     # Create a line chart with Plotly
     fig = go.Figure()
@@ -1950,7 +1948,61 @@ def generate_line_prizemoney(data=df_prizes, currency="EUR"):
         autosize=True
     )
 
-    return fig, totalprizeamount
+    return fig
+
+def generate_var_prizeamount(data=df_prizes, currency="EUR"):
+    """
+    Generates a line chart showing the cumulative Nobel Prize money awarded 
+    over time, optionally converted to a specified currency.
+
+    Args:
+        data (DataFrame): The input dataset of Nobel Prizes (default: df_prizes).
+        currency (str): The currency for prize amounts ('EUR', 'USD', or 'SEK', 
+            default: 'EUR').
+
+    Returns:
+        plotly.graph_objects.Figure: A line chart with cumulative prize money 
+        and inflation-adjusted prize money over the years.
+    """
+
+    sek_to_eur_rate, sek_to_usd_rate = get_conversion_rates()
+
+    if currency=="EUR":
+        conversionrate = sek_to_eur_rate
+        currencyname = "EUR"
+    elif currency=="USD":
+        conversionrate = sek_to_usd_rate
+        currencyname = "USD"
+    elif currency=="SEK":
+        conversionrate = 1
+        currencyname = "SEK"
+    
+
+    # Create a deep copy of the relevant columns to avoid the SettingWithCopyWarning
+    df_prizemoney = data[["Prize0_AwardYear", "Prize0_Category", "Prize0_Portion", "Prize0_Amount", "Prize0_AmountAdjusted_"]].copy(deep=True)
+
+    # Safely convert Prize0_Portion to numeric using .loc
+    df_prizemoney.loc[:, "Prize0_Portion"] = df_prizemoney["Prize0_Portion"].apply(lambda x: float(eval(x)))
+
+    # Safely calculate PrizeAmountShared using .loc
+    df_prizemoney.loc[:, "PrizeAmountShared"] = df_prizemoney["Prize0_Amount"] * df_prizemoney["Prize0_Portion"] * conversionrate
+
+    # Safely calculate PrizeAmountAdjustedShared using .loc
+    df_prizemoney.loc[:, "PrizeAmountAdjustedShared"] = df_prizemoney["Prize0_AmountAdjusted_"] * df_prizemoney["Prize0_Portion"]  * conversionrate
+
+    df_prizemoney_rs = df_prizemoney.groupby("Prize0_AwardYear").agg({
+        "PrizeAmountShared": "sum",
+        "PrizeAmountAdjustedShared": "sum"
+    }).reset_index()
+
+    # Step 2: Calculate the running sum for each column
+    df_prizemoney_rs["CumulativePrizeAmountShared"] = df_prizemoney_rs["PrizeAmountShared"].cumsum()
+    df_prizemoney_rs["CumulativePrizeAmountAdjustedShared"] = df_prizemoney_rs["PrizeAmountAdjustedShared"].cumsum()
+
+    data = df_prizemoney_rs
+    totalprizeamount = data["CumulativePrizeAmountAdjustedShared"].iloc[-1]
+
+    return totalprizeamount
 
 
 
@@ -2301,6 +2353,64 @@ def generate_map_movement(data=df_laureates, year="last", categories="all", gend
     return fig
 
 
+def generate_overview_stats(categories="all", gender="all"):
+    df_filtered_prizes = standard_filter(df_laureates, categories)
+    df_filtered_laureates = standard_filter(df_prizes, categories)
+
+    # Number of Prizes
+    number_of_prizes = df_filtered_prizes.shape[0]
+
+    # Number of Laureates#
+    number_of_laureates = df_filtered_laureates.shape[0]
+
+    # Calculate Youngest and Oldest laureate
+    if df_filtered_prizes.shape[0] == 0:
+        laureate_oldest_name = "None"
+        laureate_oldest_age = ""
+        laureate_youngest_name = "None"
+        laureate_youngest_age = ""
+    else:
+        df_oldestyoungest_laureate = df_filtered_prizes[["AwardeeDisplayName", "OrganisationName", "BirthDate", "Prize0_AwardYear"]].copy()
+        df_oldestyoungest_laureate = df_oldestyoungest_laureate[pd.isna(df_oldestyoungest_laureate["OrganisationName"])]
+        df_oldestyoungest_laureate["BirthDate"] = df_oldestyoungest_laureate["BirthDate"].str.replace(r"-00-00", "-01-01", regex=True)
+        df_oldestyoungest_laureate["BirthDate"] = pd.to_datetime(df_oldestyoungest_laureate["BirthDate"])
+
+        # Convert Prize0_AwardYear to YYYY-12-10 format
+        df_oldestyoungest_laureate["AwardDate"] = pd.to_datetime(
+            df_oldestyoungest_laureate["Prize0_AwardYear"].astype(str) + "-12-10"
+        )
+
+        # Calculate the difference
+        df_oldestyoungest_laureate["AgeAtAward"] = (
+            df_oldestyoungest_laureate["AwardDate"] - df_oldestyoungest_laureate["BirthDate"]
+        )
+
+        from dateutil.relativedelta import relativedelta
+
+        # Function to calculate exact age in years
+        def calculate_exact_years(row):
+            if pd.isna(row["BirthDate"]) or pd.isna(row["AwardDate"]):
+                return None  # Handle missing dates gracefully
+            return relativedelta(row["AwardDate"], row["BirthDate"]).years
+
+        # Apply the function to calculate age in years
+        df_oldestyoungest_laureate["AgeAtAwardYears"] = df_oldestyoungest_laureate.apply(calculate_exact_years, axis=1)
+
+        df_sorted = df_oldestyoungest_laureate.sort_values(by="AgeAtAward", ascending=False)
+
+        laureate_oldest_name = df_sorted.iloc[0]["AwardeeDisplayName"]
+        laureate_oldest_age = df_sorted.iloc[0]["AgeAtAwardYears"]
+
+        #print(f"{laureate_oldest_name}: {laureate_oldest_age}")
+
+        df_sorted = df_oldestyoungest_laureate.sort_values(by="AgeAtAward", ascending=True)
+
+        laureate_youngest_name = df_sorted.iloc[0]["AwardeeDisplayName"]
+        laureate_youngest_age = df_sorted.iloc[0]["AgeAtAwardYears"]
+
+        #print(f"{laureate_youngest_name}: {laureate_youngest_age}")
+        
+        return number_of_laureates, number_of_prizes, laureate_oldest_name, laureate_oldest_age, laureate_youngest_name, laureate_youngest_age, df_filtered_laureates
 
 
 ##################################################################################################
@@ -2322,105 +2432,3 @@ if __name__ == "__main__":
 
     df_prizes_enriched_redux_clean.to_csv("df_prizes_enriched_redux_clean.csv", sep=';', encoding="UTF-8")
     print("df_prizes_enriched_redux_clean.csv has been saved.")
-
-
-    # Generate plots
-    def generate_plots():
-
-        # Tab Overview
-        fig_donut_gender = generate_donut(df_laureates, characteristic="gender")
-        fig_donut_ethnicity = generate_donut(df_laureates, characteristic="ethnicity")
-        fig_donut_religion = generate_donut(df_laureates, characteristic="religion")
-        fig_sunburst = generate_sunburst(df_laureates)
-        
-        # Tab Current
-        fig_sunburst_last = generate_sunburst(df_laureates, year="last")
-        fig_map_movement = generate_map_movement(df_laureates, year="last")
-
-        # Tab Geography
-        fig_choroplethglobe_prizespercountry = generate_choroplethglobe(df_laureates)
-        fig_map_cities = generate_scattermapbox_cities(df_laureates)
-        fig_bubbles_population = generate_bubbles_perpopulation(df_prizes)
-        fig_bar_prizespercountry = generate_bar_percountry(df_prizes)
-        fig_bar_prizespercountry_rs = generate_bar_percountry(df_prizes, runningsum=True)
-        
-        # Tab Demography
-        fig_surface_prizesforwomen = generate_3dsurface_pergender(df_prizes, gender="female")
-        fig_surface_prizesformenwomen = generate_3dsurface_pergender(df_prizes, gender="all")
-
-        # Tab Time
-        fig_histogram_timegap = generate_histogram_timegap(df_prizes, categories="natsci")
-        fig_scatter_timegaptrend = generate_scatterbox_timegaptrend(df_prizes, categories="natsci")
-        fig_scatterbox_age = generate_scatterbox_age(df_laureates)
-        fig_heatmap_age = generate_heatmap_age(df_laureates)
-
-        # Tab Migration
-        fig_parcat_migration_dwp = generate_parcat_migration(df_laureates)
-        fig_parcat_migration_bpd = generate_parcat_migration(df_laureates, loc1="BirthCountryNow", loc2="Prize0_Affiliation0_Country", loc3="DeathCountryNow", width=1400, height=1800)
-        fig_globe_movement = generate_globe_movement(df_laureates)
-
-        # Tab Misc
-        fig_line_prizemoney, totalprizeamount = generate_line_prizemoney(df_prizes)
-
-        return {
-
-        # Tab Overview
-        'fig_donut_gender': fig_donut_gender,
-        'fig_donut_ethnicity': fig_donut_ethnicity,
-        'fig_donut_religion': fig_donut_religion,
-        'fig_sunburst': fig_sunburst,
-
-        # Tab Current
-        'fig_sunburst_last': fig_sunburst_last,
-        'fig_map_movement': fig_map_movement,
-
-        # Tab Geography
-        'fig_choroplethglobe_prizespercountry' : fig_choroplethglobe_prizespercountry,
-        'fig_map_cities' : fig_map_cities,
-        'fig_bubbles_population' : fig_bubbles_population,
-        'fig_bar_prizespercountry' : fig_bar_prizespercountry,
-        'fig_bar_prizespercountry_rs' : fig_bar_prizespercountry_rs,
-
-        # Tab Demography
-        'fig_surface_prizesforwomen' : fig_surface_prizesforwomen,
-        'fig_surface_prizesformenwomen' : fig_surface_prizesformenwomen,
-
-        # Tab Time
-        'fig_histogram_timegap' : fig_histogram_timegap,
-        'fig_scatter_timegaptrend' : fig_scatter_timegaptrend,
-        'fig_scatterbox_age' : fig_scatterbox_age,
-        'fig_heatmap_age' : fig_heatmap_age,
-
-        # Tab Migration
-        'fig_parcat_migration_dwp': fig_parcat_migration_dwp,
-        'fig_parcat_migration_bpd': fig_parcat_migration_bpd,
-        'fig_globe_movement' : fig_globe_movement,
-
-        # Tab Misc
-        'fig_line_prizemoney' : fig_line_prizemoney,
-        'totalprizeamount' : totalprizeamount
-        }
- 
-
-    # Save plots to a pickle file
-
-    # Start timing
-    start_time = time.time()
-
-    # Generate the plots
-    pcp_plots = generate_plots()
-
-    # Save to a pickle file
-    pickle_file = 'pcp_plots.pkl'
-    with open(pickle_file, 'wb') as f:
-        pickle.dump(pcp_plots, f)
-
-    # Measure elapsed time
-    elapsed_time = time.time() - start_time
-
-    # Get the file size
-    file_size = os.path.getsize(pickle_file) / (1024 * 1024)  # Convert bytes to MB
-
-    print(f"All plots precomputed in {elapsed_time:.2f} seconds.")
-    print(f"Pickle file size: {file_size:.2f} MB.")
-

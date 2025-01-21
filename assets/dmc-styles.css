@@ -214,6 +214,17 @@ c_teal_verydark = '#072124'
     text-align: flex-start;
 }
 
+.loader-spinner{
+    background-color: #ffffff; /* White background */
+    border: 1px solid #e83f3f; /* Light grey border */
+    border-radius: 10px; /* Rounded corners */
+    padding: 15px; /* Padding inside the widget */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    margin: 0px; /* Space between widgets */
+    font-size: 12px;
+    text-align: center;
+}
+
 /**
 .p{
     color: #0000ff;;
@@ -237,7 +248,7 @@ c_teal_verydark = '#072124'
     border-radius: 10px; /* Rounded corners */
     padding: 15px; /* Padding inside the widget */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    margin: 0px; /* Space between widgets */
+    margin-bottom: 10px;
     font-size: 12px;
 }
 
