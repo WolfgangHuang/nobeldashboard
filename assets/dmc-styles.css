@@ -318,5 +318,58 @@ c_teal_verydark = '#072124'
     font-size: 12px;
 }
 
+.plot-header {
+    font-size: 18px;
+    font-weight: 500;
+    font-family: 'Rubik', sans-serif;
+    color: #47382a;
+    margin-bottom: 10px;
+}
 
+.plot-subheader {
+    font-size: 12px;
+    font-weight: 400;
+    font-family: 'Rubik', sans-serif;
+    color: #47382a;
+    margin-bottom: 10px;
+}
 
+.dashboard-title {
+    font-size: 32px;
+    font-weight: 400;
+    font-family: 'Rubik', sans-serif;
+    color: #47382a;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.dashboard-tab {
+    font-size: 14px;
+    font-weight: 300;
+    font-family: 'Rubik', sans-serif;
+    color: #666666;
+}
+
+.text-header {
+    font-size: 18px;
+    font-weight: 500;
+    font-family: 'Rubik', sans-serif;
+    color: #47382a;
+    margin-bottom: 10px;
+}
+
+.text-subheader {
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Rubik', sans-serif;
+    color: #47382a;
+    margin-bottom: 10px;
+}
+
+.text-copy {
+    font-size: 14px;
+    font-weight: 400;
+    font-family: 'Rubik', sans-serif;
+    color: #000000;
+    margin-bottom: 10px;
+}

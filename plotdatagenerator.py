@@ -15,7 +15,7 @@ import yfinance as yf
 # Color Settings
 ##################################################################################################
 
-brand_color_plot_background='#FEFEFA'
+brand_color_plot_background='#F5F4F5'
 
 c_brown = '#47382a'
 c_brown_verylight = '#F0EBE6'
@@ -27,6 +27,7 @@ c_yellow = '#ffe74c'
 c_darkmagenta = '#8e2984'
 c_magenta = '#cf437d'
 c_pink = '#ff99c8'
+c_grey='#e6e6e6'
 
 c_red_verylight = '#f7c1c6'
 c_red_superlight = '#fbe0e2'
@@ -65,7 +66,6 @@ brand_color_main = c_brown
 brand_color_alt = c_teal
 brand_color_alt2 = c_red
 brand_color_acc = c_darkmagenta
-brand_color_plot_background='#F7F5F2'
 brand_colorscale_main = colorscale_palette
 c_physics = c_teal
 c_medicine = c_red
@@ -444,7 +444,7 @@ def define_gender_states(chip_female, chip_male):
         return ""
 
 
-def standard_filter(data, categories="all", gender="all", timerange=None, timerange_field="award"):
+def standard_filter(data, categories="all", gender="all", timerange=[1901, lastyearincluded], timerange_field="award", callsign=""):
 
     # Replace short handles with lists
     if categories == "all":
@@ -456,6 +456,8 @@ def standard_filter(data, categories="all", gender="all", timerange=None, timera
     else:
         categories = categories
 
+    # print(f"Categories from: {callsign}: {categories}")
+
     # Apply category filter
     df_filtered = data[data["Prize0_Category"].isin(categories)]
 
@@ -465,21 +467,42 @@ def standard_filter(data, categories="all", gender="all", timerange=None, timera
     else:
         df_filtered = df_filtered
     
-    # Apply year range Filter if not empty
+    # print(f"Time Range: {timerange}")
+    # print(f"Time Range Field: {timerange_field}")
+    #print("Columns in DataFrame:", df_filtered.columns)
+
     if timerange is None:
         df_filtered = df_filtered
     else:
         if timerange_field == "birth":
-            datefield = pd.to_datetime(data['BirthDate'], errors='coerce').dt.year.astype(int)
+            df_filtered['BirthYear'] = pd.to_datetime(df_filtered['BirthDate'], errors='coerce', format='%Y-%m-%d').dt.year
+            df_filtered['BirthYear'] = df_filtered['BirthYear'].fillna(0).astype(int)
+            datefield = 'BirthYear'
         elif timerange_field == "death":
-            datefield = pd.to_datetime(data['DeathDate'], errors='coerce').dt.year.astype(int)
+            df_filtered['DeathYear'] = pd.to_datetime(df_filtered['DeathDate'], errors='coerce', format='%Y-%m-%d').dt.year
+            df_filtered['DeathYear'] = df_filtered['DeathYear'].fillna(0).astype(int)
+            datefield = 'DeathYear'
+        elif timerange_field == "award":
+            df_filtered.loc[:,'Prize0_AwardYear'] = df_filtered['Prize0_AwardYear'].fillna(0).astype(int)
+            datefield = 'Prize0_AwardYear'
         else:
-            datefield = data['Prize0_AwardYear'].astype(int)
-            
+            df_filtered.loc[:,'Prize0_AwardYear'] = df_filtered['Prize0_AwardYear'].fillna(0).astype(int)
+            datefield = 'Prize0_AwardYear'
+
+        # print("Datefield:", datefield)
+        # print("Timerange:", timerange)
+        # print("Columns in DataFrame:", df_filtered.columns)
+        # print("DataFrame Object Type:", df_filtered.dtypes)
+
+        # print(f"Datefield dtype: {df_filtered[datefield].dtype}")
+        # print(f"Timerange dtype: {type(timerange[0])}")
+
         df_filtered = df_filtered[
-            (df_filtered[datefield] >= timerange[0]) &
-            (df_filtered[datefield] <= timerange[1])
+            (df_filtered[datefield].astype(int) >= timerange[0]) &
+            (df_filtered[datefield].astype(int) <= timerange[1])
         ]
+
+    # print(f"Result rows/columns: {df_filtered.shape[0]}, {df_filtered.shape[1]}")
 
     return df_filtered
 
@@ -501,7 +524,7 @@ def replace_country_designations(country):
 # Plot: Choropleth Globe Countries
 # ================================================================================================
 
-def generate_choroplethglobe(data=df_laureates, country="birth", categories="all", gender="all", year_range=None, year_range_field="award"):
+def generate_choroplethglobe(data=df_laureates, country="birth", categories="all", gender="all", timerange=[1901, lastyearincluded], timerange_field="award"):
     """
     Generates a 3D globe with the number of Nobel Laureates per Country.
 
@@ -538,7 +561,7 @@ def generate_choroplethglobe(data=df_laureates, country="birth", categories="all
     """
 
     # Filter
-    df_filtered = standard_filter(data, categories, gender, year_range, year_range_field)
+    df_filtered = standard_filter(data, categories, gender, timerange, timerange_field)
 
     # Count
     country = replace_country_designations(country)
@@ -548,7 +571,7 @@ def generate_choroplethglobe(data=df_laureates, country="birth", categories="all
     fig = go.Figure(data=go.Choropleth(
         locations=data['ISO3'],
         z=data['Count'],
-        colorscale=colorscale_teal_log,
+        colorscale=colorscale_hue_log,
         marker_line_color='darkgray',
         marker_line_width=0.5,
         colorbar=dict(
@@ -563,6 +586,7 @@ def generate_choroplethglobe(data=df_laureates, country="birth", categories="all
 
     fig.update_layout(      
         template='plotly_white',
+        plot_bgcolor=brand_color_plot_background,
         margin={"r":0,"t":0,"l":0,"b":0},
         font=dict(
             family = 'Rubik, sans-serif',
@@ -595,7 +619,7 @@ def generate_choroplethglobe(data=df_laureates, country="birth", categories="all
 # Plot: Scatter Mapbox Cities
 # ================================================================================================
 
-def generate_scattermapbox_cities(data=df_laureates, city="birth", gender="all", categories="all"):
+def generate_scattermapbox_cities(data=df_laureates, city="birth", gender="all", categories="all", timerange=[1901, lastyearincluded], timerange_field="award"):
     """
     Generates a Scatter Mapbox with the number of Nobel Laureates per City.
 
@@ -624,7 +648,7 @@ def generate_scattermapbox_cities(data=df_laureates, city="birth", gender="all",
     - fig (plotly.graph_objs._figure.Figure): The Plotly figure object representing the globe.
     """
     # Filter
-    data = standard_filter(data, categories, gender)
+    data = standard_filter(data, categories, gender, timerange, timerange_field)
 
     # Function to add small jitter to coordinates to avoid overlap
     def add_jitter(coordinates, scale=0.05):
@@ -687,6 +711,8 @@ def generate_scattermapbox_cities(data=df_laureates, city="birth", gender="all",
 
     # Update layout of the map
     fig.update_layout(
+        template='plotly_white',
+        plot_bgcolor=brand_color_plot_background,
         margin={"r":0,"t":0,"l":0,"b":0},
         font=dict(
             family = 'Rubik, sans-serif',
@@ -894,7 +920,7 @@ def prepare_data_bubbles_population(df_nlpc_complete, df_pop=df_pop, interval=5)
 
 # generate the plot
 
-def generate_bubbles_perpopulation(data=df_prizes, country="birth", gender="all", categories="all", df_pop=df_pop, interval=5):
+def generate_bubbles_perpopulation(data=df_prizes, country="birth", gender="all", categories="all", timerange=[1901, lastyearincluded], timerange_field="award", df_pop=df_pop, interval=5):
     """
     Generates a population-based bubble chart of Nobel Prize data, using Plotly for interactive visualization.
     
@@ -941,7 +967,7 @@ def generate_bubbles_perpopulation(data=df_prizes, country="birth", gender="all"
     
     """
 
-    data = standard_filter(data, categories, gender)
+    data = standard_filter(data, categories, gender, timerange, timerange_field)
     df_nlpc_complete = prepare_data_prizespercountry(data, country)
     data, y_range_max, bubblesize = prepare_data_bubbles_population(df_nlpc_complete, df_pop, interval)
 
@@ -1011,7 +1037,7 @@ def generate_bubbles_perpopulation(data=df_prizes, country="birth", gender="all"
 # Plot: Prizes per Country Stacked Bar Chart
 # ================================================================================================
 
-def generate_bar_percountry(data=df_prizes, country="birth", gender="all", categories="all", runningsum=False):
+def generate_bar_percountry(data=df_prizes, country="birth", gender="all", categories="all", timerange=[1901, lastyearincluded], timerange_field="award", runningsum=False):
     """
     Generates a stacked bar chart of Nobel Prizes per country per year.
     
@@ -1051,7 +1077,7 @@ def generate_bar_percountry(data=df_prizes, country="birth", gender="all", categ
     """
 
     # Filter
-    data = standard_filter(data, categories, gender)
+    data = standard_filter(data, categories, gender, timerange, timerange_field)
 
     # Prepare
     df_nlpc_complete = prepare_data_prizespercountry(data, country)
@@ -1113,7 +1139,7 @@ def generate_bar_percountry(data=df_prizes, country="birth", gender="all", categ
 # Plot: Prizes to Women and Men per Decade, 3D surface
 # ================================================================================================
 
-def prepare_data_3dsurface(data, categories, gender):
+def prepare_data_3dsurface(data, categories, gender, timerange, timerange_field):
     """
     Prepares data for a 3D surface plot.
     
@@ -1133,7 +1159,8 @@ def prepare_data_3dsurface(data, categories, gender):
             Two dfs allowing to show two surfaces in the plot.    
     """
 
-    data = standard_filter(data, categories, gender)
+    data = standard_filter(data, categories, gender, timerange, timerange_field)
+
 
     # To ensure that we don't accidentally modify the passed original dataframe.
     data = data.copy()
@@ -1169,7 +1196,7 @@ def prepare_data_3dsurface(data, categories, gender):
     return df_prizes_women, df_prizes_men
 
 
-def generate_3dsurface_pergender(data=df_prizes, categories="all",  gender="female", width=1000, height=600):
+def generate_3dsurface_pergender(data=df_prizes, categories="all", gender="female", timerange=[1901, lastyearincluded], timerange_field="award", width=1000, height=600):
     """
     Generates 3D surface plot, showing prizes to men and women.
     
@@ -1195,7 +1222,7 @@ def generate_3dsurface_pergender(data=df_prizes, categories="all",  gender="fema
     
     """
     # Prepare data
-    data_w, data_m = prepare_data_3dsurface(data, categories, gender)
+    data_w, data_m = prepare_data_3dsurface(data, categories, gender, timerange, timerange_field)
 
     # Define axes dynamically
     x = list(data_w.columns)  # Decades from the pivoted DataFrame columns
@@ -1223,6 +1250,7 @@ def generate_3dsurface_pergender(data=df_prizes, categories="all",  gender="fema
     fig.update_layout(
         autosize=True,
         template='plotly_white',
+        plot_bgcolor=brand_color_plot_background,
         scene=dict(
             xaxis=dict(tickvals=x, ticktext=x, title='Decades', autorange='reversed'),
             yaxis=dict(title='Categories'),
@@ -1243,7 +1271,7 @@ def generate_3dsurface_pergender(data=df_prizes, categories="all",  gender="fema
 # Plot: Donuts Gender/Ethnicity/Religion
 # ================================================================================================
 
-def prepare_data_donuts(data, categories, gender, characteristic):
+def prepare_data_donuts(data, categories, gender, timerange, timerange_field, characteristic):
     """
     Prepares data for a donut chart by filtering and aggregating counts 
     based on the specified characteristic.
@@ -1262,7 +1290,7 @@ def prepare_data_donuts(data, categories, gender, characteristic):
     """
 
     # Standard filter
-    data = standard_filter(data, categories, gender)
+    data = standard_filter(data, categories, gender, timerange, timerange_field, characteristic)
 
     if characteristic == "gender":
         # Data for gender
@@ -1288,7 +1316,7 @@ def prepare_data_donuts(data, categories, gender, characteristic):
         return df_empty
 
 
-def generate_donut(data=df_laureates, categories="all", gender="all", characteristic="gender"):
+def generate_donut(data=df_laureates, categories="all", gender="all", characteristic="gender", timerange=[1901, lastyearincluded], timerange_field="award"):
     """
     Generates a donut chart visualizing the distribution of a specified 
     characteristic (e.g., gender, ethnicity, or religion) among Nobel laureates.
@@ -1306,46 +1334,53 @@ def generate_donut(data=df_laureates, categories="all", gender="all", characteri
     """
 
     # Prepare data
-    data = prepare_data_donuts(data, categories, gender, characteristic)
+    data = prepare_data_donuts(data, categories, gender, timerange, timerange_field, characteristic)
 
-    # Extract labels and values
-    labels = data['Label'].tolist()
-    values = data['Count'].tolist()
-    characteristic_name = characteristic.capitalize()
+    if data.empty:
+        print("Error: No data available for generating the plot.")
+        fig = {"data": [], "layout": {"title": "Error generating plot"}}
+    else:
 
-    # Create the pie chart
-    fig = go.Figure(
-        data=[
-            go.Pie(
-                labels=labels,
-                values=values,
-                hole=0.5,
-                marker=dict(
-                    colors=colorscale_palette_light  # Use the colors in the order of the labels
-                ),
-                showlegend=False,
-                textinfo='label',
-                textposition='inside',
-                insidetextorientation='horizontal'
-            )
-        ]
-    )
+        # Extract labels and values
+        labels = data['Label'].tolist()
+        values = data['Count'].tolist()
+        characteristic_name = characteristic.capitalize()
 
-    # Update layout
-    fig.update_layout(
-        annotations=[
-            dict(
-                text=characteristic_name,
-                x=0.5,
-                y=0.5,
-                font_size=16,
-                showarrow=False,
-                xanchor="center"
-            )
-        ],
-        autosize=True,
-        margin=dict(l=10, r=10, t=10, b=10),
-    )
+        # Create the pie chart
+        fig = go.Figure(
+            data=[
+                go.Pie(
+                    labels=labels,
+                    values=values,
+                    hole=0.5,
+                    marker=dict(
+                        colors=colorscale_palette_light  # Use the colors in the order of the labels
+                    ),
+                    showlegend=False,
+                    textinfo='label',
+                    textposition='inside',
+                    insidetextorientation='horizontal'
+                )
+            ]
+        )
+
+        # Update layout
+        fig.update_layout(
+            template='plotly_white',
+            plot_bgcolor=brand_color_plot_background,
+            annotations=[
+                dict(
+                    text=characteristic_name,
+                    x=0.5,
+                    y=0.5,
+                    font_size=16,
+                    showarrow=False,
+                    xanchor="center"
+                )
+            ],
+            autosize=True,
+            margin=dict(l=10, r=10, t=10, b=10),
+        )
 
     return fig
 
@@ -1358,7 +1393,7 @@ def generate_donut(data=df_laureates, categories="all", gender="all", characteri
 # Plot: Timegap
 # ================================================================================================
 
-def prepare_data_histogram_timegap(data, categories, gender, datasource):
+def prepare_data_histogram_timegap(data, categories, gender, timerange, timerange_field, datasource):
     """
     Filters and prepares data for a timegap histogram.
 
@@ -1374,7 +1409,7 @@ def prepare_data_histogram_timegap(data, categories, gender, datasource):
         is not empty and matches the specified filters.
     """
 
-    data = standard_filter(data, categories, gender)
+    data = standard_filter(data, categories, gender, timerange, timerange_field)
 
     # delete rows where there is no info on the timegap
     df_filtered = data[data['PublicationSource'].notna() & (data['PublicationSource'].str.strip() != "")]
@@ -1390,7 +1425,7 @@ def prepare_data_histogram_timegap(data, categories, gender, datasource):
     return df_filtered
 
 
-def generate_histogram_timegap(data=df_prizes, categories="all", gender="all", datasource="all"):
+def generate_histogram_timegap(data=df_prizes, categories="all", gender="all", timerange=[1901, lastyearincluded], timerange_field="award", datasource="all"):
     """
     Generates a histogram visualizing the time gap between seminal papers 
     and Nobel Prizes.
@@ -1406,7 +1441,7 @@ def generate_histogram_timegap(data=df_prizes, categories="all", gender="all", d
         prize categories, with custom styling and layout.
     """    
 
-    data = prepare_data_histogram_timegap(data, categories, gender, datasource)
+    data = prepare_data_histogram_timegap(data, categories, gender, timerange, timerange_field, datasource)
 
     fig = px.histogram(
         data,
@@ -1428,7 +1463,11 @@ def generate_histogram_timegap(data=df_prizes, categories="all", gender="all", d
     )
     
     fig.update_layout(
+        template='plotly_white',
+        plot_bgcolor=brand_color_plot_background,
         margin={"r":0,"t":50,"l":0,"b":0},
+        xaxis_title="Average Time Gap (years)",
+        yaxis_title="Count",
         font=dict(
             family = 'Rubik, sans-serif',
             size = 14,
@@ -1456,7 +1495,7 @@ def generate_histogram_timegap(data=df_prizes, categories="all", gender="all", d
 # Plot: Timegap with Trendlines
 # ================================================================================================
 
-def generate_scatterbox_timegaptrend(data=df_laureates, df_lifeexpectancy=df_lifeexpectancy, categories="all", gender="all", datasource="both"):
+def generate_scatterbox_timegaptrend(data=df_laureates, df_lifeexpectancy=df_lifeexpectancy, categories="all", gender="all", timerange=[1901, lastyearincluded], timerange_field="award", datasource="both"):
     """
     Generates a trend visualization of the time gap between seminal papers 
     and Nobel Prizes, including trendlines and life expectancy comparisons.
@@ -1472,7 +1511,7 @@ def generate_scatterbox_timegaptrend(data=df_laureates, df_lifeexpectancy=df_lif
         categorized by prize, and overlaid with life expectancy trends.
     """
 
-    data = prepare_data_histogram_timegap(data, categories, gender, datasource)
+    data = prepare_data_histogram_timegap(data, categories, gender, timerange, timerange_field, datasource)
     
     fig = go.Figure()
 
@@ -1535,6 +1574,8 @@ def generate_scatterbox_timegaptrend(data=df_laureates, df_lifeexpectancy=df_lif
 
     # Update layout
     fig.update_layout(
+        template='plotly_white',
+        plot_bgcolor=brand_color_plot_background,
         xaxis_title="Year of Nobel Prize Award",
         yaxis_title="Average Time Gap (years)",
         showlegend=True,
@@ -1565,7 +1606,7 @@ def generate_scatterbox_timegaptrend(data=df_laureates, df_lifeexpectancy=df_lif
 # ================================================================================================
 
 
-def prepare_data_age(data, gender, categories):
+def prepare_data_age(data, categories, gender, timerange, timerange_field):
     """
     Prepares data for analyzing the average age of Nobel laureates at the time 
     of receiving their award.
@@ -1581,7 +1622,7 @@ def prepare_data_age(data, gender, categories):
     """
 
     # standard filter
-    df_filtered = standard_filter(data, categories, gender)
+    df_filtered = standard_filter(data, categories, gender, timerange, timerange_field)
 
     # Copy the relevant columns to avoid warnings
     df_age = df_filtered[["Prize0_AwardYear", "Prize0_Category", "BirthDate", "Prize0_DateAwarded"]].copy()
@@ -1608,7 +1649,7 @@ def prepare_data_age(data, gender, categories):
     return df_age_grouped
 
 
-def generate_scatterbox_age(data=df_laureates, gender="all", categories="all"):
+def generate_scatterbox_age(data=df_laureates, categories="all", gender="all", timerange=[1901, lastyearincluded], timerange_field="award"):
     """
     Generates a scatter plot with trendlines showing the average age of Nobel 
     laureates at the time of award, grouped by year and prize categories.
@@ -1623,7 +1664,7 @@ def generate_scatterbox_age(data=df_laureates, gender="all", categories="all"):
         categorized by prize type, showing average age trends.
     """
 
-    data = prepare_data_age(data, gender, categories)
+    data = prepare_data_age(data, categories, gender, timerange, timerange_field)
 
     colors = {
         "Physics": c_physics, 
@@ -1649,23 +1690,25 @@ def generate_scatterbox_age(data=df_laureates, gender="all", categories="all"):
     )
 
     fig.update_layout(
-            margin={"r":0,"t":50,"l":0,"b":0},
-            font=dict(
-                family = 'Rubik, sans-serif',
-                size = 14,
-                color = brand_color_main,
-            ),        
-            # title=dict(
-            #     text = "3.c: Laureate Age at Time of Award (with trendlines)",
-            #     font=dict(size = 20),
-            #     x = 0,                            # Left align the title
-            #     xanchor = 'left',                 # Align to the left edge
-            #     y = 1,                         # Adjust Y to position title above the map
-            #     yanchor = 'top',                  # Anchor at the top of the title box
-            #     pad=dict(t = 20, b = 20)
-            # ),
-            autosize= True
-            ),
+        template='plotly_white',
+        plot_bgcolor=brand_color_plot_background,
+        margin={"r":0,"t":50,"l":0,"b":0},
+        font=dict(
+            family = 'Rubik, sans-serif',
+            size = 14,
+            color = brand_color_main,
+        ),        
+        # title=dict(
+        #     text = "3.c: Laureate Age at Time of Award (with trendlines)",
+        #     font=dict(size = 20),
+        #     x = 0,                            # Left align the title
+        #     xanchor = 'left',                 # Align to the left edge
+        #     y = 1,                         # Adjust Y to position title above the map
+        #     yanchor = 'top',                  # Anchor at the top of the title box
+        #     pad=dict(t = 20, b = 20)
+        # ),
+        autosize= True
+        ),
 
     return fig
 
@@ -1674,7 +1717,7 @@ def generate_scatterbox_age(data=df_laureates, gender="all", categories="all"):
 # Plot: Age Heatmap
 # ================================================================================================
 
-def generate_heatmap_age(data=df_laureates, gender="all", categories="all"):
+def generate_heatmap_age(data=df_laureates, categories="all", gender="all", timerange=[1901, lastyearincluded], timerange_field="award"):
     """
     Generates a heatmap showing the average age of Nobel laureates at the 
     time of award, categorized by prize and year.
@@ -1689,7 +1732,7 @@ def generate_heatmap_age(data=df_laureates, gender="all", categories="all"):
         ages by award year and prize categories.
     """
 
-    data = prepare_data_age(data, gender, categories)
+    data = prepare_data_age(data, categories, gender, timerange, timerange_field)
 
     data = data.pivot_table(
         index="Prize0_Category", 
@@ -1710,6 +1753,8 @@ def generate_heatmap_age(data=df_laureates, gender="all", categories="all"):
     )
 
     fig.update_layout(
+        template='plotly_white',
+        plot_bgcolor=brand_color_plot_background,
         margin={"r":0,"t":50,"l":0,"b":0},
         font=dict(
             family = 'Rubik, sans-serif',
@@ -1736,7 +1781,7 @@ def generate_heatmap_age(data=df_laureates, gender="all", categories="all"):
 # Plot: Movement Degree - Work - Prize
 # ================================================================================================
 
-def generate_parcat_migration(data=df_laureates, loc1="ParCatDegreeCountry", loc2="ParCatWorkCountry", loc3="ParCatPrizeCountry", categories="all", gender="all", width=1000, height=1400):
+def generate_parcat_migration(data=df_laureates, loc1="ParCatDegreeCountry", loc2="ParCatWorkCountry", loc3="ParCatPrizeCountry", categories="all", gender="all", timerange=[1901, lastyearincluded], timerange_field="award", width=1000, height=1400):
     """
     Generates a parallel categories diagram visualizing Nobel laureates' movement 
     via three locations (Degree/WorkPrize or Birth/Prize/Death)
@@ -1764,7 +1809,8 @@ def generate_parcat_migration(data=df_laureates, loc1="ParCatDegreeCountry", loc
         movement paths, with customizable dimensions and color-coded categories.
     """
 
-    data = standard_filter(data, categories, gender)
+    data = standard_filter(data, categories, gender, timerange, timerange_field)
+
 
     # .copy() to ensure we don't modify the original dataframe
     data = data[data['ParCatDegreeCountry'].notna() & (data['ParCatDegreeCountry'].str.strip() != "")].copy()
@@ -1789,7 +1835,8 @@ def generate_parcat_migration(data=df_laureates, loc1="ParCatDegreeCountry", loc
     )])
 
     fig.update_layout(
-        #margin={"r":35,"t":0,"l":50,"b":0},
+        template='plotly_white',
+        plot_bgcolor=brand_color_plot_background,
         font=dict(
             family = 'Rubik, sans-serif',
             size = 14,
@@ -1833,7 +1880,7 @@ def get_conversion_rates():
 
     return sek_to_eur_rate, sek_to_usd_rate
 
-def generate_line_prizemoney(data=df_prizes, categories="all", gender="all", currency="EUR"):
+def generate_line_prizemoney(data=df_prizes, categories="all", gender="all", timerange=[1901, lastyearincluded], timerange_field="award", currency="EUR"):
     """
     Generates a line chart showing the cumulative Nobel Prize money awarded 
     over time, optionally converted to a specified currency.
@@ -1860,7 +1907,8 @@ def generate_line_prizemoney(data=df_prizes, categories="all", gender="all", cur
         conversionrate = 1
         currencyname = "SEK"
     
-    data = standard_filter(data, categories, gender)
+    data = standard_filter(data, categories, gender, timerange, timerange_field)
+
 
     # Create a deep copy of the relevant columns to avoid the SettingWithCopyWarning
     df_prizemoney = data[["Prize0_AwardYear", "Prize0_Category", "Prize0_Portion", "Prize0_Amount", "Prize0_AmountAdjusted_"]].copy(deep=True)
@@ -2013,7 +2061,7 @@ def generate_var_prizeamount(data=df_prizes, currency="EUR"):
 # Plot Sunburst 2024
 #=================================================================================================
 
-def prepare_data_sunburst(data, year, path, categories, gender):
+def prepare_data_sunburst(data, year, path, categories, gender, timerange, timerange_field):
     """
     Prepares data for a sunburst chart by grouping and counting based on the specified path.
 
@@ -2027,7 +2075,7 @@ def prepare_data_sunburst(data, year, path, categories, gender):
         and a 'count' column representing the number of occurrences.
     """
    
-    data = standard_filter(data, categories, gender)
+    data = standard_filter(data, categories, gender, timerange, timerange_field)
 
     if year=="last":
         data = data[data['Prize0_AwardYear'] == lastyearincluded]
@@ -2041,7 +2089,7 @@ def prepare_data_sunburst(data, year, path, categories, gender):
     return data_count
 
 
-def generate_sunburst(data=df_laureates, year="all", path=['Prize0_Category', 'LaureateGender', 'BirthCountryNow'], categories="all", gender="all"):
+def generate_sunburst(data=df_laureates, year="all", path=['Prize0_Category', 'LaureateGender', 'BirthCountryNow'], categories="all", gender="all", timerange=[1901, lastyearincluded], timerange_field="award"):
     """
     Generates a sunburst chart visualizing the distribution of Nobel laureates 
     based on the specified hierarchical path.
@@ -2056,22 +2104,31 @@ def generate_sunburst(data=df_laureates, year="all", path=['Prize0_Category', 'L
         with customized colors based on prize categories.
     """
 
-    data = prepare_data_sunburst(data, year, path, categories, gender)
+    data = prepare_data_sunburst(data, year, path, categories, gender, timerange, timerange_field)
 
-    fig = px.sunburst(
-        data, 
-        path=path, 
-        values='count',
-        color='Prize0_Category',
-        color_discrete_map={
-            "Medicine": c_medicine,
-            "Physics": c_physics,
-            "Chemistry": c_chemistry,
-            "Literature": c_literature,
-            "Peace": c_peace,
-            "Economics": c_economics,
-        }
-    )
+    if data.empty:
+        fig = {"data": [], "layout": {"title": "Error generating plot"}}
+    else:
+        fig = px.sunburst(
+            data, 
+            path=path, 
+            values='count',
+            color='Prize0_Category',
+            color_discrete_map={
+                "Medicine": c_medicine,
+                "Physics": c_physics,
+                "Chemistry": c_chemistry,
+                "Literature": c_literature,
+                "Peace": c_peace,
+                "Economics": c_economics,
+            }
+        )
+
+        fig.update_layout(
+            template='plotly_white',
+            plot_bgcolor=brand_color_plot_background
+        )
+
     return fig
 
 
@@ -2079,7 +2136,7 @@ def generate_sunburst(data=df_laureates, year="all", path=['Prize0_Category', 'L
 # Plot Movement Splines on Map/Globe
 #=================================================================================================
 
-def prepare_data_splines(data, year, categories, gender):
+def prepare_data_splines(data, year, categories, gender, timerange, timerange_field):
    """
    Filters and formats Nobel laureates' data for visualizing movement splines.
 
@@ -2101,8 +2158,7 @@ def prepare_data_splines(data, year, categories, gender):
    """
 
    # standard filter
-   data = standard_filter(data, categories, gender)
-
+   data = standard_filter(data, categories, gender, timerange, timerange_field)
    # get required columns
    df_movement_splines = data[["AwardeeDisplayName", "Prize0_AwardYear", "BirthCityNow", "BirthCountryNow","BirthContinent", "BirthCityNowLat", "BirthCityNowLon",
       "Prize0_Affiliation0_CityNow", "Prize0_Affiliation0_Country","Prize0_Affiliation0_Continent", "Prize0_Affiliation0_CityLatitude", "Prize0_Affiliation0_CityLongitude", "DeathCityNow", "DeathCountryNow", "DeathContinent", "DeathCityLat", "DeathCityLon"]]
@@ -2128,7 +2184,7 @@ def prepare_data_splines(data, year, categories, gender):
 
 
 
-def generate_globe_movement(data=df_laureates, year="all", categories="all", gender="all"):
+def generate_globe_movement(data=df_laureates, year="all", categories="all", gender="all", timerange=[1901, lastyearincluded], timerange_field="award"):
     """
     Creates a globe visualization showing Nobel laureates' migration paths.
 
@@ -2156,7 +2212,7 @@ def generate_globe_movement(data=df_laureates, year="all", categories="all", gen
 
     colors = colorscale_palette
 
-    data = prepare_data_splines(data, year, categories, gender)
+    data = prepare_data_splines(data, year, categories, gender, timerange, timerange_field)
 
     # Initialize the figure
     fig = go.Figure()
@@ -2194,6 +2250,8 @@ def generate_globe_movement(data=df_laureates, year="all", categories="all", gen
 
     # Update layout for global view
     fig.update_layout(
+        template='plotly_white',
+        plot_bgcolor=brand_color_plot_background,
         # title_text="Migration Paths of 2023 Nobel Prize Laureates",
         showlegend=False,
         geo=go.layout.Geo(
@@ -2218,7 +2276,7 @@ def generate_globe_movement(data=df_laureates, year="all", categories="all", gen
     return fig
 
 
-def generate_map_movement(data=df_laureates, year="last", categories="all", gender="all"):
+def generate_map_movement(data=df_laureates, year="last", categories="all", gender="all", timerange=[1901, lastyearincluded], timerange_field="award"):
     """
     Creates an interactive map visualizing Nobel laureates' migration paths with curved lines.
 
@@ -2241,7 +2299,7 @@ def generate_map_movement(data=df_laureates, year="last", categories="all", gend
     
     # colors = colorscale_palette
 
-    data = prepare_data_splines(data, year, categories, gender)
+    data = prepare_data_splines(data, year, categories, gender, timerange, timerange_field)
 
 
     # Function to interpolate points for curved paths
@@ -2338,6 +2396,8 @@ def generate_map_movement(data=df_laureates, year="last", categories="all", gend
 
     # Update layout for the mapbox visualization
     fig.update_layout(
+        template='plotly_white',
+        plot_bgcolor=brand_color_plot_background,
         title_text="Places of Birth & Affiliation",
         showlegend=False,
         mapbox=dict(
@@ -2353,64 +2413,144 @@ def generate_map_movement(data=df_laureates, year="last", categories="all", gend
     return fig
 
 
-def generate_overview_stats(categories="all", gender="all"):
-    df_filtered_prizes = standard_filter(df_laureates, categories)
-    df_filtered_laureates = standard_filter(df_prizes, categories)
+def generate_mostcommon_firstnames(data=df_laureates, categories="all", gender="all", timerange=[1901, lastyearincluded], timerange_field="award"):
+    """
+    Generates a bar chart showing the most common first names among Nobel laureates.
 
-    # Number of Prizes
-    number_of_prizes = df_filtered_prizes.shape[0]
+    
+    """
+    data = standard_filter(data, categories, gender, timerange, timerange_field)
 
-    # Number of Laureates#
-    number_of_laureates = df_filtered_laureates.shape[0]
+    data = data["LaureateNameFirst"].str.split(' ').str[0]
+    df_data = data.to_frame()
 
-    # Calculate Youngest and Oldest laureate
-    if df_filtered_prizes.shape[0] == 0:
+    df_data = df_data.dropna()  # Option 1: Drop rows with NaN
+
+    df_filtered = df_data[
+        ~df_data['LaureateNameFirst'].str.match(r'^[A-Z]\.$') &  # Drop initials like "J."
+        ~df_data['LaureateNameFirst'].str.contains(r'^Sir$', case=False)  # Drop "Sir" (case insensitive)
+    ]
+
+    top_names = df_filtered['LaureateNameFirst'].value_counts().head(25)
+
+    # Create a bar chart
+    fig = px.bar(
+        top_names,
+        x=top_names.values,
+        y=top_names.index,
+        orientation='h',  # Horizontal bar chart
+        labels={'x': 'Count', 'y': 'Name'},
+        color_discrete_sequence=[c_teal]
+    )
+
+    fig.update_layout(
+            xaxis_title="Occurences",
+            yaxis_title="Most Common First Names",
+            template="plotly_white",
+            plot_bgcolor=brand_color_plot_background,
+            #yaxis=dict(ticksuffix="   "),
+            yaxis=dict(
+                tickmode="linear",  # Ensures all labels are shown
+                tickfont=dict(size=10),  # Adjust font size for better readability
+                ticksuffix="   "  # Add spaces to the end of each label for better alignment
+            ),
+            margin={"r":0,"t":0,"l":0,"b":0},
+
+            font=dict(
+                family = 'Rubik, sans-serif',
+                size = 11,
+                color = brand_color_main,
+            ),
+            
+            # showlegend = True,
+
+            # title=dict(
+            #     text = "Most common First Names",
+            #     font=dict(size = 20),
+            #     x = 0,                            # Left align the title
+            #     xanchor = 'left',                 # Align to the left edge
+            #     y = 0.97,                         # Adjust Y to position title above the map
+            #     yanchor = 'top',                  # Anchor at the top of the title box
+            # ),
+
+            autosize=True
+        )
+
+    return fig
+
+
+
+def generate_overview_stats(df_filtered_laureates=df_laureates, df_filtered_prizes=df_prizes):
+
+    if df_filtered_laureates.shape[0] == 0 or df_filtered_prizes.shape[0] == 0:
+        # print("generate_overview_stats: DataFrames are empty.")
+        number_of_laureates = 0
+        # print("Number of Laureates:", number_of_laureates)
+
+        number_of_prizes = 0
         laureate_oldest_name = "None"
-        laureate_oldest_age = ""
+        laureate_oldest_age = "---"
         laureate_youngest_name = "None"
-        laureate_youngest_age = ""
+        laureate_youngest_age = "---"
+
+        return number_of_laureates, number_of_prizes, laureate_oldest_name, laureate_oldest_age, laureate_youngest_name, laureate_youngest_age
+
+
     else:
-        df_oldestyoungest_laureate = df_filtered_prizes[["AwardeeDisplayName", "OrganisationName", "BirthDate", "Prize0_AwardYear"]].copy()
-        df_oldestyoungest_laureate = df_oldestyoungest_laureate[pd.isna(df_oldestyoungest_laureate["OrganisationName"])]
-        df_oldestyoungest_laureate["BirthDate"] = df_oldestyoungest_laureate["BirthDate"].str.replace(r"-00-00", "-01-01", regex=True)
-        df_oldestyoungest_laureate["BirthDate"] = pd.to_datetime(df_oldestyoungest_laureate["BirthDate"])
+        # Number of Prizes
+        number_of_prizes = df_filtered_prizes.shape[0]
 
-        # Convert Prize0_AwardYear to YYYY-12-10 format
-        df_oldestyoungest_laureate["AwardDate"] = pd.to_datetime(
-            df_oldestyoungest_laureate["Prize0_AwardYear"].astype(str) + "-12-10"
-        )
+        # Number of Laureates#
+        number_of_laureates = df_filtered_laureates.shape[0]
 
-        # Calculate the difference
-        df_oldestyoungest_laureate["AgeAtAward"] = (
-            df_oldestyoungest_laureate["AwardDate"] - df_oldestyoungest_laureate["BirthDate"]
-        )
+        # Calculate Youngest and Oldest laureate
+        if df_filtered_prizes.shape[0] == 0:
+            laureate_oldest_name = "None"
+            laureate_oldest_age = ""
+            laureate_youngest_name = "None"
+            laureate_youngest_age = ""
+        else:
+            df_oldestyoungest_laureate = df_filtered_prizes[["AwardeeDisplayName", "OrganisationName", "BirthDate", "Prize0_AwardYear"]].copy()
+            df_oldestyoungest_laureate = df_oldestyoungest_laureate[pd.isna(df_oldestyoungest_laureate["OrganisationName"])]
+            df_oldestyoungest_laureate["BirthDate"] = df_oldestyoungest_laureate["BirthDate"].str.replace(r"-00-00", "-01-01", regex=True)
+            df_oldestyoungest_laureate["BirthDate"] = pd.to_datetime(df_oldestyoungest_laureate["BirthDate"])
 
-        from dateutil.relativedelta import relativedelta
+            # Convert Prize0_AwardYear to YYYY-12-10 format
+            df_oldestyoungest_laureate["AwardDate"] = pd.to_datetime(
+                df_oldestyoungest_laureate["Prize0_AwardYear"].astype(str) + "-12-10"
+            )
 
-        # Function to calculate exact age in years
-        def calculate_exact_years(row):
-            if pd.isna(row["BirthDate"]) or pd.isna(row["AwardDate"]):
-                return None  # Handle missing dates gracefully
-            return relativedelta(row["AwardDate"], row["BirthDate"]).years
+            # Calculate the difference
+            df_oldestyoungest_laureate["AgeAtAward"] = (
+                df_oldestyoungest_laureate["AwardDate"] - df_oldestyoungest_laureate["BirthDate"]
+            )
 
-        # Apply the function to calculate age in years
-        df_oldestyoungest_laureate["AgeAtAwardYears"] = df_oldestyoungest_laureate.apply(calculate_exact_years, axis=1)
+            from dateutil.relativedelta import relativedelta
 
-        df_sorted = df_oldestyoungest_laureate.sort_values(by="AgeAtAward", ascending=False)
+            # Function to calculate exact age in years
+            def calculate_exact_years(row):
+                if pd.isna(row["BirthDate"]) or pd.isna(row["AwardDate"]):
+                    return None  # Handle missing dates gracefully
+                return relativedelta(row["AwardDate"], row["BirthDate"]).years
 
-        laureate_oldest_name = df_sorted.iloc[0]["AwardeeDisplayName"]
-        laureate_oldest_age = df_sorted.iloc[0]["AgeAtAwardYears"]
+            # Apply the function to calculate age in years
+            df_oldestyoungest_laureate["AgeAtAwardYears"] = df_oldestyoungest_laureate.apply(calculate_exact_years, axis=1)
 
-        #print(f"{laureate_oldest_name}: {laureate_oldest_age}")
+            df_sorted = df_oldestyoungest_laureate.sort_values(by="AgeAtAward", ascending=False)
 
-        df_sorted = df_oldestyoungest_laureate.sort_values(by="AgeAtAward", ascending=True)
+            laureate_oldest_name = df_sorted.iloc[0]["AwardeeDisplayName"]
+            laureate_oldest_age = df_sorted.iloc[0]["AgeAtAwardYears"]
 
-        laureate_youngest_name = df_sorted.iloc[0]["AwardeeDisplayName"]
-        laureate_youngest_age = df_sorted.iloc[0]["AgeAtAwardYears"]
+            #print(f"{laureate_oldest_name}: {laureate_oldest_age}")
 
-        #print(f"{laureate_youngest_name}: {laureate_youngest_age}")
+            df_sorted = df_oldestyoungest_laureate.sort_values(by="AgeAtAward", ascending=True)
+
+            laureate_youngest_name = df_sorted.iloc[0]["AwardeeDisplayName"]
+            laureate_youngest_age = df_sorted.iloc[0]["AgeAtAwardYears"]
+
+            #print(f"{laureate_youngest_name}: {laureate_youngest_age}")
         
-        return number_of_laureates, number_of_prizes, laureate_oldest_name, laureate_oldest_age, laureate_youngest_name, laureate_youngest_age, df_filtered_laureates
+            return number_of_laureates, number_of_prizes, laureate_oldest_name, laureate_oldest_age, laureate_youngest_name, laureate_youngest_age
 
 
 ##################################################################################################

@@ -2,27 +2,19 @@
 # Library Imports
 ##################################################################################################
 
-# For profiling and performance testing
-# import cProfile
-# import pstats
-# import io
-
-# pr = cProfile.Profile()
-# pr.enable()
-
 import pandas as pd
 import dash_ag_grid as dag
 import os
 import dash
-from dash import dcc, html, Dash, _dash_renderer, State, callback
+from dash import dcc, html, Dash, _dash_renderer, State
 from dash.exceptions import PreventUpdate
 from dash.dependencies import Input, Output, MATCH, ALL
 import dash_mantine_components as dmc
-#import pickle
 import json
-import precompute_plots as pcp 
+import plotdatagenerator as pdg
+
 ##################################################################################################
-# List of Precomputed Plots and their Generator Functions
+# List of Generator Functions and the plots generated
 ##################################################################################################
 
 # choroplethglobe
@@ -148,12 +140,14 @@ df_prizes = pd.read_csv('df_prizes_enriched_redux_clean.csv', sep=';', encoding=
 # Nobel Prize Stats
 df_prizestats = pd.read_csv("df_prizestats.csv", sep=';', encoding="UTF-8")
 
-df=pcp.count_per_country()
+df=pdg.count_per_country()
 max_prize_count = df['Count'].max()
 lastyearincluded = 2024
 numberofprizes = df_prizes.shape[0]
 
-totalprizeamount = pcp.generate_var_prizeamount()
+totalprizeamount = pdg.generate_var_prizeamount()
+
+standard_loader_message = dmc.Loader(html.Div("Initializing tab..."))
 
 ##################################################################################################
 # Dashboard Main Setup
@@ -202,7 +196,7 @@ class PlotConfig:
     def get_plot_generator(self):
         if not self.plot_generator:
             raise ValueError("Plot generator function not defined.")
-        return getattr(pcp, self.plot_generator, None)
+        return getattr(pdg, self.plot_generator, None)
 
     def generate_layout(self):
         return generate_plot_in_layout_class(self)
@@ -470,7 +464,6 @@ plot_configs = {
         ],
         badges = [dmc.Badge("Natural Sciences", variant="outline", color=brand_color_alt)],
         plot_generator="generate_parcat_migration",
-        plot_generator_kwargs={"data": df_laureates},
         show_filters={
             "categories": True, 
             "gender": True,
@@ -673,24 +666,30 @@ def generate_loader_spinner(id):
     return html.Div(
         id={'type':'outer-container', 'index':id},
         children=[
-            dmc.Loader(
-                id={'type':'spinner', 'index':id},
-                color= c_brown,
-                size="md",  # Available sizes: xs, sm, md, lg, xl
-                variant="bars",  # Available variants: oval, dots, bars
+            html.Div(
+                dmc.Loader(
+                    id={'type':'spinner', 'index':id},
+                    color= "#e6e6e6",
+                    size="md",  # Available sizes: xs, sm, md, lg, xl
+                    variant="dots",  # Available variants: oval, dots, bars
+                ),
+                className="loader-spinner",
+                id={'type':'border', 'index':id},
+                style={"display": "block"},
             ),
             html.Div(
                 id={'type':'inner-container', 'index':id},
                 style={"display": "none"},  # Initially hidden
             ),
         ],
-        #style={"position": "relative", "width": "100%", "height": "20vh"},
+        
     )
 
 # Callback to display the plots once they are generated
 @app.callback(
     Output({'type': 'inner-container', 'index': MATCH}, "children"),
     Output({'type': 'spinner', 'index': MATCH}, "style"),  # Hide loader
+    Output({'type': 'border', 'index': MATCH}, "style"),  # Hide border
     Output({'type': 'inner-container', 'index': MATCH}, "style"),  # Show graph
     Input({'type': 'inner-container', 'index': MATCH}, "id"),  # Trigger on app load
 )
@@ -709,180 +708,23 @@ def display_plot(triggered_id):
     fig_in_layout = plot_configs[plot_id].generate_layout()
     # Hide the loader and show the graph
 
-    return fig_in_layout, {"display": "none"}, {"display": "block"}
+    return fig_in_layout, {"display": "none"}, {"display": "none"}, {"display": "block"}
 
 
 #2: Create the layout for the plots. Once the plots are generated, the spinner will be replaced by the actual plot.
-def generate_plot_in_layout(
-    cols={"base": 1, "sm": 1},
-    header="Generic Plot Title",
-    subheader="",
-    datafrom="1901",
-    datato=lastyearincluded,
-    badges=[dmc.Badge("All Categories", variant="outline", color=brand_color_alt)],
-    plot_generator=None,
-    plot_generator_kwargs={},
-    plot_id="fig_type_content",
-    figure=None,
-    style={'width': '100%', 'height': '100%'},
-    footer="",
-    content_classname="widget-content",
-    show_filters={"categories": True, "gender": True, "custom-filter": None},
-):
-    # Debug print
-    #print(f"Generator: Generating plot with ID: {plot_id} and plot_generator: {plot_generator} and kwargs: {plot_generator_kwargs}")
-
-    return dmc.SimpleGrid(
-        cols=cols,
-        spacing="sm",
-        verticalSpacing="sm",
-        children=[
-            html.Div(
-                [
-                    # Header
-                    html.Div(
-                        [
-                            html.H3(header),
-                            html.P(subheader) if subheader else None,
-                        ]
-                    ),
-
-                    # Badges
-                    dmc.Stack(
-                        children=[
-                            html.Div(badges)
-                        ],
-                        style={
-                            "marginBottom": "10px",
-                        }
-                    ),
-
-                    # Filter Modal
-                    html.Div(
-                        [
-                            dmc.Button("Filter", variant="gradient", gradient={"from": c_lightblue, "to": c_teal}, size="xs", id={"type": "filter-button", "index": plot_id}),
-                            dmc.Modal(
-                                title="Filter",
-                                centered=True,
-                                id={"type": "filter-modal", "index": plot_id},
-                                size="80%",
-                                style={"display": "block"},
-                                children=[
-                                    # Selection Area
-                                    dmc.Stack(
-                                        [
-                                            # Category filter
-                                            dmc.Stack(
-                                                children=[
-                                                    html.Div("Prize Categories"),
-                                                    html.Div(
-                                                        dmc.Group(
-                                                            [
-                                                                dmc.Chip("Medicine", size="xs", variant="outline", checked=True, color=c_brown, id={"type": "chip-medicine", "index": plot_id}),
-                                                                dmc.Chip("Physics", size="xs", variant="outline", checked=True, color=c_brown, id={"type": "chip-physics", "index": plot_id}),
-                                                                dmc.Chip("Chemistry", size="xs", variant="outline", checked=True, color=c_brown, id={"type": "chip-chemistry", "index": plot_id}),
-                                                                dmc.Chip("Economics", size="xs", variant="outline", checked=True, color=c_brown, id={"type": "chip-economics", "index": plot_id}),
-                                                                dmc.Chip("Literature", size="xs", variant="outline", checked=True, color=c_brown, id={"type": "chip-literature", "index": plot_id}),
-                                                                dmc.Chip("Peace", size="xs", variant="outline", checked=True, color=c_brown, id={"type": "chip-peace", "index": plot_id}),
-                                                            ]
-                                                        )
-                                                    ),
-                                                ],
-                                                style={
-                                                    "marginRight": "30px",
-                                                    "display": "block" if show_filters["categories"] else "none"
-                                                }
-                                            ),
-                                            # Gender Filter
-                                            dmc.Stack(
-                                                children=[
-                                                    html.Div("Gender"),
-                                                    html.Div(
-                                                        dmc.Group(
-                                                            [
-                                                                dmc.Chip("female", size="xs", variant="outline", checked=True, color=c_brown, id={"type": "chip-female", "index": plot_id}),
-                                                                dmc.Chip("male", size="xs", variant="outline", checked=True, color=c_brown, id={"type": "chip-male", "index": plot_id}),
-                                                            ]
-                                                        )
-                                                    ),
-                                                ],
-                                                style={
-                                                    "display": "block" if show_filters["gender"] else "none"
-                                                }
-                                            ),
-
-                                            # Custom Filter (if provided)
-                                            html.Div(
-                                                show_filters["custom-filter"],
-                                                style={
-                                                    "display": "block" if show_filters["custom-filter"] else "none"
-                                                }
-                                            )
-                                        ],
-                                        
-                                        gap="sm",
-                                        className="selection-area",
-                                    ),
-                                    # filter modal buttons
-                                    dmc.Group(
-                                        [
-                                            dmc.Button("Submit", id={"type": "submit-button", "index": plot_id}),
-                                            dmc.Button(
-                                                "Close",
-                                                color="red",
-                                                variant="outline",
-                                                id={"type": "close-button", "index": plot_id},
-                                            ),
-                                        ],
-                                        justify="flex-end",
-                                    ),
-                                ],
-                            ),
-                        ]
-                    ),
-
-                    # Plot
-                    html.Div(
-                        dcc.Loading(
-                            dcc.Graph(
-                                # id=plot_id,
-                                id={"type": "plot", "index": plot_id},
-                                figure=figure,
-                                style=style,
-                            )
-                        ),
-                        className=content_classname,
-                    ),
-
-                    # Footer
-                    html.Div(
-                        [
-                            *footer,
-                        ],
-                        className="widget-footer",
-                    ) if footer else None,
-
-                    # Store the plot generator function directly
-                    # dcc.Store(id={"type": "plot-generator", "index": plot_id}, data=plot_generator),
-                    # dcc.Store(id={"type": "plot-generator-kwargs", "index": plot_id}, data=plot_generator_kwargs)
-                ],
-                className="widget-container",
-            ),
-        ],
-    )
-
 def generate_plot_in_layout_class(plot_config):
     """
     Generates the layout for a plot using the provided PlotConfig instance.
     """
+    # Resolve the plot generator function, i.e. the function that generates the plot, stored in the class instance (dict)
     plot_generator = plot_config.get_plot_generator()
-
     if not plot_generator:
         raise ValueError(f"Plot generator '{plot_config.plot_generator}' not found in module.")
 
-    # Generate the initial figure using the resolved generator
+    # Generate the initial figure using the resolved generator and standard kwargs, stored in the class instance (dict)
     figure = plot_generator(**plot_config.plot_generator_kwargs)
 
+    # Return the layout for the plot
     return dmc.SimpleGrid(
         cols={"base": 1, "sm": 1},
         spacing="sm",
@@ -922,7 +764,7 @@ def generate_plot_in_layout_class(plot_config):
                                 title="Filter",
                                 centered=True,
                                 id={"type": "filter-modal", "index": plot_config.plot_id},
-                                size="80%",
+                                size="750px",
                                 style={"display": "block"},
                                 children=[
                                     # Selection Area
@@ -1014,10 +856,6 @@ def generate_plot_in_layout_class(plot_config):
                         plot_config.footer,
                         className="widget-footer",
                     ) if plot_config.footer else None,
-
-                    # # Store the plot generator function directly
-                    # dcc.Store(id={"type": "plot-generator", "index": plot_config.plot_id}, data=plot_config.plot_generator),
-                    # dcc.Store(id={"type": "plot-generator-kwargs", "index": plot_config.plot_id}, data=plot_config.plot_generator_kwargs),
                 ],
                 className="widget-container",
             ),
@@ -1074,10 +912,10 @@ def update_plot(
         raise ValueError(f"Plot configuration for ID {plot_id} not found.")
 
     # Extract and update filter states
-    selected_categories = pcp.define_category_states(
+    selected_categories = pdg.define_category_states(
         chip_medicine, chip_physics, chip_chemistry, chip_economics, chip_literature, chip_peace
     )
-    selected_genders = pcp.define_gender_states(chip_female, chip_male)
+    selected_genders = pdg.define_gender_states(chip_female, chip_male)
 
     # Combine standard kwargs with filter values
     plot_generator_kwargs = plot_config.plot_generator_kwargs or {}
@@ -1086,14 +924,50 @@ def update_plot(
         "gender": selected_genders
     })
 
-    # Add custom filters
+    print("Updater: ctx.inputs.keys():", ctx.inputs.keys())
+
+    # # Add custom filters
+    # for pattern, value in zip(ctx.inputs.keys(), custom_filter_values):
+    #     if value is not None:  # Only process non-None values
+    #         try:
+    #             # Extract the JSON part before `.value`
+    #             json_part = pattern.split('.')[0]
+    #             id_dict = json.loads(json_part)  # Parse JSON into a dictionary
+                
+    #             # Extract "filter" key
+    #             filter_name = id_dict.get("filter")
+    #             if filter_name:  # If "filter" exists, add to kwargs
+    #                 plot_generator_kwargs[filter_name] = value
+    #                 print(f"Added to kwargs: {filter_name}: {value}")
+    #             else:
+    #                 print(f"Skipping key without 'filter': {id_dict}")
+    #         except json.JSONDecodeError as e:
+    #             print(f"Error decoding JSON from pattern: {pattern}, Error: {e}")
+
+    # # Final debug
+    # print("Final plot_generator_kwargs:", plot_generator_kwargs)
+    # print("---")
+
+
+    # Add any custom filter values if they exist
     if custom_filter_values:
-        for pattern, value in zip(ctx.inputs.keys(), custom_filter_values):
-            if value is not None:
-                filter_name = json.loads(pattern.split('.')[0]).get("filter")
+        # Get all input IDs
+        input_ids = [
+            key for key in ctx.inputs.keys() 
+            if isinstance(json.loads(key.split('.')[0]), dict) and 
+            json.loads(key.split('.')[0]).get("type") == "custom-filter"
+        ]
+        
+        # Parse the pattern IDs to get filter names
+        custom_filter_patterns = [json.loads(input_id.split('.')[0]) for input_id in input_ids]
+        
+        # Add custom filter values to kwargs using the filter name from the pattern
+        for pattern, value in zip(custom_filter_patterns, custom_filter_values):
+            if value is not None:  # Only add non-None values
+                filter_name = pattern["filter"]  # This gets "city" from the pattern
                 plot_generator_kwargs[filter_name] = value
 
-    # print("Updater: kwargs:", plot_generator_kwargs)
+    print("Updater: kwargs:", plot_generator_kwargs)
 
     # Generate the updated figure
     try:
@@ -1106,10 +980,7 @@ def update_plot(
     return updated_figure
 
 
-
-
-
-# function to include pngs in the layout - should not be used, as the dashboard shoudl only include plotly figures
+# function to include pngs in the layout - should not be used, as the dashboard should only include plotly figures
 def generate_png_in_layout(
     cols= {"base": 1, "sm": 1},
     header= "Generic Plot Title", 
@@ -1181,7 +1052,7 @@ app.layout = dmc.MantineProvider(
                             dmc.Group(
                                 [
                                     html.Img(src="assets/logo-md.png", style={"width": "150px", "height": "50px"}),
-                                    html.H1("Nobel Laureate Data Dashboard v1.3", className="text-left mt-5 mb-5"),
+                                    html.H1("Nobel Laureate Data Dashboard v1.4", className="text-left mt-5 mb-5"),
                                 ]
                             ),
                         span=12)
@@ -1209,7 +1080,7 @@ app.layout = dmc.MantineProvider(
                         ),
 
                         dmc.TabsPanel(
-                            children=html.Div(id="tab-content-current"),  # Unique ID for tab content
+                            children=html.Div(id="tab-content-current"),
                             value="tab_current"
                         ),
 
@@ -1256,9 +1127,7 @@ app.layout = dmc.MantineProvider(
 
 
 ##################################################################################################
-##################################################################################################
-# Callbacks for Initial Data Loading for Active Tabs
-##################################################################################################
+# TAB CONTENT
 ##################################################################################################
 
 
@@ -1359,7 +1228,7 @@ def render_tab_overview_content(active_tab):
         return content  # Return the content and set the pre-loading-trigger-status to TRUE, i.e. preloading can now start.
 
     else:
-        return dmc.Loader(html.Div("Data is currently loading..."))
+        return standard_loader_message
 
 
 # Dynamic Content for the Overview Tab based of the selected filter values
@@ -1378,63 +1247,8 @@ def render_tab_overview_content(active_tab):
 )
 def update_overview_content(chip_medicine, chip_physics, chip_chemistry, chip_economics, chip_literature, chip_peace, timerange):
 
-    selected_categories = pcp.define_category_states(chip_medicine, chip_physics, chip_chemistry, chip_economics, chip_literature, chip_peace)
-    df_filtered_prizes = pcp.standard_filter(df_laureates, selected_categories)
-    df_filtered_laureates = pcp.standard_filter(df_prizes, selected_categories)
-
-    # Number of Prizes
-    number_of_prizes = df_filtered_prizes.shape[0]
-
-    # Number of Laureates#
-    number_of_laureates = df_filtered_laureates.shape[0]
-
-    # Calculate Youngest and Oldest laureate
-    if df_filtered_prizes.shape[0] == 0:
-        laureate_oldest_name = "None"
-        laureate_oldest_age = ""
-        laureate_youngest_name = "None"
-        laureate_youngest_age = ""
-    else:
-        df_oldestyoungest_laureate = df_filtered_prizes[["AwardeeDisplayName", "OrganisationName", "BirthDate", "Prize0_AwardYear"]].copy()
-        df_oldestyoungest_laureate = df_oldestyoungest_laureate[pd.isna(df_oldestyoungest_laureate["OrganisationName"])]
-        df_oldestyoungest_laureate["BirthDate"] = df_oldestyoungest_laureate["BirthDate"].str.replace(r"-00-00", "-01-01", regex=True)
-        df_oldestyoungest_laureate["BirthDate"] = pd.to_datetime(df_oldestyoungest_laureate["BirthDate"])
-
-        # Convert Prize0_AwardYear to YYYY-12-10 format
-        df_oldestyoungest_laureate["AwardDate"] = pd.to_datetime(
-            df_oldestyoungest_laureate["Prize0_AwardYear"].astype(str) + "-12-10"
-        )
-
-        # Calculate the difference
-        df_oldestyoungest_laureate["AgeAtAward"] = (
-            df_oldestyoungest_laureate["AwardDate"] - df_oldestyoungest_laureate["BirthDate"]
-        )
-
-        from dateutil.relativedelta import relativedelta
-
-        # Function to calculate exact age in years
-        def calculate_exact_years(row):
-            if pd.isna(row["BirthDate"]) or pd.isna(row["AwardDate"]):
-                return None  # Handle missing dates gracefully
-            return relativedelta(row["AwardDate"], row["BirthDate"]).years
-
-        # Apply the function to calculate age in years
-        df_oldestyoungest_laureate["AgeAtAwardYears"] = df_oldestyoungest_laureate.apply(calculate_exact_years, axis=1)
-
-        df_sorted = df_oldestyoungest_laureate.sort_values(by="AgeAtAward", ascending=False)
-
-        laureate_oldest_name = df_sorted.iloc[0]["AwardeeDisplayName"]
-        laureate_oldest_age = df_sorted.iloc[0]["AgeAtAwardYears"]
-
-        #print(f"{laureate_oldest_name}: {laureate_oldest_age}")
-
-        df_sorted = df_oldestyoungest_laureate.sort_values(by="AgeAtAward", ascending=True)
-
-        laureate_youngest_name = df_sorted.iloc[0]["AwardeeDisplayName"]
-        laureate_youngest_age = df_sorted.iloc[0]["AgeAtAwardYears"]
-
-        #print(f"{laureate_youngest_name}: {laureate_youngest_age}")
-        
+    selected_categories = pdg.define_category_states(chip_medicine, chip_physics, chip_chemistry, chip_economics, chip_literature, chip_peace)
+    number_of_laureates, number_of_prizes, laureate_oldest_name, laureate_oldest_age, laureate_youngest_name, laureate_youngest_age, df_filtered_laureates = pdg.generate_overview_stats(selected_categories)
 
     # Return the Content
     return [
@@ -1546,9 +1360,7 @@ def update_overview_content(chip_medicine, chip_physics, chip_chemistry, chip_ec
                         ),
                         # Bottom part (Content)
                         html.Div(
-                            dcc.Loading(
-                                dcc.Graph(id="fig_donut_gender_overview", figure=pcp.generate_donut(data=df_filtered_laureates, characteristic="gender"), style={'width': '100%', 'height':'100%'}),
-                            ),                                 
+                            dcc.Graph(id="fig_donut_gender_overview", figure=pdg.generate_donut(data=df_filtered_laureates, characteristic="gender"), style={'width': '100%', 'height':'100%'}),
                             className="widget-content-ar1",
                         ),
                     ],
@@ -1567,7 +1379,7 @@ def update_overview_content(chip_medicine, chip_physics, chip_chemistry, chip_ec
                         ),
                         # Bottom part (Content)
                         html.Div(
-                            dcc.Graph(id="fig_donut_ethnicity_overview", figure=pcp.generate_donut(data=df_filtered_laureates, characteristic="ethnicity"), style={'width': '100%', 'height':'100%'}),
+                            dcc.Graph(id="fig_donut_ethnicity_overview", figure=pdg.generate_donut(data=df_filtered_laureates, characteristic="ethnicity"), style={'width': '100%', 'height':'100%'}),
                             className="widget-content-ar1",
                         ),
                     ],
@@ -1586,7 +1398,7 @@ def update_overview_content(chip_medicine, chip_physics, chip_chemistry, chip_ec
                         ),
                         # Bottom part (Content)
                         html.Div(
-                            dcc.Graph(id="fig_donut_religion_overview", figure=pcp.generate_donut(data=df_filtered_laureates, characteristic="religion"), style={'width': '100%', 'height':'100%'}),
+                            dcc.Graph(id="fig_donut_religion_overview", figure=pdg.generate_donut(data=df_filtered_laureates, characteristic="religion"), style={'width': '100%', 'height':'100%'}),
                             className="widget-content-ar1",
                         ),
                     ],
@@ -1614,7 +1426,7 @@ def update_overview_content(chip_medicine, chip_physics, chip_chemistry, chip_ec
                         ),
                         # Bottom part (Content)
                         html.Div(
-                            dcc.Graph(id="fig_sunburst_overview", figure=pcp.generate_sunburst(data=df_filtered_laureates), style={'width': '100%', 'height':'100%'}),
+                            dcc.Graph(id="fig_sunburst_overview", figure=pdg.generate_sunburst(data=df_filtered_laureates), style={'width': '100%', 'height':'100%'}),
                             className="widget-content",
                         ),
                     ],
@@ -1898,7 +1710,7 @@ def render_tab_current_content(active_tab):
         )
 
     else:
-        return dmc.Loader(html.Div("Data is currently loading..."))
+        return standard_loader_message
 
 
 
@@ -1933,11 +1745,15 @@ def render_tab_geography(active_tab):
                     gap="lg"
                 )
 
-            ]
+            ],
+            shadow="md",
+            radius="md",
+            p="lg", 
+            className="mt-3",
         )
 
     else:
-        return html.Div("Data is loading.")
+        return standard_loader_message
 
 
 
@@ -1978,12 +1794,7 @@ def render_tab_demography_content(active_tab):
             className="mt-3",
         )
     else:
-    #     return dmc.Loader(html.Div("Data is currently loading..."))
-        return dmc.Loader(
-                color= c_physics,
-                size="md",  # Available sizes: xs, sm, md, lg, xl
-                variant="dots",  # Available variants: oval, dots, bars
-            ),
+        return standard_loader_message
 
 
 ##################################################################################################
@@ -2021,8 +1832,7 @@ def render_tab_time_content(active_tab):
             className="mt-3",
         )
     else:
-        return dmc.Loader(html.Div("Data is currently loading..."))
-
+        return standard_loader_message
 
 
 ##################################################################################################
@@ -2046,7 +1856,7 @@ def render_tab_misc_content(active_tab):
                             header = "Nobel Fields",
                             subheader = "Cube sizes represent the number of Nobel prizes awarded to that field.",
                             filepath = "/assets/images/fig_cubes_fields.png",
-                            style = {'height':'80vh'},
+                            style = {'width':'1000px'},
                             footer = [
                                 dcc.Markdown("**Interesting Findings**: Researchers with a momentum strategy should focus their research on particle physics or immunology, while contrarians should choose ethnology or chaos theory.")
                                 ],
@@ -2063,7 +1873,7 @@ def render_tab_misc_content(active_tab):
             className="mt-3",
         )
     else:
-        return dmc.Loader(html.Div("Data is currently loading..."))
+        return standard_loader_message
 
 
 
@@ -2099,7 +1909,7 @@ def render_tab_migration_content(active_tab):
             className="mt-3",
         )
     else:
-        return dmc.Loader(html.Div("Data is currently loading..."))
+        return standard_loader_message
 
 ##################################################################################################
 # Tab Data
@@ -2206,7 +2016,7 @@ def render_tab_data_content(active_tab):
             className="mt-3",
         )
     else:
-        return dmc.Loader(html.Div("Data is currently loading..."))
+        return standard_loader_message
 
 
 
@@ -2216,21 +2026,11 @@ def render_tab_data_content(active_tab):
 # Running the app
 ##################################################################################################
 
-# --------------------
 # Run the app (locally)
-if __name__ == "__main__":
-    
-    # For profiling and performance testing
-    # pr.disable()
-    # s = io.StringIO()
-    # sortby = 'cumulative'
-    # ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
-    # ps.print_stats()
-    # print(s.getvalue())
-
-    app.run(debug=True, port=5085) #, use_reloader=False)
+# if __name__ == "__main__":
+#     app.run(debug=True, port=5085) 
 
 # # # Run the app on the server
-# if __name__ == '__main__':
-#     port = int(os.environ.get('PORT', 8050))  # Fallback to port 8050 if PORT isn't set
-#     app.run_server(host='0.0.0.0', port=port, debug=False)
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 8050))  # Fallback to port 8050 if PORT isn't set
+    app.run_server(host='0.0.0.0', port=port, debug=False)

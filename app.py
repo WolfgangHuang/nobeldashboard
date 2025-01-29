@@ -62,61 +62,19 @@ import plotdatagenerator as pdg
 # Color Settings
 ##################################################################################################
 
-brand_color_plot_background='#FEFEFA'
-
-c_brown = '#47382a'
-c_brown_verylight = '#F0EBE6'
-c_teal = '#186f77'
-c_lightblue = '#93bbdc'
-c_red = '#91121d'
-c_orange = '#ff7703'
-c_yellow = '#ffe74c'
-c_darkmagenta = '#8e2984'
-c_magenta = '#cf437d'
-c_pink = '#ff99c8'
-
-c_red_verylight = '#f7c1c6'
-c_red_superlight = '#fbe0e2'
-c_red_verydark = '#3A070B'
-
-c_teal_verylight = '#C2EEF3'
-c_teal_superlight = '#e1f7f9'
-c_teal_verydark = '#072124'
-
-c_lightblue_verylight = '#e9f1f8'
-c_lightblue_superlight = '#f4f8fc'
-
-c_pie1 = '#67d6e0'
-c_pie2 = '#c9ddee'
-c_pie3 = '#ec6570'
-c_pie4 = '#ffbc82'
-c_pie5 = '#fff3a6'
-c_pie6 = '#da81d1'
-c_pie7 = '#e7a2bf'
-c_pie8 = '#ffcce4'
-c_pie0 = '#b59b82'
-
-colorscale_palette = [c_teal, c_lightblue, c_red, c_orange, c_yellow, c_darkmagenta, c_magenta, c_pink]
-colorscale_palette_light = [c_pie1, c_pie2, c_pie3, c_pie4, c_pie5, c_pie6, c_pie7, c_pie8]
-
-colorscale_red = [c_red_verylight, c_red_verydark]
-colorscale_teal = [c_teal_verylight, c_teal_verydark]
-colorscale_teal_log = ["#E1F7F9", "#67D6E0", "#67D6E0", "#186F77", "#13595F", "#114D53"]
-colorscale_teal_to_read = [c_teal_verylight, c_teal, c_red]
-colorscale_hue_log = [c_teal, c_lightblue]
+c_brown = pdg.c_brown
+c_teal = pdg.c_teal
+c_red = pdg.c_red
+c_grey = pdg.c_grey
 
 brand_color_main = c_brown
 brand_color_alt = c_teal
-brand_color_alt2 = c_red
-brand_color_acc = c_darkmagenta
-brand_color_plot_background='#F7F5F2'
-brand_colorscale_main = colorscale_palette
 c_physics = c_teal
 c_medicine = c_red
-c_chemistry = c_orange
-c_economics = c_lightblue
-c_peace = c_pink
-c_literature = c_yellow
+c_chemistry = pdg.c_orange
+c_economics = pdg.c_lightblue
+c_peace = pdg.c_pink
+c_literature = pdg.c_yellow
 
 
 ##################################################################################################
@@ -149,6 +107,28 @@ totalprizeamount = pdg.generate_var_prizeamount()
 
 standard_loader_message = dmc.Loader(html.Div("Initializing tab..."))
 
+marks_award=[
+    {"value": 1901, "label": "1901"},
+    {"value": 1925, "label": "1925"},
+    {"value": 1950, "label": "1950"},
+    {"value": 1975, "label": "1975"},
+    {"value": 2000, "label": "2000"},
+    {"value": int(lastyearincluded), "label": lastyearincluded}
+],
+
+marks_life=[
+    {"value": 1800, "label": "1800"},
+    {"value": 1825, "label": "1825"},
+    {"value": 1850, "label": "1850"},
+    {"value": 1875, "label": "1875"},
+    {"value": 1900, "label": "1900"},
+    {"value": 1925, "label": "1925"},
+    {"value": 1950, "label": "1950"},
+    {"value": 1975, "label": "1975"},
+    {"value": 2000, "label": "2000"},
+    {"value": int(lastyearincluded), "label": lastyearincluded}
+],
+
 ##################################################################################################
 # Dashboard Main Setup
 ##################################################################################################
@@ -172,22 +152,30 @@ class PlotConfig:
     def __init__(
         self,
         plot_id,
-        header="Generic Plot Title",
-        subheader="",
-        data_range=("1901", lastyearincluded),
-        show_filters={"categories": True, "gender": True, "custom-filter": None},
+        header=None,
+        subheader=None,
+        data_range=None,
+        show_filters=None,
         badges=None,
+        chips_notchecked=None,
+        chips_disabled =None,
+        timerange=None,
+        timerange_field=None,
         plot_generator=None,
         plot_generator_kwargs=None,
         footer=None,
         style=None,
     ):
         self.plot_id = plot_id
-        self.header = header
+        self.header = header or "Generic Plot Title"
         self.subheader = subheader
-        self.data_range = data_range
-        self.show_filters = show_filters
-        self.badges = badges or [dmc.Badge("All Categories", variant="outline", color=brand_color_alt)]
+        self.data_range = data_range or ("1901", lastyearincluded)
+        self.show_filters = show_filters or {"categories": True, "gender": True, "timerange": True, "custom-filter": None}
+        self.badges = badges or ["All Categories", f"1901-{lastyearincluded}"]
+        self.chips_notchecked = chips_notchecked or []
+        self.chips_disabled = chips_disabled or []
+        self.timerange = timerange or ["1901", lastyearincluded]
+        self.timerange_field = timerange_field or "award"
         self.plot_generator = plot_generator
         self.plot_generator_kwargs = plot_generator_kwargs or {}
         self.footer = footer or []
@@ -200,6 +188,13 @@ class PlotConfig:
 
     def generate_layout(self):
         return generate_plot_in_layout_class(self)
+    
+    def generate_badges(self):
+        badges_code = []
+        for badge in self.badges:
+            badges_code.append(dmc.Badge(badge, variant="outline", color=brand_color_alt, mr="xs"))
+            # print(badges_code)
+        return badges_code
 
 ##################################################################################################
 # Individual Plot Parameters
@@ -238,13 +233,13 @@ plot_configs = {
                             "filter": "city"
                         },
                         options=[
-                            {'label': 'City of Birth', 'value': 'birth'},
-                            {'label': 'City of Affiliation at Time of Award', 'value': 'affiliation'},
-                            {'label': 'City of Death', 'value': 'death'}
+                            {'label': 'Birth', 'value': 'birth'},
+                            {'label': 'Affiliation at Award', 'value': 'affiliation'},
+                            {'label': 'Death', 'value': 'death'}
                         ],
                         value='birth',
                         clearable=False,
-                        style={"width": "400px"}
+                        style={"width": "200px"}
                     ),
                 ],
                 gap="xs",
@@ -330,7 +325,7 @@ plot_configs = {
             ],
     ),
 
-        "fig_donut_ethnicity": PlotConfig(
+    "fig_donut_ethnicity": PlotConfig(
         plot_id="fig_donut_ethnicity",
         header="Ethnicity Distribution",
         subheader = "This plot shows the distribution of ethnicities among Nobel Laureates. I am aware that notions of ethnicity or even race can be considered problematic. There are some who suggest to not use these categorizations at all. However, I think we may loose analytical power if we do; this chart is the successor to an earlier one that showed that there are exactly zero Black Nobel laureates in the natural sciences. This certainly is an interesing finding, how ever one may interpret it.",
@@ -358,7 +353,9 @@ plot_configs = {
         plot_id="fig_histogram_timegap",
         header = "Timegap Between Discovery and Prize (Histogram)",
         subheader = "This histogram shows how often a value appears. For example, a waiting time of 11 years happened most often (=highest bar)",
-        badges = [dmc.Badge("Natural Sciences", variant="outline", color=brand_color_alt)],
+        badges=["Natural Sciences", "1994-2014/2024"],
+        chips_notchecked=["Economics", "Literature", "Peace"],
+        chips_disabled=["Economics", "Literature", "Peace"],
         plot_generator_kwargs={"data":df_prizes, "categories":"natsci"},
         plot_generator = "generate_histogram_timegap",
         show_filters={
@@ -380,7 +377,7 @@ plot_configs = {
                             ],
                             value='both',  # Default value
                             clearable=False,
-                            style={"width": "400px"}
+                            style={"width": "200px"}
                         ),
                     ],
                 gap="xs",  # space between the label and the dropdown
@@ -398,7 +395,9 @@ plot_configs = {
         plot_id = "fig_scatter_timegap_trend",
         header = "Timegap Between Discovery and Prize (Trendlines)",
         subheader = "This is basically the same data, but presented differently. Here, you see the time gap for all prizes (averaged in case of multiple winners) in all years. The plot also shows the trendlines (going up), as well as the average life expectancy (also going up).",
-        badges = [dmc.Badge("Natural Sciences", variant="outline", color=brand_color_alt)],
+        badges=["Natural Sciences", f"1901-{lastyearincluded}"],
+        chips_notchecked=["Economics", "Literature", "Peace"],
+        chips_disabled=["Economics", "Literature", "Peace"],
         plot_generator_kwargs={"data":df_prizes, "categories":"natsci"},
         plot_generator = "generate_scatterbox_timegaptrend",
         show_filters={
@@ -420,7 +419,7 @@ plot_configs = {
                             ],
                             value='both',  # Default value
                             clearable=False,
-                            style={"width": "400px"}
+                            style={"width": "200px"}
                         ),
                     ],
                 gap="xs",  # space between the label and the dropdown
@@ -462,7 +461,9 @@ plot_configs = {
             dcc.Markdown("This plot shows the movement between three locations: where did the laureates get their main university degree (or similar), where did they do their main work that led to the discovery, and where did they work at the time when they received the prize? This plot is based on the Nature paper \"At what institutions did Nobel laureates do their prize-winning work?\" (see References), which unfortunately only covers the years 1994 - 2014."),
             dcc.Markdown("**How to Read:**: The three vertical pillars stand for the three points and places in time: **degree, work, prize**. The lines show the flow from one place to the next. The on-hover infobox also shows you the overall percentage of the selected group. If you like, you may also re-arrange the bar sections via drag and drop. The dropdowns let you choose between *City* (many), *Country* (less), and the combination of both, which distinguishes Cambridge UK from Cambridge USA (etc.)")
         ],
-        badges = [dmc.Badge("Natural Sciences", variant="outline", color=brand_color_alt)],
+        badges=["Natural Sciences", f"1901-{lastyearincluded}"],
+        chips_notchecked = ["Economics", "Literature", "Peace"],
+        chips_disabled = ["Economics", "Literature", "Peace"],
         plot_generator="generate_parcat_migration",
         show_filters={
             "categories": True, 
@@ -533,7 +534,7 @@ plot_configs = {
         plot_id="fig_parcat_migration_bpd",
         header = "Movement: Birth / Prize / Death",
         subheader = "This plot works the same way, but has slightly diffferent data: place of birth, place of organisation when the prize was awarded, place of death. Note that this dataset, unlike the previous one, spans the full time range. (Selecting *City* may lead to incorrect visuals, as there are simply too many to display.)",
-        badges = [dmc.Badge("Natural Sciences", variant="outline", color=brand_color_alt)],
+        badges=["Natural Sciences", f"1901-{lastyearincluded}"],
         plot_generator="generate_parcat_migration",
         plot_generator_kwargs={"data": df_laureates},
         show_filters={
@@ -631,7 +632,6 @@ plot_configs = {
         plot_id="fig_globe_movement",
         header = "Movement: Birth / Prize",
         subheader = "This globe shows the movement from place of birth to place of affiliation at the time of the award.)",
-        badges = [dmc.Badge("All Categories", variant="outline", color=brand_color_alt)],
         plot_generator="generate_globe_movement",
         plot_generator_kwargs={"data": df_laureates},
         footer=[
@@ -651,6 +651,20 @@ plot_configs = {
         ],
     ),
 
+    # Most Common Firstnames
+    "fig_mostcommon_firstnames": PlotConfig(
+        plot_id="fig_mostcommon_firstnames",
+        header="Most Common Firstnames",
+        subheader="What to name your kid if you want it to become a Nobel laureate.",
+        plot_generator="generate_mostcommon_firstnames",
+        #plot_generator_kwargs={"data": df_laureates},
+        footer=[
+            dcc.Markdown("**Interesting Findings**: We may assume that the name itself will not have much of an influence on the laureates' success. However, the names are a good indicator of the social and economic status, as well as nationality and of course gender.")
+        ],
+    ),
+
+    
+
 }
 
 
@@ -669,7 +683,7 @@ def generate_loader_spinner(id):
             html.Div(
                 dmc.Loader(
                     id={'type':'spinner', 'index':id},
-                    color= "#e6e6e6",
+                    color= c_grey,
                     size="md",  # Available sizes: xs, sm, md, lg, xl
                     variant="dots",  # Available variants: oval, dots, bars
                 ),
@@ -716,6 +730,7 @@ def generate_plot_in_layout_class(plot_config):
     """
     Generates the layout for a plot using the provided PlotConfig instance.
     """
+
     # Resolve the plot generator function, i.e. the function that generates the plot, stored in the class instance (dict)
     plot_generator = plot_config.get_plot_generator()
     if not plot_generator:
@@ -723,6 +738,8 @@ def generate_plot_in_layout_class(plot_config):
 
     # Generate the initial figure using the resolved generator and standard kwargs, stored in the class instance (dict)
     figure = plot_generator(**plot_config.plot_generator_kwargs)
+
+
 
     # Return the layout for the plot
     return dmc.SimpleGrid(
@@ -735,109 +752,171 @@ def generate_plot_in_layout_class(plot_config):
                     # Header
                     html.Div(
                         [
-                            html.H3(plot_config.header),
-                            html.P(plot_config.subheader) if plot_config.subheader else None,
-                        ]
-                    ),
+                            html.H3(plot_config.header, className="plot-header"),
 
-                    # Badges
-                    dmc.Stack(
-                        children=[
-                            html.Div(plot_config.badges)
-                        ],
-                        style={
-                            "marginBottom": "10px",
-                        }
-                    ),
-
-                    # Filter Modal
-                    html.Div(
-                        [
-                            dmc.Button(
-                                "Filter", 
-                                variant="gradient", 
-                                gradient={"from": c_lightblue, "to": c_teal}, 
-                                size="xs", 
-                                id={"type": "filter-button", "index": plot_config.plot_id}
-                            ),
-                            dmc.Modal(
-                                title="Filter",
-                                centered=True,
-                                id={"type": "filter-modal", "index": plot_config.plot_id},
-                                size="750px",
-                                style={"display": "block"},
+                            dmc.Grid(
                                 children=[
-                                    # Selection Area
-                                    dmc.Stack(
-                                        [
-                                            # Category filter
-                                            dmc.Stack(
-                                                children=[
-                                                    html.Div("Prize Categories"),
-                                                    html.Div(
-                                                        dmc.Group(
+                                    dmc.GridCol(html.Div(plot_config.subheader, className="plot-subheader"), span={"base": 12, "sm": 7}),
+                                    dmc.GridCol(html.Div(plot_config.generate_badges()), span={"base": 12, "sm": 4}),
+                                    dmc.GridCol(
+                                        
+                                        # Filter Modal
+                                        html.Div(
+                                            [
+                                                dmc.Button(
+                                                    "Filter", 
+                                                    variant="gradient", 
+                                                    gradient={"from": pdg.c_lightblue, "to": c_teal}, 
+                                                    size="xs", 
+                                                    id={"type": "filter-button", "index": plot_config.plot_id}
+                                                ),
+                                                # dmc.Modal(
+                                                #     title="Filter",
+                                                #     centered=True,
+                                                #     id={"type": "filter-modal", "index": plot_config.plot_id},
+                                                #     size="750px",
+                                                #     style={"display": "block"},
+                                                 dmc.Drawer(
+                                                    title="Filter",
+                                                    position="right",
+                                                    id={"type": "filter-modal", "index": plot_config.plot_id},
+                                                    size="300px",
+                                                    style={"display": "block"},
+                                                    children=[
+                                                        # Selection Area
+                                                        dmc.Stack(
                                                             [
-                                                                dmc.Chip("Medicine", size="xs", variant="outline", checked=True, color=c_brown, id={"type": "chip-medicine", "index": plot_config.plot_id}),
-                                                                dmc.Chip("Physics", size="xs", variant="outline", checked=True, color=c_brown, id={"type": "chip-physics", "index": plot_config.plot_id}),
-                                                                dmc.Chip("Chemistry", size="xs", variant="outline", checked=True, color=c_brown, id={"type": "chip-chemistry", "index": plot_config.plot_id}),
-                                                                dmc.Chip("Economics", size="xs", variant="outline", checked=True, color=c_brown, id={"type": "chip-economics", "index": plot_config.plot_id}),
-                                                                dmc.Chip("Literature", size="xs", variant="outline", checked=True, color=c_brown, id={"type": "chip-literature", "index": plot_config.plot_id}),
-                                                                dmc.Chip("Peace", size="xs", variant="outline", checked=True, color=c_brown, id={"type": "chip-peace", "index": plot_config.plot_id}),
-                                                            ]
-                                                        )
-                                                    ),
-                                                ],
-                                                style={
-                                                    "marginRight": "30px",
-                                                    "display": "block" if plot_config.show_filters.get("categories", False) else "none"
-                                                }
-                                            ),
-                                            # Gender Filter
-                                            dmc.Stack(
-                                                children=[
-                                                    html.Div("Gender"),
-                                                    html.Div(
-                                                        dmc.Group(
-                                                            [
-                                                                dmc.Chip("female", size="xs", variant="outline", checked=True, color=c_brown, id={"type": "chip-female", "index": plot_config.plot_id}),
-                                                                dmc.Chip("male", size="xs", variant="outline", checked=True, color=c_brown, id={"type": "chip-male", "index": plot_config.plot_id}),
-                                                            ]
-                                                        )
-                                                    ),
-                                                ],
-                                                style={
-                                                    "display": "block" if plot_config.show_filters.get("gender", False) else "none"
-                                                }
-                                            ),
+                                                                # Category filter
+                                                                dmc.Stack(
+                                                                    children=[
+                                                                        html.Div("Prize Categories"),
+                                                                        html.Div(
+                                                                            dmc.Group(
+                                                                                [
+                                                                                    dmc.Chip("Medicine", size="xs", variant="outline", checked=False if "Medicine" in plot_config.chips_notchecked else True, disabled=True if "Medicine" in plot_config.chips_disabled else False, color=c_brown, id={"type": "chip-medicine", "index": plot_config.plot_id}),
+                                                                                    dmc.Chip("Physics", size="xs", variant="outline", checked=False if "Physics" in plot_config.chips_notchecked else True, disabled=True if "Physics" in plot_config.chips_disabled else False, color=c_brown, id={"type": "chip-physics", "index": plot_config.plot_id}),
+                                                                                    dmc.Chip("Chemistry", size="xs", variant="outline", checked=False if "Chemistry" in plot_config.chips_notchecked else True, disabled=True if "Chemistry" in plot_config.chips_disabled else False, color=c_brown, id={"type": "chip-chemistry", "index": plot_config.plot_id}),
+                                                                                    dmc.Chip("Economics", size="xs", variant="outline", checked=False if "Economics" in plot_config.chips_notchecked else True, disabled=True if "Economics" in plot_config.chips_disabled else False, color=c_brown, id={"type": "chip-economics", "index": plot_config.plot_id}),
+                                                                                    dmc.Chip("Literature", size="xs", variant="outline", checked=False if "Literature" in plot_config.chips_notchecked else True, disabled=True if "Literature" in plot_config.chips_disabled else False, color=c_brown, id={"type": "chip-literature", "index": plot_config.plot_id}),
+                                                                                    dmc.Chip("Peace", size="xs", variant="outline", checked=False if "Peace" in plot_config.chips_notchecked else True, disabled=True if "Peace" in plot_config.chips_disabled else False, color=c_brown, id={"type": "chip-peace", "index": plot_config.plot_id}),
+                                                                                ]
+                                                                            )
+                                                                        ),
+                                                                    ],
+                                                                    style={
+                                                                        "marginRight": "30px",
+                                                                        "display": "block" if plot_config.show_filters.get("categories", False) else "none"
+                                                                    }
+                                                                ),
+                                                                # Gender Filter
+                                                                dmc.Stack(
+                                                                    children=[
+                                                                        html.Div("Gender"),
+                                                                        html.Div(
+                                                                            dmc.Group(
+                                                                                [
+                                                                                    dmc.Chip("female", size="xs", variant="outline", checked=True, color=c_brown, id={"type": "chip-female", "index": plot_config.plot_id}),
+                                                                                    dmc.Chip("male", size="xs", variant="outline", checked=True, color=c_brown, id={"type": "chip-male", "index": plot_config.plot_id}),
+                                                                                ]
+                                                                            )
+                                                                        ),
+                                                                    ],
+                                                                    style={
+                                                                        "display": "block" if plot_config.show_filters.get("gender", False) else "none"
+                                                                    }
+                                                                ),
 
-                                            # Custom Filter (if provided)
-                                            html.Div(
-                                                plot_config.show_filters.get("custom-filter"),
-                                                style={
-                                                    "display": "block" if plot_config.show_filters.get("custom-filter") else "none"
-                                                }
-                                            ),
-                                        ],
-                                        gap="sm",
-                                        className="selection-area",
+                                                                # TimeRange Filter
+                                                                dmc.Stack(
+                                                                    children=[
+                                                                        html.Div("Time Range"),
+                                                                        html.Div(
+                                                                            dmc.Group(
+                                                                                [
+                                                                                    dcc.Dropdown(
+                                                                                        id={"type": "dropdown-timerange", "index": plot_config.plot_id},
+                                                                                        options=[
+                                                                                            {'label': 'Year of Birth', 'value': 'birth'},
+                                                                                            {'label': 'Year of Award', 'value': 'award'},
+                                                                                            {'label': 'Year of Death', 'value': 'death'}
+                                                                                        ],
+                                                                                        value='award',  # Default value
+                                                                                        clearable=False,
+                                                                                        style={"width": "200px"},
+                                                                                    ),
+
+                                                                                    dmc.RangeSlider(
+                                                                                        id={"type":"slider-timerange", "index": plot_config.plot_id},
+                                                                                        value=[1901, 2024],
+                                                                                        min=1800,
+                                                                                        max=lastyearincluded,
+                                                                                        minRange=1,
+                                                                                        marks=marks_life,
+                                                                                        style={"width": "400px"},
+                                                                                        color=c_teal
+                                                                                        
+                                                                                    ),
+                                                                                ],
+                                                                                mb=35
+                                                                            )
+                                                                        )
+                                                                    ],
+                                                                    #justify="left",
+                                                                    style={"margin-top": "0px", "width":"100%"}
+                                                                ),
+
+
+
+                                                                # Custom Filter (if provided)
+                                                                html.Div(
+                                                                    plot_config.show_filters.get("custom-filter"),
+                                                                    style={
+                                                                        "display": "block" if plot_config.show_filters.get("custom-filter") else "none"
+                                                                    }
+                                                                ),
+
+                                                                dmc.Space(h="lg"),
+
+                                                                dmc.Switch(
+                                                                    id={"type":"switch-update", "index": plot_config.plot_id},
+                                                                    size="sm",
+                                                                    radius="xl",
+                                                                    label="Update plot only on Submit",
+                                                                    checked=False
+                                                                )
+                                                            ],
+                                                            gap="sm",
+                                                            className="selection-area",
+                                                        ),
+                                                        # Filter modal buttons
+                                                        dmc.Group(
+                                                            [
+                                                                dmc.Button("Submit", id={"type": "submit-button", "index": plot_config.plot_id}, color=c_brown),
+                                                                dmc.Button(
+                                                                    "Close",
+                                                                    color="c_red",
+                                                                    variant="outline",
+                                                                    id={"type": "close-button", "index": plot_config.plot_id},
+                                                                ),
+                                                            ],
+                                                            justify="flex-end",
+                                                        ),
+                                                    ],
+                                                ),
+                                            ]
+                                        ),
+                                        span={"base": 12, "sm": 1}
                                     ),
-                                    # Filter modal buttons
-                                    dmc.Group(
-                                        [
-                                            dmc.Button("Submit", id={"type": "submit-button", "index": plot_config.plot_id}),
-                                            dmc.Button(
-                                                "Close",
-                                                color="red",
-                                                variant="outline",
-                                                id={"type": "close-button", "index": plot_config.plot_id},
-                                            ),
-                                        ],
-                                        justify="flex-end",
-                                    ),
-                                ],
-                            ),
+                                ]
+                            )
+
+
+                           # html.P(plot_config.subheader) if plot_config.subheader else None,
                         ]
                     ),
+
+
+
 
                     # Plot
                     html.Div(
@@ -862,6 +941,16 @@ def generate_plot_in_layout_class(plot_config):
         ],
     )
 
+# Callback to update the marks of the timerange slider based on the selected value
+# @app.callback(
+#     Output({"type": "slider-timerange", "index": MATCH}, "marks"),
+#     Input({"type": "dropdown-timerange", "index": MATCH}, "value")
+# )
+# def update_marks(selected_value):
+#     if selected_value == "award":
+#         return marks_award
+#     else:
+#         return marks_life
 
 # # Callback to toggle the modal (close it)
 @app.callback(
@@ -891,6 +980,9 @@ def toggle_modal(nc1, nc2, nc3, opened):
         Input({"type": "chip-peace", "index": MATCH}, "checked"),
         Input({"type": "chip-female", "index": MATCH}, "checked"),
         Input({"type": "chip-male", "index": MATCH}, "checked"),
+        Input({"type": "slider-timerange", "index": MATCH}, "value"),
+        Input({"type": "dropdown-timerange", "index": MATCH}, "value"),
+        Input({"type": "switch-update", "index": MATCH}, "checked"),
         Input({"type": "submit-button", "index": MATCH}, "n_clicks"),
         Input({"type": "custom-filter", "index": MATCH, "filter": ALL}, "value")
     ],
@@ -898,12 +990,14 @@ def toggle_modal(nc1, nc2, nc3, opened):
 )
 def update_plot(
     chip_medicine, chip_physics, chip_chemistry, chip_economics, chip_literature, chip_peace,
-    chip_female, chip_male, n_clicks, custom_filter_values, plot_id
+    chip_female, chip_male, slider_timerange, dropdown_timerange, switch_update, n_clicks, custom_filter_values, plot_id
 ):
     # Ensure the callback is only triggered when the submit button is clicked
     ctx = dash.callback_context
-    if not any('"type":"submit-button"' in trigger['prop_id'] for trigger in ctx.triggered):
-        raise PreventUpdate
+
+    if switch_update:
+        if not any('"type":"submit-button"' in trigger['prop_id'] for trigger in ctx.triggered):
+            raise PreventUpdate
 
     # Extract the plot configuration
     plot_id = plot_id["index"]
@@ -921,33 +1015,12 @@ def update_plot(
     plot_generator_kwargs = plot_config.plot_generator_kwargs or {}
     plot_generator_kwargs.update({
         "categories": selected_categories,
-        "gender": selected_genders
+        "gender": selected_genders,
+        "timerange": slider_timerange,
+        "timerange_field": dropdown_timerange
     })
 
-    print("Updater: ctx.inputs.keys():", ctx.inputs.keys())
-
-    # # Add custom filters
-    # for pattern, value in zip(ctx.inputs.keys(), custom_filter_values):
-    #     if value is not None:  # Only process non-None values
-    #         try:
-    #             # Extract the JSON part before `.value`
-    #             json_part = pattern.split('.')[0]
-    #             id_dict = json.loads(json_part)  # Parse JSON into a dictionary
-                
-    #             # Extract "filter" key
-    #             filter_name = id_dict.get("filter")
-    #             if filter_name:  # If "filter" exists, add to kwargs
-    #                 plot_generator_kwargs[filter_name] = value
-    #                 print(f"Added to kwargs: {filter_name}: {value}")
-    #             else:
-    #                 print(f"Skipping key without 'filter': {id_dict}")
-    #         except json.JSONDecodeError as e:
-    #             print(f"Error decoding JSON from pattern: {pattern}, Error: {e}")
-
-    # # Final debug
-    # print("Final plot_generator_kwargs:", plot_generator_kwargs)
-    # print("---")
-
+    # print("Updater: ctx.inputs.keys():", ctx.inputs.keys())
 
     # Add any custom filter values if they exist
     if custom_filter_values:
@@ -967,7 +1040,7 @@ def update_plot(
                 filter_name = pattern["filter"]  # This gets "city" from the pattern
                 plot_generator_kwargs[filter_name] = value
 
-    print("Updater: kwargs:", plot_generator_kwargs)
+    # print("Updater: kwargs:", plot_generator_kwargs)
 
     # Generate the updated figure
     try:
@@ -1003,11 +1076,11 @@ def generate_png_in_layout(
                     # Header
                     html.Div(
                         [
-                            html.H3(header),
-                            html.P(subheader) if subheader else None,
+                            html.H3(header, className="plot-header"),
+                            html.P(subheader, className="plot-subheader") if subheader else None,
                             dmc.Group(
                                 [
-                                    dmc.Badge(f"{datafrom} - {datato}", variant="outline", color="blue"),
+                                    dmc.Badge(f"{datafrom} - {datato}", variant="outline", color= brand_color_alt),
                                     *badges,
                                 ]
                             ),
@@ -1052,7 +1125,7 @@ app.layout = dmc.MantineProvider(
                             dmc.Group(
                                 [
                                     html.Img(src="assets/logo-md.png", style={"width": "150px", "height": "50px"}),
-                                    html.H1("Nobel Laureate Data Dashboard v1.4", className="text-left mt-5 mb-5"),
+                                    html.H1("Nobel Laureate Data Dashboard v1.6", className="dashboard-title"),
                                 ]
                             ),
                         span=12)
@@ -1063,14 +1136,14 @@ app.layout = dmc.MantineProvider(
                     [
                         dmc.TabsList(
                             [
-                                dmc.TabsTab("Overview", value="tab_overview"),
-                                dmc.TabsTab(f"{lastyearincluded} Prizes", value="tab_current"),
-                                dmc.TabsTab("Geography", value="tab_geography"),
-                                dmc.TabsTab("Demography", value="tab_demography"),
-                                dmc.TabsTab("Time", value="tab_time"),
-                                dmc.TabsTab("Migration", value="tab_migration"),
-                                dmc.TabsTab("Misc", value="tab_misc"),
-                                dmc.TabsTab("Data & References", value="tab_data"),
+                                dmc.TabsTab("Overview", value="tab_overview", className="dashboard-tab"),
+                                dmc.TabsTab(f"{lastyearincluded} Prizes", value="tab_current", className="dashboard-tab"),
+                                dmc.TabsTab("Geography", value="tab_geography", className="dashboard-tab"),
+                                dmc.TabsTab("Demography", value="tab_demography", className="dashboard-tab"),
+                                dmc.TabsTab("Time", value="tab_time", className="dashboard-tab"),
+                                dmc.TabsTab("Migration", value="tab_migration", className="dashboard-tab"),
+                                dmc.TabsTab("Misc", value="tab_misc", className="dashboard-tab"),
+                                dmc.TabsTab("Data & References", value="tab_data", className="dashboard-tab"),
                             ]
                         ),
 
@@ -1115,7 +1188,8 @@ app.layout = dmc.MantineProvider(
                         ),
                     ],
                     value="tab_overview",  # Default selected tab
-                    id="tabs"
+                    id="tabs",
+                    color = c_teal
                 )
             ],
             fluid=True,
@@ -1189,17 +1263,41 @@ def render_tab_overview_content(active_tab):
 
                         ),
 
+                        html.Div("Select Gender"),
+                        dmc.Stack(
+                            children=[
+                                html.Div(
+                                    dmc.Group(
+                                        [
+                                            dmc.Chip("female", variant="outline", checked=True, color=c_medicine, id="chip-female"),
+                                            dmc.Chip("male", variant="outline", checked=True, color=c_physics, id="chip-male"),
+                                        ]
+                                    )
+                                )
+                            ]
+                        ),
+
                         html.Div("Select Time Range"),
                         html.Div(
                             [
-                                dcc.RangeSlider(
-                                    id='overview-timerange-control',
-                                    step=1,
-                                    value=[1901, int(lastyearincluded)],  # Default range from 0 to max
-                                    marks={i: str(i) for i in range(1901, int(lastyearincluded+5), 5)}, 
-                                    tooltip={"placement": "bottom", "always_visible": True},
-                                    className="dmc-bar dmc-thumb",
-                                )
+                                dmc.RangeSlider(
+                                    id="slider-timerange-overview",
+                                    value=[1901, 2024],
+                                    min=1901,
+                                    max=2024,
+                                    minRange=1,
+                                    marks=[
+                                        {"value": 1901, "label": "1901"},
+                                        {"value": 1925, "label": "1925"},
+                                        {"value": 1950, "label": "1950"},
+                                        {"value": 1975, "label": "1975"},
+                                        {"value": 2000, "label": "2000"},
+                                        {"value": int(lastyearincluded), "label": lastyearincluded}
+                                    ],
+                                    mb=35,
+                                    color=c_teal
+                                ),
+
                             ],
                             #justify="left",
                             style={"margin-top": "0px", "width":"100%"}
@@ -1242,13 +1340,25 @@ def render_tab_overview_content(active_tab):
         Input("chip-economics", "checked"),
         Input("chip-literature", "checked"),
         Input("chip-peace", "checked"),
-        Input("overview-timerange-control", "value")],
+        Input("chip-female", "checked"),
+        Input("chip-male", "checked"),
+        Input("slider-timerange-overview", "value")],
         # prevent_initial_call=True
 )
-def update_overview_content(chip_medicine, chip_physics, chip_chemistry, chip_economics, chip_literature, chip_peace, timerange):
+def update_overview_content(chip_medicine, chip_physics, chip_chemistry, chip_economics, chip_literature, chip_peace, chip_female, chip_male, timerange):
 
     selected_categories = pdg.define_category_states(chip_medicine, chip_physics, chip_chemistry, chip_economics, chip_literature, chip_peace)
-    number_of_laureates, number_of_prizes, laureate_oldest_name, laureate_oldest_age, laureate_youngest_name, laureate_youngest_age, df_filtered_laureates = pdg.generate_overview_stats(selected_categories)
+    # print("Selected Categories:", selected_categories)
+    selected_gender = pdg.define_gender_states(chip_female, chip_male)
+
+    df_filtered_laureates = pdg.standard_filter(data=df_laureates, categories=selected_categories, gender=selected_gender, timerange=timerange, callsign="overview callback filter laureates")
+    df_filtered_prizes = pdg.standard_filter(data=df_prizes, categories=selected_categories, gender=selected_gender, timerange=timerange, callsign="overview callback filter prizes")
+
+    number_of_laureates, number_of_prizes, laureate_oldest_name, laureate_oldest_age, laureate_youngest_name, laureate_youngest_age = pdg.generate_overview_stats(df_filtered_laureates, df_filtered_prizes)
+    # print("Number of Laureates:", number_of_laureates)
+    # print("Number of Prizes:", number_of_prizes)
+    # print("Oldest Laureate:", laureate_oldest_name, laureate_oldest_age)
+    # print("Youngest Laureate:", laureate_youngest_name, laureate_youngest_age)
 
     # Return the Content
     return [
@@ -1862,6 +1972,9 @@ def render_tab_misc_content(active_tab):
                                 ],
                         ),
 
+                        # PLOT: Most Common First Names
+                        generate_loader_spinner("fig_mostcommon_firstnames"),
+
                         generate_loader_spinner("fig_line_prizemoney")
                     ],
                     gap="sm"
@@ -1959,56 +2072,65 @@ def render_tab_data_content(active_tab):
         # Return the content for tab Time
         return dmc.Paper(
             children=[
-                html.H3("About"),
-                html.Div(dcc.Markdown(["The Nobel Laureate Data Dashboard is a project of Wolfgang Huang. If you want to learn more about my other projects, please see my portfolio page www.virtuousvector.ai ([Link](https://www.virtuousvector.ai)), or email me at mail-at-virtuousvector.ai."])),
+                html.H3("About", className="text-header"),
+                html.Div(dcc.Markdown(["The Nobel Laureate Data Dashboard is a project of Wolfgang Huang. If you want to learn more about my other projects, please see my portfolio page www.virtuousvector.ai ([Link](https://www.virtuousvector.ai)), or email me at mail-at-virtuousvector.ai."]), className="text-copy"),
                 dmc.Space(h="xl"),
                 
-                html.H3("Data"),
+                html.H3("Data", className="text-header"),
 
-                html.H5("Nobel Laureate Base Data"),
-                html.Div("The core of the data is provided by Nobel Prize Outreach via their API. You can view it below, or access it via the API yourself. By the way, you can also sort and filter the data by clicking on the column headers / the column burger menu."),
+                html.H5("Nobel Laureate Base Data", className="text-subheader"),
+                html.Div("The core of the data is provided by Nobel Prize Outreach via their API. You can view it below, or access it via the API yourself. By the way, you can also sort and filter the data by clicking on the column headers / the column burger menu.", className="text-copy"),
                 dmc.Space(h="xl"),
                 html.Div([ag_df_laureates]),
 
                 dmc.Space(h="xl"),
 
-                html.H5("Timegap Analysis"),
-                html.Div("The data used for timegap analysis is published here:"),
-                html.Div(dcc.Markdown(["Li, Jichao; Yin, Yian; Fortunato, Santo; Wang Dashun, 2018, \"A dataset of publication records for Nobel laureates\", Harvard Dataverse, [Link](https://doi.org/10.7910/DVN/6NJ5RN)"])),
+                html.H5("Timegap Analysis", className="text-subheader"),
+                html.Div("The data used for timegap analysis is published here:", className="text-copy"),
+                html.Div(dcc.Markdown(["Li, Jichao; Yin, Yian; Fortunato, Santo; Wang Dashun, 2018, \"A dataset of publication records for Nobel laureates\", Harvard Dataverse, [Link](https://doi.org/10.7910/DVN/6NJ5RN)"]), className="text-copy"),
 
                 dmc.Space(h="xl"),
 
-                html.H5("Degree - Work - Prize Migration Analysis"),
-                html.Div("The data used for migration analysis is published here:"),
-                html.Div(dcc.Markdown(["Schlagberger, E.M., Bornmann, L. & Bauer, J.: \"At what institutions did Nobel laureates do their prize-winning work? An analysis of biographical information on Nobel laureates from 1994 to 2014\". Scientometrics 109, 723–767 (2016). [Link](https://doi.org/10.1007/s11192-016-2059-2)"])),
+                html.H5("Degree - Work - Prize Migration Analysis", className="text-subheader"),
+                html.Div("The data used for migration analysis is published here:", className="text-copy"),
+                html.Div(dcc.Markdown(["Schlagberger, E.M., Bornmann, L. & Bauer, J.: \"At what institutions did Nobel laureates do their prize-winning work? An analysis of biographical information on Nobel laureates from 1994 to 2014\". Scientometrics 109, 723–767 (2016). [Link](https://doi.org/10.1007/s11192-016-2059-2)"]), className="text-copy"),
 
                 dmc.Space(h="xl"),
 
-                html.H5("Population & Life Expectancy"),
-                html.Div("The data used for population numbers and life expectancy is published here:"),
-                html.Div(dcc.Markdown(["Gapminder.org Data Downloads [Link](https://www.gapminder.org/data/)"])),
+                html.H5("Population & Life Expectancy", className="text-subheader"),
+                html.Div("The data used for population numbers and life expectancy is published here:", className="text-copy"),
+                html.Div(dcc.Markdown(["Gapminder.org Data Downloads [Link](https://www.gapminder.org/data/)"]), className="text-copy"),
 
 
                 dmc.Space(h="xl"),
 
-                html.H5("Ethnicity"),
-                html.Div("The data used for ethnicity is self-compiled. Further details are provided alongside the plot. Feel free to contact me if you have constructive criticism."),
+                html.H5("Ethnicity", className="text-subheader"),
+                html.Div("The data used for ethnicity is self-compiled. Further details are provided alongside the plot. Feel free to contact me if you have constructive criticism.", className="text-copy"),
                 dmc.Space(h="xl"),
                 html.Div([ag_df_ethnicity]),
 
                 dmc.Space(h="xl"),
 
-                html.H5("Religion"),
-                html.Div("The data used for religion is self-compiled. Further details are provided alongside the plot. Feel free to contact me if you have constructive criticism."),
+                html.H5("Religion", className="text-subheader"),
+                html.Div("The data used for religion is self-compiled. Further details are provided alongside the plot. Feel free to contact me if you have constructive criticism.", className="text-copy"),
                 dmc.Space(h="xl"),
                 html.Div([ag_df_religion]),
 
                 dmc.Space(h="xl"),
 
-                html.H5("Download the Data"),
-                html.Div(dcc.Markdown(["You can download all the data from my Github repository \"nobeldashboard\". [Link](https://github.com/WolfgangHuang/nobeldashboard)"])),
+                html.H5("Download the Data", className="text-subheader"),
+                html.Div(dcc.Markdown(["You can download all the data from my Github repository \"nobeldashboard\". [Link](https://github.com/WolfgangHuang/nobeldashboard)"]), className="text-copy"),
                 dmc.Space(h="xl"),
-                
+
+                dmc.Space(h="xl"),
+
+                html.H5("Version History", className="text-subheader"),
+                html.Div(dcc.Markdown(["Version 1.6 (January 2025): New plot 'Most Common Firstnames', design updates"]), className="text-copy"),
+                html.Div(dcc.Markdown(["Version 1.5 (January 2025): Finalized New Filters"]), className="text-copy"),
+                html.Div(dcc.Markdown(["Version 1.4 (January 2025): New Filters using pattern matching; rewrote plot configs as class instances."]), className="text-copy"),
+                html.Div(dcc.Markdown(["Version 1.3 (December 2024): Rewrote all plots as functions, removed pickle storage."]), className="text-copy"),
+                html.Div(dcc.Markdown(["Version 1.2 (November 2024): Design Upgrades / Improved Layout."]), className="text-copy"),
+                dmc.Space(h="xl"),
             ],
             shadow="md",
             radius="md",
@@ -2027,10 +2149,10 @@ def render_tab_data_content(active_tab):
 ##################################################################################################
 
 # Run the app (locally)
-if __name__ == "__main__":
-    app.run(debug=True, port=5085) 
+# if __name__ == "__main__":
+#     app.run(debug=True, port=5085) 
 
 # # # Run the app on the server
-# if __name__ == '__main__':
-#     port = int(os.environ.get('PORT', 8050))  # Fallback to port 8050 if PORT isn't set
-#     app.run_server(host='0.0.0.0', port=port, debug=False)
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 8050))  # Fallback to port 8050 if PORT isn't set
+    app.run_server(host='0.0.0.0', port=port, debug=False)
