@@ -1106,7 +1106,7 @@ app.layout = dmc.MantineProvider(
                             dmc.Group(
                                 [
                                     html.Img(src="assets/logo-md.png", style={"width": "150px", "height": "50px"}),
-                                    html.H1("Nobel Laureate Data Dashboard v1.6", className="dashboard-title"),
+                                    html.H1("Nobel Laureate Data Dashboard v1.7", className="dashboard-title"),
                                 ]
                             ),
                         span=12)
