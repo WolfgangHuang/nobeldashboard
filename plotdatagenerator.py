@@ -15,65 +15,75 @@ import yfinance as yf
 # Color Settings
 ##################################################################################################
 
-brand_color_plot_background='#F5F4F5'
 
-c_brown = '#47382a'
-c_brown_verylight = '#F0EBE6'
-c_teal = '#186f77'
-c_lightblue = '#93bbdc'
-c_red = '#91121d'
-c_orange = '#ff7703'
-c_yellow = '#ffe74c'
-c_darkmagenta = '#8e2984'
-c_magenta = '#cf437d'
-c_pink = '#ff99c8'
-c_grey='#e6e6e6'
+### Colors HEX ###
 
-c_red_verylight = '#f7c1c6'
-c_red_superlight = '#fbe0e2'
-c_red_verydark = '#3A070B'
+c_black= '#27262c'
+c_blue= '#26384b'
+c_teal= '#476e71'
+c_green= '#2f754e'
+c_yellow= '#edae49'
+c_orange= '#f28118'
+c_red= '#b50603'
+c_purple= '#9f5683'
+c_grey= '#999999'
 
-c_teal_verylight = '#C2EEF3'
-c_teal_superlight = '#e1f7f9'
-c_teal_verydark = '#072124'
+c_black_light= '#8075ae'
+c_blue_light= '#6b98c8'
+c_teal_light= '#8cc7cb'
+c_green_light= '#76d7a2'
+c_yellow_light= '#f8d6a1'
+c_orange_light= '#f9bf88'
+c_red_light= '#fd5d5a'
+c_purple_light= '#d99ec2'
+c_grey_light= '#eeeeee'
+c_grey_extralight= '#fafafa'
 
-c_lightblue_verylight = '#e9f1f8'
-c_lightblue_superlight = '#f4f8fc'
-
-c_pie1 = '#67d6e0'
-c_pie2 = '#c9ddee'
-c_pie3 = '#ec6570'
-c_pie4 = '#ffbc82'
-c_pie5 = '#fff3a6'
-c_pie6 = '#da81d1'
-c_pie7 = '#e7a2bf'
-c_pie8 = '#ffcce4'
-c_pie0 = '#b59b82'
-
-colorscale_palette = [c_teal, c_lightblue, c_red, c_orange, c_yellow, c_darkmagenta, c_magenta, c_pink]
-colorscale_palette_light = [c_pie1, c_pie2, c_pie3, c_pie4, c_pie5, c_pie6, c_pie7, c_pie8]
-
-colorscale_red = [c_red_verylight, c_red_verydark]
-colorscale_teal = [c_teal_verylight, c_teal_verydark]
-colorscale_teal_log = ["#E1F7F9", "#67D6E0", "#67D6E0", "#186F77", "#13595F", "#114D53"]
-colorscale_teal_to_read = [c_teal_verylight, c_teal, c_red]
+c_black_dark= '#0d0823'
+c_blue_dark= '#081d33'
+c_teal_dark= '#104d52'
+c_green_dark= '#0a4d28'
+c_yellow_dark= '#9f6406'
+c_orange_dark= '#894404'
+c_red_dark= '#610200'
+c_purple_dark= '#6f134c'
+c_grey_dark= '#333333'
 
 
+### Color Assignments ###
 
-colorscale_hue_log = [c_teal, c_lightblue]
+c_brand_color_main = c_black
+c_brand_color_alt = c_blue
+c_brand_color_acc = c_red
 
-brand_color_main = c_brown
-brand_color_alt = c_teal
-brand_color_alt2 = c_red
-brand_color_acc = c_darkmagenta
-brand_colorscale_main = colorscale_palette
-c_physics = c_teal
+c_physics = c_blue
 c_medicine = c_red
 c_chemistry = c_orange
-c_economics = c_lightblue
-c_peace = c_pink
+c_economics = c_purple
+c_peace = c_green
 c_literature = c_yellow
 
+
+c_pie1 = c_blue_light
+c_pie2 = c_teal_light
+c_pie3 = c_green_light
+c_pie4 = c_yellow_light
+c_pie5 = c_orange_light
+c_pie6 = c_red_light
+c_pie7 = c_purple_light
+c_pie8 = c_black_light
+c_pie0 = c_grey_light
+
+
+c_plot_background= c_grey_extralight
+c_hoverlabel_bg = c_grey_light
+
+c_colorscale_palette = [c_blue, c_teal, c_green, c_yellow, c_orange, c_red, c_purple, c_black]
+c_colorscale_palette_light = [c_blue_light, c_teal_light, c_green_light, c_yellow_light, c_orange_light, c_red_light, c_purple_light, c_black_light]
+
+c_colorscale_red = [c_orange_light, c_red_dark]
+c_colorscale_teal = [c_blue_light, c_teal_dark]
+c_colorscale_contrast = [c_teal, c_red]
 
 
 ##################################################################################################
@@ -125,10 +135,7 @@ df_iso = pd.read_csv('countries_iso2_iso3.csv', sep=';')
 # Fields
 df_fields = pd.read_csv("df_fields.csv", sep=";")
 
-lastyearincluded=2024
-# TODO: Determine year dynamically
 
-# print(df_laureates_import.columns)
 
 ##################################################################################################
 # Data Cleaning
@@ -371,7 +378,92 @@ df_prizes.drop(
 )
 
 df_laureates_enriched_redux_clean = df_laureates.copy()
-df_prizes_enriched_redux_clean = df_laureates.copy()
+df_prizes_enriched_redux_clean = df_prizes.copy()
+
+
+##################################################################################################
+# Functions for Prize Statistics
+##################################################################################################
+
+def get_lastyearincluded(data=df_prizes):
+    data = data.sort_values(by="Prize0_AwardYear", ascending=True)
+    lastyearincluded = data.iloc[-1]["Prize0_AwardYear"]
+    return lastyearincluded
+
+lastyearincluded = get_lastyearincluded(df_prizes)
+
+def get_currentlaureatemotivations(data=df_prizes):
+
+    # Filter df for current year
+    df_currentprizes = data[data["Prize0_AwardYear"] == lastyearincluded]
+    
+    # Write different categories to separate dfs
+    df_currentprizes_med = df_currentprizes[df_currentprizes["Prize0_Category"] == "Medicine"].sort_index()
+    df_currentprizes_phys = df_currentprizes[df_currentprizes["Prize0_Category"] == "Physics"].sort_index()
+    df_currentprizes_chem = df_currentprizes[df_currentprizes["Prize0_Category"] == "Chemistry"].sort_index()
+    df_currentprizes_lit = df_currentprizes[df_currentprizes["Prize0_Category"] == "Literature"].sort_index()
+    df_currentprizes_peace = df_currentprizes[df_currentprizes["Prize0_Category"] == "Peace"].sort_index()
+    df_currentprizes_eco = df_currentprizes[df_currentprizes["Prize0_Category"] == "Economic Sciences"].sort_index()
+
+    # Turn the dfs into dicts
+    dict_med = df_currentprizes_med.set_index("AwardeeDisplayName")["Prize0_Motivation"].to_dict()
+    dict_phys = df_currentprizes_phys.set_index("AwardeeDisplayName")["Prize0_Motivation"].to_dict()
+    dict_chem = df_currentprizes_chem.set_index("AwardeeDisplayName")["Prize0_Motivation"].to_dict()
+    dict_lit = df_currentprizes_lit.set_index("AwardeeDisplayName")["Prize0_Motivation"].to_dict()
+    dict_peace = df_currentprizes_peace.set_index("AwardeeDisplayName")["Prize0_Motivation"].to_dict()
+    dict_eco = df_currentprizes_eco.set_index("AwardeeDisplayName")["Prize0_Motivation"].to_dict()
+
+
+    def generate_html_current_prizes(prize_dict):
+
+        # check for repeating motivations, and keep only the last
+        items = list(prize_dict.items())
+        new_items = []
+        for i in range(len(items)):
+            key, value = items[i]
+            # Check if there is a next item and if its value equals the current value.
+            if i < len(items) - 1:
+                _, next_value = items[i + 1]
+                if value == next_value:
+                    # Replace the first of the identical pair with an empty string (or "skip" if desired)
+                    new_items.append((key, ''))
+                else:
+                    new_items.append((key, value))
+            else:
+                # Always keep the last item as is
+                new_items.append((key, value))
+
+        data = dict(new_items)
+
+
+        # turn the dict to a list of html elements
+        html_elements = []
+        for key, value in data.items():
+            # Create and append the <h4> element for the key.
+            html_elements.append(f"<h4>{key}</h4>")
+            # If the value is non-empty, create and append the <p> element.
+            if value:
+                html_elements.append(f"<p>{value}</p>")
+
+        # If you want to see the result as a single string:
+        #html_output = "\n".join(html_elements)
+        html_output = "".join(html_elements)
+        # print(html_output)
+
+        return html_output
+    
+    html_med = generate_html_current_prizes(dict_med)
+    html_phys = generate_html_current_prizes(dict_phys)
+    html_chem = generate_html_current_prizes(dict_chem)
+    html_lit = generate_html_current_prizes(dict_lit)
+    html_peace = generate_html_current_prizes(dict_peace)
+    html_eco = generate_html_current_prizes(dict_eco)
+
+    return html_med, html_phys, html_chem, html_lit, html_peace, html_eco
+    
+
+
+
 
 ##################################################################################################
 # Count Laureates per Country
@@ -524,7 +616,7 @@ def replace_country_designations(country):
 # Plot: Choropleth Globe Countries
 # ================================================================================================
 
-def generate_choroplethglobe(data=df_laureates, country="birth", categories="all", gender="all", timerange=[1901, lastyearincluded], timerange_field="award"):
+def generate_choroplethglobe(data=df_laureates, country="birth", gender="all", categories="all", timerange=[1901, lastyearincluded], timerange_field="award"):
     """
     Generates a 3D globe with the number of Nobel Laureates per Country.
 
@@ -534,11 +626,11 @@ def generate_choroplethglobe(data=df_laureates, country="birth", categories="all
         - "birth"
         - "affiliation"
         - "death"
-    - categories (str): The Nobel Prize categories to filter by. Allowed values:
+    - category (str): The Nobel Prize category to filter by. Allowed values:
         - "all" (no filtering)
         - "Physics"
         - "Chemistry"
-        - "Medicine"
+        - "Physiology or Medicine"
         - "Literature"
         - "Peace"
         - "Economic Sciences"
@@ -548,13 +640,6 @@ def generate_choroplethglobe(data=df_laureates, country="birth", categories="all
         - "male"
         - "female"
         Default: "all".
-    - year_range (list): The start and end year of range
-        Default: None
-    - year_range_field (str): The year field/column the range is being applied to.
-        - "birth"
-        - "award"
-        - "death"
-        Default: "award"
 
     Returns:
     - fig (plotly.graph_objs._figure.Figure): The Plotly figure object representing the globe.
@@ -571,7 +656,7 @@ def generate_choroplethglobe(data=df_laureates, country="birth", categories="all
     fig = go.Figure(data=go.Choropleth(
         locations=data['ISO3'],
         z=data['Count'],
-        colorscale=colorscale_hue_log,
+        colorscale=c_colorscale_teal,
         marker_line_color='darkgray',
         marker_line_width=0.5,
         colorbar=dict(
@@ -586,12 +671,12 @@ def generate_choroplethglobe(data=df_laureates, country="birth", categories="all
 
     fig.update_layout(      
         template='plotly_white',
-        plot_bgcolor=brand_color_plot_background,
+        plot_bgcolor=c_plot_background,
         margin={"r":0,"t":0,"l":0,"b":0},
         font=dict(
             family = 'Rubik, sans-serif',
             size = 11,
-            color = brand_color_main,
+            color = c_brand_color_main,
         ),
         # showlegend = True,
         # title=dict(
@@ -604,12 +689,54 @@ def generate_choroplethglobe(data=df_laureates, country="birth", categories="all
         #     pad=dict(t = 20, b = 20)
         # ),
         # width=1200, 
-        # height=800,
+        height=800,
         autosize=True,
         geo=dict(
-            showframe=False,
-            showcoastlines=False,
-            projection_type='orthographic'
+            # bgcolor='#ffffff',
+            # landcolor='#f0f0f0',
+            # showcountries=True,
+            # oceancolor=' #f0f005',
+            # rivercolor=' #f0f0f5',
+            # lakecolor=' #f0f0f5',
+            # showframe=False,
+            # showcoastlines=False,
+            # projection_type='orthographic'
+
+            projection_type="orthographic",
+            showland=True,
+            countrycolor=c_black,  # Darker color for country borders
+            countrywidth=0.8,  # Border width
+            coastlinecolor=c_black,  # Darker coastlines
+            coastlinewidth=0.5,  # Coastline width
+            showlakes=True,
+            showcountries=True,
+            showocean=True,
+            showframe=False,  # Removes the box frame
+            bgcolor='#ffffff',
+            landcolor='#f0f0f0',
+            oceancolor=' #e6f2ff',
+            rivercolor=' #e6f2ff',
+            lakecolor=' #e6f2ff',
+
+        )
+    )
+
+    # Hover label template
+    fig.update_traces(
+        customdata=data[['Country']],
+        hovertemplate=(
+            "<b>%{customdata[0]}</b><br>" +  # Show Country name (specified in customdata)
+            "%{z}" + # Show the count
+            "<extra></extra>"  # Hide the trace
+        )
+    )
+
+    # Hover label styling
+    fig.update_layout(
+        hoverlabel=dict(
+            bgcolor=c_plot_background,
+            font_size=12,
+            font_family="Rubik"
         )
     )
 
@@ -701,7 +828,7 @@ def generate_scattermapbox_cities(data=df_laureates, city="birth", gender="all",
         mode='markers',
         marker=go.scattermapbox.Marker(
             size=9,   # Marker size
-            color=brand_color_main,  # Color of the marker (your brand color)
+            color=c_blue_light,  # Color of the marker (your brand color)
             opacity=0.8
         ),
         text=data['AwardeeDisplayName'],  # Laureate name (used for hover)
@@ -712,13 +839,19 @@ def generate_scattermapbox_cities(data=df_laureates, city="birth", gender="all",
     # Update layout of the map
     fig.update_layout(
         template='plotly_white',
-        plot_bgcolor=brand_color_plot_background,
+        plot_bgcolor=c_plot_background,
         margin={"r":0,"t":0,"l":0,"b":0},
         font=dict(
             family = 'Rubik, sans-serif',
             size = 14,
-            color = brand_color_main,
-        ),    
+            color = c_brand_color_main
+        ),
+        hoverlabel=dict(
+                bgcolor=c_hoverlabel_bg,
+                font_size=12,
+                font_family="Rubik"
+        ),
+
         # title=dict(
         #     text = f"1.c: Places of {city.capitalize()} of Nobel Laureates",
         #     font=dict(size = 20),
@@ -729,7 +862,7 @@ def generate_scattermapbox_cities(data=df_laureates, city="birth", gender="all",
         #     pad=dict(t = 20, b = 20)
         # ),
         # width = 800,
-        # height = 600,
+        height = 800,
         mapbox=dict(
             style="carto-positron",  # Free CartoDB Positron map style
             zoom=1,  # Set default zoom level
@@ -892,40 +1025,38 @@ def prepare_data_bubbles_population(df_nlpc_complete, df_pop=df_pop, interval=5)
     df_nlpc_complete_population["PrizesPer1MPop"] = (df_nlpc_complete_population["RunningSum"] / df_nlpc_complete_population["Population"])*1000000
 
 
-    # Log transform the Population and add the 4th root of PrizesPer1MPop
+    # Log transform the Population and Prizes per Pop
     df_nlpc_complete_population_log = df_nlpc_complete_population
-    df_nlpc_complete_population_log['LogPopulation'] = np.log(df_nlpc_complete_population_log['Population'] + 1) # Adding 1 to avoid log(0)
-    df_nlpc_complete_population_log['SQRT4ofPrizesPer1MPop'] = np.power(df_nlpc_complete_population_log['PrizesPer1MPop'], (1/4)) # forth root, gives a nice scaling
+    df_nlpc_complete_population_log['LogPopulation'] = np.log(df_nlpc_complete_population_log['Population'] + 0.01) # Adding 0.01 to avoid log(0)
+    df_nlpc_complete_population_log['LogPrizesPer1MPop'] = np.log(df_nlpc_complete_population_log['PrizesPer1MPop'] + 1)
 
 
     # Data Redux, using "interval" - returns every nth year
-    df_nlpc_complete_population_log = df_nlpc_complete_population_log[df_nlpc_complete_population_log["Year"] % interval == 0]
+    # df_nlpc_complete_population_log = df_nlpc_complete_population_log[df_nlpc_complete_population_log["Year"] % interval == 0]
+    df_nlpc_complete_population_log = df_nlpc_complete_population_log[(df_nlpc_complete_population_log["Year"] % interval == 0) | (df_nlpc_complete_population_log["Year"] == lastyearincluded)]
     df_nlpc_complete_population_log.loc[:,"LogPopulation"] = df_nlpc_complete_population_log["LogPopulation"].round(4)
-    df_nlpc_complete_population_log.loc[:,"SQRT4ofPrizesPer1MPop"] = df_nlpc_complete_population_log["SQRT4ofPrizesPer1MPop"].round(2)
-
+    df_nlpc_complete_population_log.loc[:,"LogPrizesPer1MPop"] = df_nlpc_complete_population_log["LogPrizesPer1MPop"].round(2)
 
     # plot settings
     df_nlpc_complete_population_log = df_nlpc_complete_population_log.copy()
     df_nlpc_complete_population_log.loc[:,'PopulationNormalized'] = min_max_normalize(df_nlpc_complete_population['Population'])
-    y_range_max = df_nlpc_complete_population_log['SQRT4ofPrizesPer1MPop'].max()*1.1
+    y_range_max = df_nlpc_complete_population_log['LogPrizesPer1MPop'].max()*1.1
 
-    min_size = 0.2
+    min_size = 1
     df_nlpc_complete_population_log['PopulationNormalized'] = df_nlpc_complete_population_log['PopulationNormalized'].fillna(0)
-    bubblesize = np.maximum(df_nlpc_complete_population_log['PopulationNormalized']*10, min_size)*3
+    bubblesize = np.maximum(df_nlpc_complete_population_log['PopulationNormalized']*500, min_size)
 
     return df_nlpc_complete_population_log, y_range_max, bubblesize
 
 
-
-
 # generate the plot
 
-def generate_bubbles_perpopulation(data=df_prizes, country="birth", gender="all", categories="all", timerange=[1901, lastyearincluded], timerange_field="award", df_pop=df_pop, interval=5):
+def generate_bubbles_perpopulation(data=df_prizes, country="birth", gender="all", categories="all", df_pop=df_pop, interval=5, timerange=[1901, lastyearincluded], timerange_field="award"):
     """
     Generates a population-based bubble chart of Nobel Prize data, using Plotly for interactive visualization.
     
     This function:
-      1. Applies a standard filter on the input data using `standard_filter()` to limit rows by categories and gender.
+      1. Applies a standard filter on the input data using `standard_filter()` to limit rows by category and gender.
       2. Prepares the data for bubble plotting by calling `prepare_data_bubbles_population()`; this step merges 
          cumulative prize counts per country/year with population data, and computes numeric transformations 
          (log, min-max normalization).
@@ -935,7 +1066,7 @@ def generate_bubbles_perpopulation(data=df_prizes, country="birth", gender="all"
     Args:
         data (pd.DataFrame, optional):
             Nobel Prize data in a pandas DataFrame. Defaults to `df_prizes` (a global variable in this script). 
-            Must contain columns appropriate for filtering by categories/gender and merging with population data.
+            Must contain columns appropriate for filtering by category/gender and merging with population data.
         country (str, optional):
             Country type for merging Nobel data: 
               - "birth" (BirthCountryNow), 
@@ -945,9 +1076,9 @@ def generate_bubbles_perpopulation(data=df_prizes, country="birth", gender="all"
         gender (str, optional):
             Filter the data for a specific gender ("male", "female", etc.). Using "all" applies no gender filter.
             Defaults to "all".
-        categories (str, optional):
-            Filter the data for a specific Nobel categories ("physics", "chemistry", etc.). Using "all" applies 
-            no categories filter. Defaults to "all".
+        category (str, optional):
+            Filter the data for a specific Nobel category ("physics", "chemistry", etc.). Using "all" applies 
+            no category filter. Defaults to "all".
         df_pop (pd.DataFrame, optional):
             A DataFrame containing population data by country and year. Defaults to `df_pop` (global variable).
         interval(str):
@@ -958,7 +1089,7 @@ def generate_bubbles_perpopulation(data=df_prizes, country="birth", gender="all"
             A Plotly figure object representing the bubble chart, with an animation slider to step through years.
     
     Notes:
-        - Internally calls `standard_filter()` to reduce the dataset based on categories/gender.
+        - Internally calls `standard_filter()` to reduce the dataset based on category/gender.
         - Uses `prepare_data_bubbles_population()` to merge population data, compute transformations (log scale, 
           min-max normalization, etc.), and obtain the bubble sizes.
         - The x-axis is log-transformed population; the y-axis is the 4th root of the "prizes per 1M population."
@@ -973,36 +1104,38 @@ def generate_bubbles_perpopulation(data=df_prizes, country="birth", gender="all"
 
     fig = px.scatter(data, 
                     x="LogPopulation", 
-                    y="SQRT4ofPrizesPer1MPop", 
-                    size=bubblesize, 
+                    y="LogPrizesPer1MPop", 
+                    size="LogPrizesPer1MPop", 
                     color="Country",
+                    color_continuous_scale=c_colorscale_palette,
                     hover_name="Country", 
                     animation_frame="Year", 
                     range_x=[np.log(50_000), np.log(2_000_000_000)],  # Adjust range for log scale
                     range_y=[0, y_range_max],  # Adjust range for 1M scale                                    
                     text="Text",
-                    #text=None,
-                    hover_data={
-                        'Year': True,
-                        'Prizes': True,
-                        'Population': True,
-                        'LogPopulation': False,  # Hide automatic hover for x
-                        'SQRT4ofPrizesPer1MPop': False,  # Hide automatic hover for y
-                        #'size': False,  # Hide the size column
-                        'Text': False  # Ensure "Text" is hidden if it's not needed
-                    },
+                    # #text=None,
+                    # hover_data={
+                    #     'Year': True,
+                    #     'Prizes': True,
+                    #     'Population': True,
+                    #     'LogPopulation': False,  # Hide automatic hover for x
+                    #     'LogPrizesPer1MPop': False,  # Hide automatic hover for y
+                    #     #'size': False,  # Hide the size column
+                    #     'Text': False  # Ensure "Text" is hidden if it's not needed
+                    # },
     )
 
     fig.update_layout(
             template='plotly_white',
-            plot_bgcolor=brand_color_plot_background,
-            margin={"r":0,"t":30,"l":0,"b":0},
+            plot_bgcolor=c_plot_background,
+            margin={"r":0,"t":30,"l":0,"b":60},
             font=dict(
                 family = 'Rubik, sans-serif',
                 size = 11,
-                color = brand_color_main,
+                color = c_brand_color_main,
             ),
-            # showlegend = True,
+            showlegend = False,
+            autosize=True,
             # title=dict(
             #     text = "5.a: Nobel Prizes x Country of Birth x Population: 1901-2023",
             #     font=dict(size = 20),
@@ -1012,8 +1145,53 @@ def generate_bubbles_perpopulation(data=df_prizes, country="birth", gender="all"
             #     yanchor = 'top',                  # Anchor at the top of the title box
             # ),
             # width=1200, 
-            # height=800,
-            autosize=True
+            height=800,
+    )
+
+
+    # The hovertemplate needs to be updated for all traces and all animation frames.
+    # it is unfortunately not enough to do it as usual only once. 
+
+    # Update hovertemplate and customdata for the first frame (initial display)
+    for trace in fig.data:
+        country_name = trace.name  # Each trace in px.scatter() is a single country
+        country_data = data[data["Country"] == country_name]  # Filter data for this country
+        
+        trace.customdata = country_data[['Country', 'Prizes', 'Population', 'PrizesPer1MPop']].values
+        trace.hovertemplate = (
+            "<b>%{customdata[0]}</b><br>" +  # Year
+            "Prizes: %{customdata[1]}<br>" +  
+            "Population: %{customdata[2]:,}<br>" +  
+            "Prizes per 1M inhabitants: %{customdata[3]:.1f}" +  
+            "<extra></extra>"
+        )
+
+    # Update hovertemplate and customdata for each animation frame
+    for frame in fig.frames:
+        frame_year = int(frame.name)  # Each frame represents one year
+
+        for trace in frame.data:
+            country_name = trace.name  # Get the country name from trace
+            country_data = data[(data["Country"] == country_name) & (data["Year"] == frame_year)]  # Filter by country & year
+
+            if not country_data.empty:
+                trace.customdata = country_data[['Country', 'Prizes', 'Population', 'PrizesPer1MPop']].values
+                trace.hovertemplate = (
+                    "<b>%{customdata[0]}</b><br>" +  # Year
+                    "Prizes: %{customdata[1]}<br>" +  
+                    "Population: %{customdata[2]:,}<br>" +  
+                    "Prizes per 1M inhabitants: %{customdata[3]:.3f}" +  
+                    "<extra></extra>"
+                )
+
+
+    # Hover label styling
+    fig.update_layout(
+        hoverlabel=dict(
+            bgcolor=c_plot_background,
+            font_size=12,
+            font_family="Rubik"
+        )
     )
 
     # Define tick values and labels for the x-axis (population)
@@ -1026,10 +1204,41 @@ def generate_bubbles_perpopulation(data=df_prizes, country="birth", gender="all"
 
     # Update x-axis and y-axis to show original values
     fig.update_xaxes(tickvals=tickvals_x, ticktext=ticktext_x, title="Population (log-scale)")
-    fig.update_yaxes(tickvals=tickvals_y, ticktext=ticktext_y, title="Prizes Per Population (4th root)")
+    fig.update_yaxes(tickvals=tickvals_y, ticktext=ticktext_y, title="Prizes Per Population (log-scale)")
 
     # Adjust the position of the text labels
     fig.update_traces(textposition='top center')
+
+    # Range slider
+    fig.update_layout(
+    xaxis=dict(
+        rangeslider=dict(
+            visible=True, 
+            range=[data["LogPopulation"].min(), data["LogPopulation"].max()],
+        ),  
+        type="linear",
+        )
+    )
+
+    fig.update_xaxes(rangeslider_thickness = 0.05)  # sets the slider height to 0.5% of the plot height
+
+    # Animation SLider
+    fig.update_layout(
+        updatemenus=[dict(
+            type="buttons",
+            showactive=False,
+            # buttons=[
+            #     dict(label="Play", method="animate", args=[None, {"frame": {"duration": 500, "redraw": True}, "fromcurrent": True}]),
+            #     dict(label="Pause", method="animate", args=[[None], {"frame": {"duration": 0, "redraw": False}, "mode": "immediate"}])
+            # ],
+            x=0.0,
+            y=-0.3,  # Moves the buttons down
+            xanchor="left",
+            yanchor="bottom"
+        )],
+        sliders=[dict(y=-0.1)]  # Moves the animation slider further down
+    )
+
 
     return fig
 
@@ -1084,44 +1293,61 @@ def generate_bar_percountry(data=df_prizes, country="birth", gender="all", categ
 
     # Return running sum (or not)
     if runningsum:
-        data = df_nlpc_complete.pivot(index='Year', columns='Country', values='RunningSum').fillna(0)        
+        data = df_nlpc_complete.pivot(index='Year', columns='Country', values='RunningSum').fillna(0)
     else:
         data = df_nlpc_complete.pivot(index='Year', columns='Country', values='Prizes').fillna(0)
-    
+
+    # Reset index to include 'Year' as a column
     data = data.reset_index()
 
-    fig = px.bar(data, x='Year', y=data.columns[1:],
-    labels={'value': 'Number of Prizes', 'variable': 'Country'})
+    # Melt the data to include 'Country' as a row
+    data_melted = data.melt(id_vars='Year', var_name='Country', value_name='Prizes')
 
-    # Update the layout to stack bars
-    fig.update_layout(barmode='stack', xaxis_title='Year', yaxis_title='Number of Prizes')
-
-    fig.update_layout(
-            template='plotly_white',
-            plot_bgcolor=brand_color_plot_background,
-            margin={"r":0,"t":0,"l":0,"b":0},
-            font=dict(
-                family = 'Rubik, sans-serif',
-                size = 11,
-                color = brand_color_main,
-            ),
-            # showlegend = True,
-            # title=dict(
-            #     text = "5.b: Nobel Prizes per Country (Individual Years)",
-            #     font=dict(size = 20),
-            #     x = 0,                            # Left align the title
-            #     xanchor = 'left',                 # Align to the left edge
-            #     y = 0.97,                         # Adjust Y to position title above the map
-            #     yanchor = 'top',                  # Anchor at the top of the title box
-            # ),
-            # width=1200, 
-            # height=600,
-            autosize=True
+    # Create the bar chart using melted data
+    fig = px.bar(
+        data_melted,
+        x='Year',
+        y='Prizes',
+        color='Country',  # Color by country
+        color_discrete_sequence=c_colorscale_palette_light,
+        labels={'Prizes': 'Number of Prizes', 'Country': 'Country'}
     )
 
+    # Assign `customdata` for each trace separately
+    for trace in fig.data:
+        country_name = trace.name  # Get the country name for this trace
+        country_data = data_melted[data_melted['Country'] == country_name]  # Filter for this country
+
+        trace.customdata = country_data[['Year', 'Prizes']].values  # Assign Year and Prizes to customdata
+        trace.hovertemplate = (
+            "<b>" + country_name + "</b><br>" +  # Country name (manually added)
+            "Year: %{customdata[0]}<br>" +  # Year
+            "Prizes: %{customdata[1]}" +  # Number of prizes
+            "<extra></extra>"
+        )
+
+    # Update layout and hover styling
+    fig.update_layout(
+        barmode='stack',
+        xaxis_title='Year',
+        yaxis_title='Number of Prizes',
+        template='plotly_white',
+        plot_bgcolor=c_plot_background,
+        margin={"r": 0, "t": 0, "l": 0, "b": 0},
+        font=dict(
+            family='Rubik, sans-serif',
+            size=11,
+            color=c_brand_color_main,
+        ),
+        hoverlabel=dict(
+            bgcolor=c_plot_background,
+            font_size=12,
+            font_family="Rubik"
+        )
+    )
+
+
     return fig
-
-
 
 
 # Prizes per Country Stacked Bar Chart (Running Sum)
@@ -1196,7 +1422,7 @@ def prepare_data_3dsurface(data, categories, gender, timerange, timerange_field)
     return df_prizes_women, df_prizes_men
 
 
-def generate_3dsurface_pergender(data=df_prizes, categories="all", gender="female", timerange=[1901, lastyearincluded], timerange_field="award", width=1000, height=600):
+def generate_3dsurface_pergender(data=df_prizes, categories="all", gender="female", timerange=[1901, lastyearincluded], timerange_field="award", height=800):
     """
     Generates 3D surface plot, showing prizes to men and women.
     
@@ -1231,16 +1457,16 @@ def generate_3dsurface_pergender(data=df_prizes, categories="all", gender="femal
     # Filter gender and determine surfaces
     if gender == "all":
         data = [
-            go.Surface(z=data_w.values, y=y, x=x, colorscale=brand_colorscale_main, showscale=False, opacity=0.7),
-            go.Surface(z=data_m.values, y=y, x=x, colorscale=brand_colorscale_main, showscale=False, opacity=0.7)
+            go.Surface(z=data_w.values, y=y, x=x, colorscale=c_colorscale_palette, showscale=False, opacity=0.7),
+            go.Surface(z=data_m.values, y=y, x=x, colorscale=c_colorscale_palette, showscale=False, opacity=0.7)
         ]
     elif gender == "female":
         data = [
-            go.Surface(z=data_w.values, y=y, x=x, colorscale=brand_colorscale_main, showscale=False, opacity=0.7)
+            go.Surface(z=data_w.values, y=y, x=x, colorscale=c_colorscale_palette, showscale=False, opacity=0.7)
         ]
     elif gender == "male":
         data = [
-            go.Surface(z=data_m.values, y=y, x=x, colorscale=brand_colorscale_main, showscale=False, opacity=0.7)
+            go.Surface(z=data_m.values, y=y, x=x, colorscale=c_colorscale_palette, showscale=False, opacity=0.7)
         ]
 
     # Initiate figure
@@ -1250,7 +1476,7 @@ def generate_3dsurface_pergender(data=df_prizes, categories="all", gender="femal
     fig.update_layout(
         autosize=True,
         template='plotly_white',
-        plot_bgcolor=brand_color_plot_background,
+        plot_bgcolor=c_plot_background,
         scene=dict(
             xaxis=dict(tickvals=x, ticktext=x, title='Decades', autorange='reversed'),
             yaxis=dict(title='Categories'),
@@ -1261,9 +1487,35 @@ def generate_3dsurface_pergender(data=df_prizes, categories="all", gender="femal
                 up=dict(x=0, y=0, z=2)
             ),
         ),
-        width = width,
+        # width = width,
         height = height,
-        margin=dict(l=10, r=10, t=10, b=10)
+        margin=dict(l=10, r=10, t=10, b=10),
+
+        hoverlabel=dict(
+            bgcolor=c_plot_background,
+            font_size=12,
+            font_family="Rubik"
+        )
+    
+    )
+
+    # Hover label template
+    fig.update_traces(
+        hovertemplate=(
+            "<b>%{y}</b><br>" +  # Category
+            "Decade: %{x}+<br>" + # Decade
+            "Prizes: %{z}" # Prize count
+            "<extra></extra>"  # Hide the trace
+        )
+    )
+
+    # Hover label styling
+    fig.update_layout(
+        hoverlabel=dict(
+            bgcolor=c_plot_background,
+            font_size=12,
+            font_family="Rubik"
+        )
     )
     return fig
 
@@ -1354,7 +1606,7 @@ def generate_donut(data=df_laureates, categories="all", gender="all", characteri
                     values=values,
                     hole=0.5,
                     marker=dict(
-                        colors=colorscale_palette_light  # Use the colors in the order of the labels
+                        colors=c_colorscale_palette_light  # Use the colors in the order of the labels
                     ),
                     showlegend=False,
                     textinfo='label',
@@ -1367,7 +1619,7 @@ def generate_donut(data=df_laureates, categories="all", gender="all", characteri
         # Update layout
         fig.update_layout(
             template='plotly_white',
-            plot_bgcolor=brand_color_plot_background,
+            plot_bgcolor=c_plot_background,
             annotations=[
                 dict(
                     text=characteristic_name,
@@ -1380,6 +1632,13 @@ def generate_donut(data=df_laureates, categories="all", gender="all", characteri
             ],
             autosize=True,
             margin=dict(l=10, r=10, t=10, b=10),
+
+
+            hoverlabel=dict(
+                bgcolor=c_plot_background,
+                font_size=12,
+                font_family="Rubik"
+            )   
         )
 
     return fig
@@ -1464,14 +1723,14 @@ def generate_histogram_timegap(data=df_prizes, categories="all", gender="all", t
     
     fig.update_layout(
         template='plotly_white',
-        plot_bgcolor=brand_color_plot_background,
+        plot_bgcolor=c_plot_background,
         margin={"r":0,"t":50,"l":0,"b":0},
         xaxis_title="Average Time Gap (years)",
         yaxis_title="Count",
         font=dict(
             family = 'Rubik, sans-serif',
             size = 14,
-            color = brand_color_main,
+            color = c_brand_color_main,
         ),
         # title=dict(
         #     text = "3.a: Histogram of Timegap between Seminal Paper and Nobel Prize",
@@ -1487,6 +1746,27 @@ def generate_histogram_timegap(data=df_prizes, categories="all", gender="all", t
         # height = 600,
         autosize=True
         ),
+    
+    # Hover label template
+    fig.update_traces(
+        customdata=data[['Prize0_Category']],
+        hovertemplate=(
+            "<b>%{customdata[0]}</b><br>" +  # Category
+            "Timegap: %{x} years<br>" + # Timegap
+            "Count: %{y}" + # Count
+            "<extra></extra>"  # Hide the trace
+        )
+    )
+
+
+    # Hover label styling
+    fig.update_layout(
+        hoverlabel=dict(
+            bgcolor=c_plot_background,
+            font_size=12,
+            font_family="Rubik"
+        )
+    )
 
     return fig
 
@@ -1528,13 +1808,24 @@ def generate_scatterbox_timegaptrend(data=df_laureates, df_lifeexpectancy=df_lif
         subset = data[data['Prize0_Category'] == category]
         
         # Scatter points for each category
-        fig.add_trace(go.Scatter(
+        scatter_trace = go.Scatter(
             x=subset["Prize0_AwardYear"], 
             y=subset["PublicationTimegap"],  
             mode='markers',  
             name=category,
-            marker=dict(color=colors[category], size=8)
-        ))
+            marker=dict(color=colors[category], size=8),
+            customdata=subset[['Prize0_Category']].values,  # Ensure alignment
+            hovertemplate=(
+                "<b>%{customdata[0]}</b><br>" +  # Category
+                "Award Year: %{x}<br>" +  # Correct syntax
+                "Average Publication Timegap: %{y} years<br>" +  # Correct syntax
+                "<extra></extra>"  # Hide the trace name
+            )
+        )
+
+        # Add scatter trace to figure
+        fig.add_trace(scatter_trace)
+
         
         # Perform linear regression for the trendline
         X = subset["Prize0_AwardYear"].values.reshape(-1, 1)
@@ -1551,7 +1842,13 @@ def generate_scatterbox_timegaptrend(data=df_laureates, df_lifeexpectancy=df_lif
                 y=y_pred,  
                 mode='lines', 
                 name=f"{category} Trendline",
-                line=dict(color=colors[category], dash='dot')
+                line=dict(color=colors[category], dash='dot'),
+                customdata=data[['Prize0_Category']],
+                hovertemplate=(
+                    "<b>%{x}</b><br>" +  # Year
+                    "Average Publication Timegap: %{y:.1f} years<br>"  # life expectancy
+                    "<extra>%{customdata[0]}</extra>"  # Hide the trace name
+                )
             ))
 
     # Add the new red line from df_lifeexpectancy
@@ -1560,7 +1857,12 @@ def generate_scatterbox_timegaptrend(data=df_laureates, df_lifeexpectancy=df_lif
         y=df_lifeexpectancy["World"], 
         mode='lines', 
         name="Life Expectancy World",
-        line=dict(color=c_literature, width=2)  # Red line for the new data
+        line=dict(color=c_black, width=2),  # Red line for the new data
+        hovertemplate=(
+            "<b>%{x}</b><br>" +  # Years
+            "Life Expectancy: %{y:.1f} years<br>"  # life expectancy
+            "<extra>World</extra>"  # Hide the trace name
+        )
     ))
 
     # Add the new red line from df_lifeexpectancy
@@ -1569,13 +1871,19 @@ def generate_scatterbox_timegaptrend(data=df_laureates, df_lifeexpectancy=df_lif
         y=df_lifeexpectancy["Europe"], 
         mode='lines', 
         name="Life Expectancy Europe",
-        line=dict(color=c_peace, width=2)  # Red line for the new data
+        line=dict(color=c_blue_light, width=2),  # Red line for the new data
+        hovertemplate=(
+            "<b>%{x}</b><br>" +  # Years
+            "Life Expectancy: %{y:.1f} years<br>"  # life expectancy
+            "<extra>Europe</extra>"  # Hide the trace name
+        )
+
     ))
 
     # Update layout
     fig.update_layout(
         template='plotly_white',
-        plot_bgcolor=brand_color_plot_background,
+        plot_bgcolor=c_plot_background,
         xaxis_title="Year of Nobel Prize Award",
         yaxis_title="Average Time Gap (years)",
         showlegend=True,
@@ -1583,7 +1891,7 @@ def generate_scatterbox_timegaptrend(data=df_laureates, df_lifeexpectancy=df_lif
         font=dict(
             family = 'Rubik, sans-serif',
             size = 14,
-            color = brand_color_main,
+            color = c_brand_color_main,
         ),
         # title=dict(
         #     text = "3.b: Timegap between Seminal Paper and Nobel Prize with Trendlines",
@@ -1598,6 +1906,29 @@ def generate_scatterbox_timegaptrend(data=df_laureates, df_lifeexpectancy=df_lif
         # height = 600,
         autosize=True
     )
+
+    # Hover label styling
+    fig.update_layout(
+        # hovermode="x",
+        hoverlabel=dict(
+            bgcolor=c_plot_background,
+            font_size=12,
+            font_family="Rubik"
+        )
+    )
+
+    # Range slider
+    fig.update_layout(
+    xaxis=dict(
+        rangeslider=dict(
+            visible=True, 
+        ),  
+        type="linear",
+        )
+    )
+
+    fig.update_xaxes(rangeslider_thickness = 0.05)  # sets the slider height to 0.5% of the plot height
+
 
     return fig
 
@@ -1691,12 +2022,12 @@ def generate_scatterbox_age(data=df_laureates, categories="all", gender="all", t
 
     fig.update_layout(
         template='plotly_white',
-        plot_bgcolor=brand_color_plot_background,
+        plot_bgcolor=c_plot_background,
         margin={"r":0,"t":50,"l":0,"b":0},
         font=dict(
             family = 'Rubik, sans-serif',
             size = 14,
-            color = brand_color_main,
+            color = c_brand_color_main,
         ),        
         # title=dict(
         #     text = "3.c: Laureate Age at Time of Award (with trendlines)",
@@ -1709,6 +2040,39 @@ def generate_scatterbox_age(data=df_laureates, categories="all", gender="all", t
         # ),
         autosize= True
         ),
+
+    # Hover label template
+    fig.update_traces(
+        customdata=data[['Prize0_Category']],
+        hovertemplate=(
+            "<b>%{customdata[0]}</b><br>" +  # Category
+            "Award Year: %{x}<br>" + # Year
+            "Average Age: %{y:.1f}"  # Age
+            "<extra></extra>"  # Hide the trace
+        )
+    )
+
+    # Hover label styling
+    fig.update_layout(
+        hoverlabel=dict(
+            bgcolor=c_plot_background,
+            font_size=12,
+            font_family="Rubik"
+        )
+    )
+
+
+    # Range slider
+    fig.update_layout(
+    xaxis=dict(
+        rangeslider=dict(
+            visible=True, 
+        ),  
+        type="linear",
+        )
+    )
+
+    fig.update_xaxes(rangeslider_thickness = 0.05)  # sets the slider height to 0.5% of the plot height
 
     return fig
 
@@ -1749,17 +2113,17 @@ def generate_heatmap_age(data=df_laureates, categories="all", gender="all", time
         },
         x=data.columns,
         y=data.index,
-        color_continuous_scale= colorscale_teal_to_read,
+        color_continuous_scale= c_colorscale_red,
     )
 
     fig.update_layout(
         template='plotly_white',
-        plot_bgcolor=brand_color_plot_background,
+        plot_bgcolor=c_plot_background,
         margin={"r":0,"t":50,"l":0,"b":0},
         font=dict(
             family = 'Rubik, sans-serif',
             size = 14,
-            color = brand_color_main,
+            color = c_brand_color_main,
         ),
         # title=dict(
         #     text = f"3.c: Laureate Age at Time of Award",
@@ -1772,6 +2136,40 @@ def generate_heatmap_age(data=df_laureates, categories="all", gender="all", time
         # ),
         autosize= True
     )
+
+    fig.update_traces(
+        customdata=data.values,  # Pass heatmap values for hover display
+        hovertemplate=(
+            "<b>%{y}</b><br>" +  # Prize category
+            "Award Year: %{x}<br>" +  # Year of award
+            "Average Age: %{customdata:.1f}<br>" +  # Show the average age, formatted to 1 decimal place
+            "<extra></extra>"  # Hide trace info
+        )
+    )
+
+    # Hover label styling
+    fig.update_layout(
+        hoverlabel=dict(
+            bgcolor=c_plot_background,
+            font_size=12,
+            font_family="Rubik"
+        )
+    )
+
+
+    # Range slider
+    fig.update_layout(
+    xaxis=dict(
+        rangeslider=dict(
+            visible=True, 
+        ),  
+        type="linear",
+        )
+    )
+
+    fig.update_xaxes(rangeslider_thickness = 0.05)  # sets the slider height to 0.5% of the plot height
+
+
     return fig
 
 
@@ -1825,22 +2223,21 @@ def generate_parcat_migration(data=df_laureates, loc1="ParCatDegreeCountry", loc
         ],
         line={
             'color': data['color_value'],  # Use the mapped numerical values for coloring
-            'colorscale': colorscale_palette,
+            'colorscale': c_colorscale_palette_light,
             'shape': 'hspline'  # hspline is the attribute for curved lines
         },
-        hoveron='color', # Hover on color
+        hoveron='category', # Hover on color
         hoverinfo='all', # Display all available information on hover
-        arrangement='freeform' # Allows for dragging categories without snapping to a grid
-        
+        arrangement='freeform', # Allows for dragging categories without snapping to a grid
     )])
 
     fig.update_layout(
         template='plotly_white',
-        plot_bgcolor=brand_color_plot_background,
+        plot_bgcolor=c_plot_background,
         font=dict(
             family = 'Rubik, sans-serif',
             size = 14,
-            color = brand_color_main,
+            color = c_brand_color_main,
         ),
         # title=dict(
         #     text = "4.a: Movement from Locations of Degree / Achievement / Prize",
@@ -1855,6 +2252,16 @@ def generate_parcat_migration(data=df_laureates, loc1="ParCatDegreeCountry", loc
         height = height,
         margin=dict(l=60, r=60, t=30, b=10)
         ),
+
+
+    # Hover label styling
+    fig.update_layout(
+        hoverlabel=dict(
+            bgcolor=c_plot_background,
+            font_size=12,
+            font_family="Rubik"
+        )
+    )
 
     return fig
 
@@ -1942,7 +2349,7 @@ def generate_line_prizemoney(data=df_prizes, categories="all", gender="all", tim
         y=data["CumulativePrizeAmountShared"],
         mode='lines+markers',
         name=f'Cumulative Prize Amount ({currencyname})',
-        line=dict(color=brand_color_alt),
+        line=dict(color=c_brand_color_alt),
         marker=dict(size=8)
     ))
 
@@ -1951,7 +2358,7 @@ def generate_line_prizemoney(data=df_prizes, categories="all", gender="all", tim
         y=data["CumulativePrizeAmountAdjustedShared"],
         mode='lines+markers',
         name=f'Cumulative Prize Amount ({currencyname}) Inflation Adjusted',
-        line=dict(color=brand_color_alt2),
+        line=dict(color=c_brand_color_acc),
         marker=dict(size=8)
     ))
     # Customize layout
@@ -1960,14 +2367,14 @@ def generate_line_prizemoney(data=df_prizes, categories="all", gender="all", tim
         xaxis_title="Year",
         yaxis_title=f"Cumulative Prize Amount ({currencyname})",
         template="plotly_white",
-        plot_bgcolor=brand_color_plot_background,
+        plot_bgcolor=c_plot_background,
 
         margin={"r":0,"t":60,"l":0,"b":0},
 
         font=dict(
             family = 'Rubik, sans-serif',
             size = 11,
-            color = brand_color_main,
+            color = c_brand_color_main,
         ),
         
         # showlegend = True,
@@ -1995,6 +2402,25 @@ def generate_line_prizemoney(data=df_prizes, categories="all", gender="all", tim
 
         autosize=True
     )
+
+    fig.update_traces(
+        hovertemplate=(
+            "<b>Year:</b> %{x}<br>" +
+            "Amount: %{y}<br>"
+        "<extra></extra>"  # Hide the trace info
+        )
+    )
+ 
+
+    # Hover label styling
+    fig.update_layout(
+        hoverlabel=dict(
+            bgcolor=c_plot_background,
+            font_size=12,
+            font_family="Rubik"
+        )
+    )
+
 
     return fig
 
@@ -2055,10 +2481,10 @@ def generate_var_prizeamount(data=df_prizes, currency="EUR"):
 
 
 
-# 2024 Facts
+# Current Facts
 ##################################################################################################
 
-# Plot Sunburst 2024
+# Plot Sunburst Current
 #=================================================================================================
 
 def prepare_data_sunburst(data, year, path, categories, gender, timerange, timerange_field):
@@ -2126,8 +2552,22 @@ def generate_sunburst(data=df_laureates, year="all", path=['Prize0_Category', 'L
 
         fig.update_layout(
             template='plotly_white',
-            plot_bgcolor=brand_color_plot_background
+            plot_bgcolor=c_plot_background,
+            hoverlabel=dict(
+                bgcolor=c_hoverlabel_bg,
+                font_size=12,
+                font_family="Rubik"
+            )
         )
+
+            # Hover label template
+        fig.update_traces(
+            hovertemplate=(
+                "Path: %{id}<br>"  # Show the full hierarchical path
+                "Count: %{value}"  # Show the count
+            )
+        )
+
 
     return fig
 
@@ -2210,7 +2650,7 @@ def generate_globe_movement(data=df_laureates, year="all", categories="all", gen
     # "red", "blue", "green", "orange", "purple", "brown", "pink", "cyan", "magenta", "yellow"
     # ]
 
-    colors = colorscale_palette
+    colors = c_colorscale_palette
 
     data = prepare_data_splines(data, year, categories, gender, timerange, timerange_field)
 
@@ -2226,7 +2666,7 @@ def generate_globe_movement(data=df_laureates, year="all", categories="all", gen
         mode="markers",
         marker=dict(
             size=4,
-            color=c_brown,
+            color=c_black,
             line=dict(width=0.5, color="rgba(68, 68, 68, 0)")
         ),
         name="Birth Cities"
@@ -2244,33 +2684,46 @@ def generate_globe_movement(data=df_laureates, year="all", categories="all", gen
             line=dict(width=1, color=color),
             opacity=0.6,
             hoverinfo="text",
-            text=f"{row['AwardeeDisplayName']}<br>Birth: {row['BirthCityNow']}<br>Affiliation: {row['Prize0_Affiliation0_CityNow']}",
+            text=f"<b>{row['AwardeeDisplayName']}</b><br>Birth: {row['BirthCityNow']}<br>Affiliation: {row['Prize0_Affiliation0_CityNow']}",
             name=f"{row['AwardeeDisplayName']}"
         ))
 
     # Update layout for global view
     fig.update_layout(
         template='plotly_white',
-        plot_bgcolor=brand_color_plot_background,
+        plot_bgcolor=c_plot_background,
         # title_text="Migration Paths of 2023 Nobel Prize Laureates",
         showlegend=False,
         geo=go.layout.Geo(
             projection_type="orthographic",
             showland=True,
-            landcolor=c_brown_verylight,  # Terrain-like land color
-            countrycolor=c_brown,  # Darker color for country borders
+            countrycolor=c_black,  # Darker color for country borders
             countrywidth=0.8,  # Border width
-            coastlinecolor=c_brown,  # Darker coastlines
+            coastlinecolor=c_black,  # Darker coastlines
             coastlinewidth=0.5,  # Coastline width
             showlakes=True,
-            lakecolor=c_lightblue,  # Same as water color for lakes
             showcountries=True,
             showocean=True,
-            oceancolor=c_lightblue_superlight,
             showframe=False,  # Removes the box frame
+            bgcolor='#ffffff',
+            landcolor='#f0f0f0',
+            oceancolor='#f1f6ff',
+            rivercolor=' #e6f2ff',
+            lakecolor=' #e6f2ff',
+
+
         ),
         height=900,
         #autosize=True
+    )
+
+    # Hover label styling
+    fig.update_layout(
+        hoverlabel=dict(
+            bgcolor=c_plot_background,
+            font_size=12,
+            font_family="Rubik"
+        )
     )
 
     return fig
@@ -2349,7 +2802,7 @@ def generate_map_movement(data=df_laureates, year="last", categories="all", gend
         mode="markers",
         marker=go.scattermapbox.Marker(
             size=10,
-            color="darkgrey",
+            color=c_teal,
             opacity=0.7
         ),
         name="Birth Cities"
@@ -2364,14 +2817,15 @@ def generate_map_movement(data=df_laureates, year="last", categories="all", gend
         mode="markers",
         marker=go.scattermapbox.Marker(
             size=10,
-            color="darkgrey",
+            color=c_teal,
             opacity=0.9
         ),
         name="Affiliation Cities"
     ))
 
     # Add migration paths for each laureate with curvature
-    colors = [c_brown, c_darkmagenta, c_lightblue, c_orange, c_pink, c_red, c_teal]
+    # colors = [c_brown, c_darkmagenta, c_lightblue, c_orange, c_pink, c_red, c_teal]
+    colors = c_colorscale_palette
     for i, row in data.iterrows():
         color = colors[int(i) % len(colors)]  # Cycle through the colors list
 
@@ -2397,7 +2851,7 @@ def generate_map_movement(data=df_laureates, year="last", categories="all", gend
     # Update layout for the mapbox visualization
     fig.update_layout(
         template='plotly_white',
-        plot_bgcolor=brand_color_plot_background,
+        plot_bgcolor=c_plot_background,
         title_text="Places of Birth & Affiliation",
         showlegend=False,
         mapbox=dict(
@@ -2405,6 +2859,12 @@ def generate_map_movement(data=df_laureates, year="last", categories="all", gend
             center=dict(lat=30, lon=0),  # Center the map globally
             zoom=0.8,
         
+        ),
+
+        hoverlabel=dict(
+                bgcolor=c_hoverlabel_bg,
+                font_size=12,
+                font_family="Rubik"
         ),
         # height=800,
         margin=dict(l=0, r=0, t=0, b=0),  # Reduce the margins
@@ -2440,14 +2900,40 @@ def generate_mostcommon_firstnames(data=df_laureates, categories="all", gender="
         y=top_names.index,
         orientation='h',  # Horizontal bar chart
         labels={'x': 'Count', 'y': 'Name'},
-        color_discrete_sequence=[c_teal]
+        color=[
+            c_black_light,
+            c_blue_light,
+            c_teal_light,
+            c_green_light,
+            c_yellow_light,
+            c_orange_light,
+            c_red_light,
+            c_purple_light,
+            c_grey_light,
+            c_black,
+            c_blue,
+            c_teal,
+            c_green,
+            c_yellow,
+            c_orange,
+            c_red,
+            c_purple,
+            c_grey,
+            c_black_dark,
+            c_blue_dark,
+            c_teal_dark,
+            c_green_dark,
+            c_yellow_dark,
+            c_orange_dark,
+            c_red_dark
+        ]
     )
 
     fig.update_layout(
             xaxis_title="Occurences",
             yaxis_title="Most Common First Names",
             template="plotly_white",
-            plot_bgcolor=brand_color_plot_background,
+            plot_bgcolor=c_plot_background,
             #yaxis=dict(ticksuffix="   "),
             yaxis=dict(
                 tickmode="linear",  # Ensures all labels are shown
@@ -2459,10 +2945,10 @@ def generate_mostcommon_firstnames(data=df_laureates, categories="all", gender="
             font=dict(
                 family = 'Rubik, sans-serif',
                 size = 11,
-                color = brand_color_main,
+                color = c_brand_color_main,
             ),
             
-            # showlegend = True,
+            showlegend = False,
 
             # title=dict(
             #     text = "Most common First Names",
@@ -2475,6 +2961,28 @@ def generate_mostcommon_firstnames(data=df_laureates, categories="all", gender="
 
             autosize=True
         )
+
+    customdata = top_names.reset_index().values  # Prepare customdata for hovertemplate
+
+    fig.update_traces(
+        customdata=customdata,
+        hovertemplate=(
+            "<b>Name:</b> %{customdata[0]}<br>" +
+            "Count: %{customdata[1]}<br>" +
+        "<extra></extra>"  # Hide the trace info
+        )
+    )
+    
+    
+
+    # Hover label styling
+    fig.update_layout(
+        hoverlabel=dict(
+            bgcolor=c_plot_background,
+            font_size=12,
+            font_family="Rubik"
+        )
+    )
 
     return fig
 

@@ -55,26 +55,9 @@ import plotdatagenerator as pdg
 # 	- fig_globe_movement (migration)
 # map_movement
 # 	- fig_map_movement (current)
+# generate_mostcommon_firstnames
+#   - fig_mostcommon_firstnames (misc)
 
-
-
-##################################################################################################
-# Color Settings
-##################################################################################################
-
-c_brown = pdg.c_brown
-c_teal = pdg.c_teal
-c_red = pdg.c_red
-c_grey = pdg.c_grey
-
-brand_color_main = c_brown
-brand_color_alt = c_teal
-c_physics = c_teal
-c_medicine = c_red
-c_chemistry = pdg.c_orange
-c_economics = pdg.c_lightblue
-c_peace = pdg.c_pink
-c_literature = pdg.c_yellow
 
 
 ##################################################################################################
@@ -100,7 +83,7 @@ df_prizestats = pd.read_csv("df_prizestats.csv", sep=';', encoding="UTF-8")
 
 df=pdg.count_per_country()
 max_prize_count = df['Count'].max()
-lastyearincluded = 2024
+lastyearincluded = pdg.get_lastyearincluded()
 numberofprizes = df_prizes.shape[0]
 
 totalprizeamount = pdg.generate_var_prizeamount()
@@ -192,7 +175,7 @@ class PlotConfig:
     def generate_badges(self):
         badges_code = []
         for badge in self.badges:
-            badges_code.append(dmc.Badge(badge, variant="outline", color=brand_color_alt, mr="xs"))
+            badges_code.append(dmc.Badge(badge, variant="outline", color=pdg.c_brand_color_alt, mr="xs"))
             # print(badges_code)
         return badges_code
 
@@ -620,6 +603,7 @@ plot_configs = {
         plot_id="fig_sunburst_last",
         header="Discipline - Gender - Country",
         subheader="Click on the segments to filter the data.",
+        badges=["All Categories", f"{lastyearincluded}"],
         plot_generator="generate_sunburst",
         plot_generator_kwargs={"data": df_laureates, "year": "last"},
         footer=[
@@ -644,6 +628,7 @@ plot_configs = {
         plot_id="fig_map_movement",
         header="Life Paths (Birth - Work)",
         subheader="Some laureates haven't moved and are represented as dots.",
+        badges=["All Categories", f"{lastyearincluded}"],
         plot_generator="generate_map_movement",
         plot_generator_kwargs={"data": df_laureates},
         footer=[
@@ -683,7 +668,7 @@ def generate_loader_spinner(id):
             html.Div(
                 dmc.Loader(
                     id={'type':'spinner', 'index':id},
-                    color= c_grey,
+                    color= pdg.c_grey,
                     size="md",  # Available sizes: xs, sm, md, lg, xl
                     variant="dots",  # Available variants: oval, dots, bars
                 ),
@@ -766,17 +751,12 @@ def generate_plot_in_layout_class(plot_config):
                                                 dmc.Button(
                                                     "Filter", 
                                                     variant="gradient", 
-                                                    gradient={"from": pdg.c_lightblue, "to": c_teal}, 
+                                                    gradient={"from": pdg.c_blue_light, "to": pdg.c_green_dark}, 
                                                     size="xs", 
-                                                    id={"type": "filter-button", "index": plot_config.plot_id}
+                                                    id={"type": "filter-button", "index": plot_config.plot_id},
+                                                    className="filter-button"
                                                 ),
-                                                # dmc.Modal(
-                                                #     title="Filter",
-                                                #     centered=True,
-                                                #     id={"type": "filter-modal", "index": plot_config.plot_id},
-                                                #     size="750px",
-                                                #     style={"display": "block"},
-                                                 dmc.Drawer(
+                                                dmc.Drawer(
                                                     title="Filter",
                                                     position="right",
                                                     id={"type": "filter-modal", "index": plot_config.plot_id},
@@ -793,12 +773,12 @@ def generate_plot_in_layout_class(plot_config):
                                                                         html.Div(
                                                                             dmc.Group(
                                                                                 [
-                                                                                    dmc.Chip("Medicine", size="xs", variant="outline", checked=False if "Medicine" in plot_config.chips_notchecked else True, disabled=True if "Medicine" in plot_config.chips_disabled else False, color=c_brown, id={"type": "chip-medicine", "index": plot_config.plot_id}),
-                                                                                    dmc.Chip("Physics", size="xs", variant="outline", checked=False if "Physics" in plot_config.chips_notchecked else True, disabled=True if "Physics" in plot_config.chips_disabled else False, color=c_brown, id={"type": "chip-physics", "index": plot_config.plot_id}),
-                                                                                    dmc.Chip("Chemistry", size="xs", variant="outline", checked=False if "Chemistry" in plot_config.chips_notchecked else True, disabled=True if "Chemistry" in plot_config.chips_disabled else False, color=c_brown, id={"type": "chip-chemistry", "index": plot_config.plot_id}),
-                                                                                    dmc.Chip("Economics", size="xs", variant="outline", checked=False if "Economics" in plot_config.chips_notchecked else True, disabled=True if "Economics" in plot_config.chips_disabled else False, color=c_brown, id={"type": "chip-economics", "index": plot_config.plot_id}),
-                                                                                    dmc.Chip("Literature", size="xs", variant="outline", checked=False if "Literature" in plot_config.chips_notchecked else True, disabled=True if "Literature" in plot_config.chips_disabled else False, color=c_brown, id={"type": "chip-literature", "index": plot_config.plot_id}),
-                                                                                    dmc.Chip("Peace", size="xs", variant="outline", checked=False if "Peace" in plot_config.chips_notchecked else True, disabled=True if "Peace" in plot_config.chips_disabled else False, color=c_brown, id={"type": "chip-peace", "index": plot_config.plot_id}),
+                                                                                    dmc.Chip("Medicine", size="xs", variant="outline", checked=False if "Medicine" in plot_config.chips_notchecked else True, disabled=True if "Medicine" in plot_config.chips_disabled else False, color=pdg.c_brand_color_main, id={"type": "chip-medicine", "index": plot_config.plot_id}),
+                                                                                    dmc.Chip("Physics", size="xs", variant="outline", checked=False if "Physics" in plot_config.chips_notchecked else True, disabled=True if "Physics" in plot_config.chips_disabled else False, color=pdg.c_brand_color_main, id={"type": "chip-physics", "index": plot_config.plot_id}),
+                                                                                    dmc.Chip("Chemistry", size="xs", variant="outline", checked=False if "Chemistry" in plot_config.chips_notchecked else True, disabled=True if "Chemistry" in plot_config.chips_disabled else False, color=pdg.c_brand_color_main, id={"type": "chip-chemistry", "index": plot_config.plot_id}),
+                                                                                    dmc.Chip("Economics", size="xs", variant="outline", checked=False if "Economics" in plot_config.chips_notchecked else True, disabled=True if "Economics" in plot_config.chips_disabled else False, color=pdg.c_brand_color_main, id={"type": "chip-economics", "index": plot_config.plot_id}),
+                                                                                    dmc.Chip("Literature", size="xs", variant="outline", checked=False if "Literature" in plot_config.chips_notchecked else True, disabled=True if "Literature" in plot_config.chips_disabled else False, color=pdg.c_brand_color_main, id={"type": "chip-literature", "index": plot_config.plot_id}),
+                                                                                    dmc.Chip("Peace", size="xs", variant="outline", checked=False if "Peace" in plot_config.chips_notchecked else True, disabled=True if "Peace" in plot_config.chips_disabled else False, color=pdg.c_brand_color_main, id={"type": "chip-peace", "index": plot_config.plot_id}),
                                                                                 ]
                                                                             )
                                                                         ),
@@ -815,8 +795,8 @@ def generate_plot_in_layout_class(plot_config):
                                                                         html.Div(
                                                                             dmc.Group(
                                                                                 [
-                                                                                    dmc.Chip("female", size="xs", variant="outline", checked=True, color=c_brown, id={"type": "chip-female", "index": plot_config.plot_id}),
-                                                                                    dmc.Chip("male", size="xs", variant="outline", checked=True, color=c_brown, id={"type": "chip-male", "index": plot_config.plot_id}),
+                                                                                    dmc.Chip("female", size="xs", variant="outline", checked=True, color=pdg.c_brand_color_main, id={"type": "chip-female", "index": plot_config.plot_id}),
+                                                                                    dmc.Chip("male", size="xs", variant="outline", checked=True, color=pdg.c_brand_color_main, id={"type": "chip-male", "index": plot_config.plot_id}),
                                                                                 ]
                                                                             )
                                                                         ),
@@ -847,13 +827,13 @@ def generate_plot_in_layout_class(plot_config):
 
                                                                                     dmc.RangeSlider(
                                                                                         id={"type":"slider-timerange", "index": plot_config.plot_id},
-                                                                                        value=[1901, 2024],
+                                                                                        value=[1901, lastyearincluded],
                                                                                         min=1800,
                                                                                         max=lastyearincluded,
                                                                                         minRange=1,
                                                                                         marks=marks_life,
                                                                                         style={"width": "400px"},
-                                                                                        color=c_teal
+                                                                                        color=pdg.c_teal
                                                                                         
                                                                                     ),
                                                                                 ],
@@ -891,7 +871,7 @@ def generate_plot_in_layout_class(plot_config):
                                                         # Filter modal buttons
                                                         dmc.Group(
                                                             [
-                                                                dmc.Button("Submit", id={"type": "submit-button", "index": plot_config.plot_id}, color=c_brown),
+                                                                dmc.Button("Submit", id={"type": "submit-button", "index": plot_config.plot_id}, color=pdg.c_brand_color_main),
                                                                 dmc.Button(
                                                                     "Close",
                                                                     color="c_red",
@@ -903,7 +883,8 @@ def generate_plot_in_layout_class(plot_config):
                                                         ),
                                                     ],
                                                 ),
-                                            ]
+                                            ],
+                                        className="filter-button"
                                         ),
                                         span={"base": 12, "sm": 1}
                                     ),
@@ -1060,7 +1041,7 @@ def generate_png_in_layout(
     subheader="", 
     datafrom="1901", 
     datato=lastyearincluded, 
-    badges=[dmc.Badge("All Categories", variant="outline", color= brand_color_alt)],
+    badges=[dmc.Badge("All Categories", variant="outline", color= pdg.c_brand_color_alt)],
     code="", 
     filepath="",
     style={'width': '80vw', 'height': '50vh'}, 
@@ -1080,7 +1061,7 @@ def generate_png_in_layout(
                             html.P(subheader, className="plot-subheader") if subheader else None,
                             dmc.Group(
                                 [
-                                    dmc.Badge(f"{datafrom} - {datato}", variant="outline", color= brand_color_alt),
+                                    dmc.Badge(f"{datafrom} - {datato}", variant="outline", color= pdg.c_brand_color_alt),
                                     *badges,
                                 ]
                             ),
@@ -1189,7 +1170,7 @@ app.layout = dmc.MantineProvider(
                     ],
                     value="tab_overview",  # Default selected tab
                     id="tabs",
-                    color = c_teal
+                    color = pdg.c_teal
                 )
             ],
             fluid=True,
@@ -1242,7 +1223,7 @@ ag_df_prizestats = dag.AgGrid(
 def render_tab_overview_content(active_tab):
     if active_tab == 'tab_overview':
 
-        # Define the content for tab2024
+        # Define the content for tab overview
         content = dmc.Paper(
             children=[
 
@@ -1252,12 +1233,12 @@ def render_tab_overview_content(active_tab):
                         html.Div(
                             dmc.Group(
                                 [
-                                    dmc.Chip("Medicine", checked=True, color=c_medicine, id="chip-medicine"),
-                                    dmc.Chip("Physics", checked=True, color=c_physics, id="chip-physics"),
-                                    dmc.Chip("Chemistry", checked=True, color=c_chemistry, id="chip-chemistry"),
-                                    dmc.Chip("Economics", checked=True, color=c_economics, id="chip-economics"),
-                                    dmc.Chip("Literature", checked=True, color=c_literature, id="chip-literature"),
-                                    dmc.Chip("Peace", checked=True, color=c_peace, id="chip-peace")
+                                    dmc.Chip("Medicine", checked=True, color=pdg.c_medicine, id="chip-medicine"),
+                                    dmc.Chip("Physics", checked=True, color=pdg.c_physics, id="chip-physics"),
+                                    dmc.Chip("Chemistry", checked=True, color=pdg.c_chemistry, id="chip-chemistry"),
+                                    dmc.Chip("Economics", checked=True, color=pdg.c_economics, id="chip-economics"),
+                                    dmc.Chip("Literature", checked=True, color=pdg.c_literature, id="chip-literature"),
+                                    dmc.Chip("Peace", checked=True, color=pdg.c_peace, id="chip-peace")
                                 ]
                             )
 
@@ -1269,8 +1250,8 @@ def render_tab_overview_content(active_tab):
                                 html.Div(
                                     dmc.Group(
                                         [
-                                            dmc.Chip("female", variant="outline", checked=True, color=c_medicine, id="chip-female"),
-                                            dmc.Chip("male", variant="outline", checked=True, color=c_physics, id="chip-male"),
+                                            dmc.Chip("female", variant="outline", checked=True, color=pdg.c_red, id="chip-female"),
+                                            dmc.Chip("male", variant="outline", checked=True, color=pdg.c_teal, id="chip-male"),
                                         ]
                                     )
                                 )
@@ -1282,9 +1263,9 @@ def render_tab_overview_content(active_tab):
                             [
                                 dmc.RangeSlider(
                                     id="slider-timerange-overview",
-                                    value=[1901, 2024],
+                                    value=[1901, lastyearincluded],
                                     min=1901,
-                                    max=2024,
+                                    max=lastyearincluded,
                                     minRange=1,
                                     marks=[
                                         {"value": 1901, "label": "1901"},
@@ -1295,7 +1276,7 @@ def render_tab_overview_content(active_tab):
                                         {"value": int(lastyearincluded), "label": lastyearincluded}
                                     ],
                                     mb=35,
-                                    color=c_teal
+                                    color=pdg.c_teal
                                 ),
 
                             ],
@@ -1588,6 +1569,7 @@ def update_overview_content(chip_medicine, chip_physics, chip_chemistry, chip_ec
 # Tab Current
 ##################################################################################################
 
+current_prizes = pdg.get_currentlaureatemotivations(df_prizes)
 
 @app.callback(
     Output('tab-content-current', 'children'),
@@ -1596,7 +1578,7 @@ def update_overview_content(chip_medicine, chip_physics, chip_chemistry, chip_ec
 def render_tab_current_content(active_tab):
     if active_tab == 'tab_current':
 
-        # Return the content for tab2024
+        # Return the content for tab "current"
         return dmc.Paper(
             children=[
                 dmc.Stack(
@@ -1620,19 +1602,25 @@ def render_tab_current_content(active_tab):
                                         ),
             
                                         html.Div(
-                                            children=[
-                                                    html.H4(
-                                                        "Victor Ambros",
-                                                    ),
-                                                    html.H4(
-                                                        "Gary Ruvkun",
-                                                    ),
-                                                    html.P(
-                                                        "for the discovery of microRNA and its role in post-transcriptional gene regulation",
-                                                    )
-                                            ],
+                                            dcc.Markdown(current_prizes[0], dangerously_allow_html=True),
                                             className="widget-content"
                                         ),
+                                        # html.Div(
+                                        #     current_prizes[0],
+                                        #     # children=[
+                                        #             # html.H4(
+                                        #             #     "Victor Ambros",
+                                        #             # ),
+                                        #             # html.H4(
+                                        #             #     "Gary Ruvkun",
+                                        #             # ),
+                                        #             # html.P(
+                                        #             #     "for the discovery of microRNA and its role in post-transcriptional gene regulation",
+                                        #             # )
+                                                
+                                        #     # ],
+                                        #     className="widget-content"
+                                        # ),
                                     ],
                                     className="widget-container",
                                 ),
@@ -1650,19 +1638,23 @@ def render_tab_current_content(active_tab):
                                         ),
             
                                         html.Div(
-                                            children=[
-                                                    html.H4(
-                                                        "John J. Hopfield",
-                                                    ),
-                                                    html.H4(
-                                                        "Geoffrey Hinton",
-                                                    ),
-                                                    html.P(
-                                                        "for foundational discoveries and inventions that enable machine learning with artificial neural networks",
-                                                    )
-                                            ],
+                                            dcc.Markdown(current_prizes[1], dangerously_allow_html=True),
                                             className="widget-content"
                                         ),
+                                        # html.Div(
+                                        #     children=[
+                                        #             html.H4(
+                                        #                 "John J. Hopfield",
+                                        #             ),
+                                        #             html.H4(
+                                        #                 "Geoffrey Hinton",
+                                        #             ),
+                                        #             html.P(
+                                        #                 "for foundational discoveries and inventions that enable machine learning with artificial neural networks",
+                                        #             )
+                                        #     ],
+                                        #     className="widget-content"
+                                        # ),
                                     ],
                                     className="widget-container",
                                 ),
@@ -1678,27 +1670,32 @@ def render_tab_current_content(active_tab):
                                             className="widget-title",
                                             # style={"borderBottom": f"1px solid {c_chemistry}"}
                                         ),
-            
+
                                         html.Div(
-                                            children=[
-                                                    html.H4(
-                                                        "David Baker"
-                                                    ),
-                                                    html.P(
-                                                        "for computational protein design",
-                                                    ),
-                                                    html.H4(
-                                                        "Demis Hassabis",
-                                                    ),
-                                                    html.H4(
-                                                        "John N. Jumper",
-                                                    ),
-                                                    html.P(
-                                                        "for protein structure prediction",
-                                                    )
-                                            ],
+                                            dcc.Markdown(current_prizes[2], dangerously_allow_html=True),
                                             className="widget-content"
                                         ),
+            
+                                        # html.Div(
+                                        #     children=[
+                                        #             html.H4(
+                                        #                 "David Baker"
+                                        #             ),
+                                        #             html.P(
+                                        #                 "for computational protein design",
+                                        #             ),
+                                        #             html.H4(
+                                        #                 "Demis Hassabis",
+                                        #             ),
+                                        #             html.H4(
+                                        #                 "John N. Jumper",
+                                        #             ),
+                                        #             html.P(
+                                        #                 "for protein structure prediction",
+                                        #             )
+                                        #     ],
+                                        #     className="widget-content"
+                                        # ),
                                     ],
                                     className="widget-container",
                                 ),
@@ -1726,16 +1723,21 @@ def render_tab_current_content(active_tab):
                                         ),
             
                                         html.Div(
-                                            children=[
-                                                    html.H4(
-                                                        "Han Kang",
-                                                    ),
-                                                    html.P(
-                                                        "for her intense poetic prose that confronts historical traumas and exposes the fragility of human life",
-                                                    )
-                                            ],
+                                            dcc.Markdown(current_prizes[3], dangerously_allow_html=True),
                                             className="widget-content"
                                         ),
+
+                                        # html.Div(
+                                        #     children=[
+                                        #             html.H4(
+                                        #                 "Han Kang",
+                                        #             ),
+                                        #             html.P(
+                                        #                 "for her intense poetic prose that confronts historical traumas and exposes the fragility of human life",
+                                        #             )
+                                        #     ],
+                                        #     className="widget-content"
+                                        # ),
                                     ],
                                     className="widget-container",
                                 ),
@@ -1753,16 +1755,21 @@ def render_tab_current_content(active_tab):
                                         ),
             
                                         html.Div(
-                                            children=[
-                                                    html.H4(
-                                                        "Nihon Hidankyo",
-                                                    ),
-                                                    html.P(
-                                                        "for its efforts to achieve a world free of nuclear weapons and for demonstrating through witness testimony that nuclear weapons must never be used again",
-                                                    )
-                                            ],
+                                            dcc.Markdown(current_prizes[4], dangerously_allow_html=True),
                                             className="widget-content"
                                         ),
+
+                                        # html.Div(
+                                        #     children=[
+                                        #             html.H4(
+                                        #                 "Nihon Hidankyo",
+                                        #             ),
+                                        #             html.P(
+                                        #                 "for its efforts to achieve a world free of nuclear weapons and for demonstrating through witness testimony that nuclear weapons must never be used again",
+                                        #             )
+                                        #     ],
+                                        #     className="widget-content"
+                                        # ),
                                     ],
                                     className="widget-container",
                                 ),
@@ -1778,24 +1785,29 @@ def render_tab_current_content(active_tab):
                                             className="widget-title",
                                             #style={"borderBottom": f"1px solid {c_chemistry}"}
                                         ),
-            
+
                                         html.Div(
-                                            children=[
-                                                    html.H4(
-                                                        "Daron Acemoglu",
-                                                    ),
-                                                    html.H4(
-                                                        "Simon Johnson",
-                                                    ),
-                                                    html.H4(
-                                                        "James A. Robinson",
-                                                    ),
-                                                    html.P(
-                                                        "for studies of how institutions are formed and affect prosperity",
-                                                    )
-                                            ],
+                                            dcc.Markdown(current_prizes[5], dangerously_allow_html=True),
                                             className="widget-content"
                                         ),
+            
+                                        # html.Div(
+                                        #     children=[
+                                        #             html.H4(
+                                        #                 "Daron Acemoglu",
+                                        #             ),
+                                        #             html.H4(
+                                        #                 "Simon Johnson",
+                                        #             ),
+                                        #             html.H4(
+                                        #                 "James A. Robinson",
+                                        #             ),
+                                        #             html.P(
+                                        #                 "for studies of how institutions are formed and affect prosperity",
+                                        #             )
+                                        #     ],
+                                        #     className="widget-content"
+                                        # ),
                                     ],
                                     className="widget-container",
                                 ),
@@ -2125,6 +2137,7 @@ def render_tab_data_content(active_tab):
                 dmc.Space(h="xl"),
 
                 html.H5("Version History", className="text-subheader"),
+                html.Div(dcc.Markdown(["Version 1.7 (February 2025): Unified hover labels style, new color scheme"]), className="text-copy"),
                 html.Div(dcc.Markdown(["Version 1.6 (January 2025): New plot 'Most Common Firstnames', design updates"]), className="text-copy"),
                 html.Div(dcc.Markdown(["Version 1.5 (January 2025): Finalized New Filters"]), className="text-copy"),
                 html.Div(dcc.Markdown(["Version 1.4 (January 2025): New Filters using pattern matching; rewrote plot configs as class instances."]), className="text-copy"),
