@@ -1,7 +1,7 @@
 [project]
-name = "ihr-neuer-projektname"  # Hier ändern
-version = "0.1.0"
-description = "Add your description here"
+name = "Nobel Data Dashboard"
+version = "1.8"
+description = "A dashboard showing data and visualizations of Nobel Prizes"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
