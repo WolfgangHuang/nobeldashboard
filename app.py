@@ -2,16 +2,20 @@
 # Library Imports
 ##################################################################################################
 
-import pandas as pd
-import dash_ag_grid as dag
 import os
+from dotenv import load_dotenv
+import pandas as pd
+import polars as pl
+import dash_ag_grid as dag
 import dash
-from dash import dcc, html, Dash, _dash_renderer, State
+from dash import dcc, html, Dash, State, callback_context  #, _dash_renderer
 from dash.exceptions import PreventUpdate
 from dash.dependencies import Input, Output, MATCH, ALL
+from dash_iconify import DashIconify
 import dash_mantine_components as dmc
 import json
 import plotdatagenerator as pdg
+
 
 ##################################################################################################
 # List of Generator Functions and the plots generated
@@ -59,76 +63,68 @@ import plotdatagenerator as pdg
 #   - fig_mostcommon_firstnames (misc)
 
 
-
 ##################################################################################################
-# Load Data
+# Data Loading
 ##################################################################################################
 
 # Get the path of the directory where the script is located
 current_dir = os.path.dirname(os.path.abspath(__file__))
-
-# Set the working directory to this location
 os.chdir(current_dir)
 
 # Load tables
-
-# Laureates data
 df_laureates = pd.read_csv('df_laureates_enriched_redux_clean.csv', sep=';', encoding="UTF-8", index_col=0)
-
-# Same as laureates, but the two-time-winners are listed twice
 df_prizes = pd.read_csv('df_prizes_enriched_redux_clean.csv', sep=';', encoding="UTF-8", index_col=0)
-
-# Nobel Prize Stats
 df_prizestats = pd.read_csv("df_prizestats.csv", sep=';', encoding="UTF-8")
 
-df=pdg.count_per_country()
+df = pdg.count_per_country()
 max_prize_count = df['Count'].max()
 lastyearincluded = pdg.get_lastyearincluded()
 numberofprizes = df_prizes.shape[0]
-
 totalprizeamount = pdg.generate_var_prizeamount()
 
 standard_loader_message = dmc.Loader(html.Div("Initializing tab..."))
 
-marks_award=[
+marks_award = [
     {"value": 1901, "label": "1901"},
     {"value": 1925, "label": "1925"},
     {"value": 1950, "label": "1950"},
     {"value": 1975, "label": "1975"},
     {"value": 2000, "label": "2000"},
     {"value": int(lastyearincluded), "label": lastyearincluded}
-],
+]
 
-marks_life=[
-    {"value": 1800, "label": "1800"},
-    {"value": 1825, "label": "1825"},
-    {"value": 1850, "label": "1850"},
-    {"value": 1875, "label": "1875"},
+marks_life = [
+    {"value": 1817, "label": "1800"},
+    # {"value": 1825, "label": "1825"},
+    # {"value": 1850, "label": "1850"},
+    # {"value": 1875, "label": "1875"},
     {"value": 1900, "label": "1900"},
-    {"value": 1925, "label": "1925"},
-    {"value": 1950, "label": "1950"},
-    {"value": 1975, "label": "1975"},
-    {"value": 2000, "label": "2000"},
+    # {"value": 1925, "label": "1925"},
+    # {"value": 1950, "label": "1950"},
+    # {"value": 1975, "label": "1975"},
+    # {"value": 2000, "label": "2000"},
     {"value": int(lastyearincluded), "label": lastyearincluded}
-],
+]
 
 ##################################################################################################
 # Dashboard Main Setup
 ##################################################################################################
 
-_dash_renderer._set_react_version("18.2.0")
+# _dash_renderer._set_react_version("18.2.0")
 
 app = Dash(
     external_stylesheets=[
-        "assets/dmc_styles.css",  # custom CSS
-        dmc.styles.ALL           # Mantine styles
+        "assets/dmc_styles.css",
+        dmc.styles.ALL
     ],
     title="Nobel Laureate Data Dashboard",
     suppress_callback_exceptions=True
 )
 
+server = app.server
+
 ##################################################################################################
-# Plot Class
+# Plot Configuration Classes
 ##################################################################################################
 
 class PlotConfig:
@@ -176,7 +172,6 @@ class PlotConfig:
         badges_code = []
         for badge in self.badges:
             badges_code.append(dmc.Badge(badge, variant="outline", color=pdg.c_brand_color_alt, mr="xs"))
-            # print(badges_code)
         return badges_code
 
 ##################################################################################################
@@ -733,16 +728,18 @@ def generate_plot_in_layout_class(plot_config):
         verticalSpacing="sm",
         children=[
             html.Div(
-                [
+                id=plot_config.plot_id,
+                children =[
                     # Header
                     html.Div(
                         [
                             html.H3(plot_config.header, className="plot-header"),
 
                             dmc.Grid(
+                                columns=24,
                                 children=[
-                                    dmc.GridCol(html.Div(plot_config.subheader, className="plot-subheader"), span={"base": 12, "sm": 7}),
-                                    dmc.GridCol(html.Div(plot_config.generate_badges()), span={"base": 12, "sm": 4}),
+                                    dmc.GridCol(html.Div(plot_config.subheader, className="plot-subheader"), span={"base": 24, "md": 14}),
+                                    dmc.GridCol(html.Div(plot_config.generate_badges()), span={"base": 24, "md": 7}),
                                     dmc.GridCol(
                                         
                                         # Filter Modal
@@ -886,7 +883,8 @@ def generate_plot_in_layout_class(plot_config):
                                             ],
                                         className="filter-button"
                                         ),
-                                        span={"base": 12, "sm": 1}
+                                        span={"base": 24, "md": 3},
+                                        # style={"alignItems": "center", "display": "flex", "justifyContent": "flex-end", "verticalAlign": "top"}
                                     ),
                                 ]
                             )
@@ -1003,18 +1001,27 @@ def update_plot(
 
     # print("Updater: ctx.inputs.keys():", ctx.inputs.keys())
 
-    # Add any custom filter values if they exist
+    # # Add any custom filter values if they exist
+    # if custom_filter_values:
+    #     # Get all input IDs
+    #     input_ids = [
+    #         key for key in ctx.inputs.keys() 
+    #         if isinstance(json.loads(key.split('.')[0]), dict) and 
+    #         json.loads(key.split('.')[0]).get("type") == "custom-filter"
+    #     ]
+        
+    #     # Parse the pattern IDs to get filter names
+    #     custom_filter_patterns = [json.loads(input_id.split('.')[0]) for input_id in input_ids]
+        
     if custom_filter_values:
-        # Get all input IDs
-        input_ids = [
-            key for key in ctx.inputs.keys() 
+        # Parse JSON once and filter for custom-filter inputs
+        custom_filter_patterns = [
+            json.loads(key.split('.')[0]) for key in ctx.inputs.keys()
             if isinstance(json.loads(key.split('.')[0]), dict) and 
             json.loads(key.split('.')[0]).get("type") == "custom-filter"
         ]
-        
-        # Parse the pattern IDs to get filter names
-        custom_filter_patterns = [json.loads(input_id.split('.')[0]) for input_id in input_ids]
-        
+
+
         # Add custom filter values to kwargs using the filter name from the pattern
         for pattern, value in zip(custom_filter_patterns, custom_filter_values):
             if value is not None:  # Only add non-None values
@@ -1091,103 +1098,18 @@ def generate_png_in_layout(
     )
 
 
-
 ##################################################################################################
-# Layout Definition
 ##################################################################################################
-
-app.layout = dmc.MantineProvider(
-    children=[
-        dmc.Container(
-            children=[
-                dmc.Grid(
-                    children=[
-                        dmc.GridCol(
-                            dmc.Group(
-                                [
-                                    html.Img(src="assets/logo-md.png", style={"width": "150px", "height": "50px"}),
-                                    html.H1("Nobel Laureate Data Dashboard v1.7", className="dashboard-title"),
-                                ]
-                            ),
-                        span=12)
-                    ]
-                ),
-
-                dmc.Tabs(
-                    [
-                        dmc.TabsList(
-                            [
-                                dmc.TabsTab("Overview", value="tab_overview", className="dashboard-tab"),
-                                dmc.TabsTab(f"{lastyearincluded} Prizes", value="tab_current", className="dashboard-tab"),
-                                dmc.TabsTab("Geography", value="tab_geography", className="dashboard-tab"),
-                                dmc.TabsTab("Demography", value="tab_demography", className="dashboard-tab"),
-                                dmc.TabsTab("Time", value="tab_time", className="dashboard-tab"),
-                                dmc.TabsTab("Migration", value="tab_migration", className="dashboard-tab"),
-                                dmc.TabsTab("Misc", value="tab_misc", className="dashboard-tab"),
-                                dmc.TabsTab("Data & References", value="tab_data", className="dashboard-tab"),
-                            ]
-                        ),
-
-                        dmc.TabsPanel(
-                            html.Div(id="tab-content-overview"),  # Unique ID for tab content
-                            value="tab_overview"
-                        ),
-
-                        dmc.TabsPanel(
-                            children=html.Div(id="tab-content-current"),
-                            value="tab_current"
-                        ),
-
-                       dmc.TabsPanel(
-                            html.Div(id="tab-content-geography"),
-                            value="tab_geography"
-                        ),
-
-                        dmc.TabsPanel(
-                            html.Div(id="tab-content-demography"),
-                            value="tab_demography"
-                        ),
-
-                        dmc.TabsPanel(
-                            html.Div(id="tab-content-time"),
-                            value="tab_time"
-                        ),
-
-                        dmc.TabsPanel(
-                            html.Div(id="tab-content-migration"),
-                            value="tab_migration"
-                        ),
-
-                        dmc.TabsPanel(
-                            html.Div(id="tab-content-misc"),
-                            value="tab_misc"
-                        ),
-
-                        dmc.TabsPanel(
-                            html.Div(id="tab-content-data"),
-                            value="tab_data"
-                        ),
-                    ],
-                    value="tab_overview",  # Default selected tab
-                    id="tabs",
-                    color = pdg.c_teal
-                )
-            ],
-            fluid=True,
-            style={"margin": "0px", "backgroundColor": "#ffffff", "maxWidth": "1200px"}
-        )
-    ]
-)
+##################################################################################################
+# Sections
+##################################################################################################
+##################################################################################################
+##################################################################################################
 
 
 
 ##################################################################################################
-# TAB CONTENT
-##################################################################################################
-
-
-##################################################################################################
-# Tab Overview
+# Section Overview
 ##################################################################################################
 
 # Definition of the AG Grid to display the prize stats table
@@ -1216,98 +1138,81 @@ ag_df_prizestats = dag.AgGrid(
 # Callback that triggers the initial loading of the Content for the tab Overview
 ##################################################################################################
 
-@app.callback(
-    Output("tab-content-overview", "children"),
-    Input("tabs", "value")
-)
-def render_tab_overview_content(active_tab):
-    if active_tab == 'tab_overview':
-
-        # Define the content for tab overview
-        content = dmc.Paper(
-            children=[
-
-                dmc.Stack(
-                    [
-                        html.Div("Select Categories"),
-                        html.Div(
-                            dmc.Group(
-                                [
-                                    dmc.Chip("Medicine", checked=True, color=pdg.c_medicine, id="chip-medicine"),
-                                    dmc.Chip("Physics", checked=True, color=pdg.c_physics, id="chip-physics"),
-                                    dmc.Chip("Chemistry", checked=True, color=pdg.c_chemistry, id="chip-chemistry"),
-                                    dmc.Chip("Economics", checked=True, color=pdg.c_economics, id="chip-economics"),
-                                    dmc.Chip("Literature", checked=True, color=pdg.c_literature, id="chip-literature"),
-                                    dmc.Chip("Peace", checked=True, color=pdg.c_peace, id="chip-peace")
-                                ]
-                            )
-
-                        ),
-
-                        html.Div("Select Gender"),
-                        dmc.Stack(
-                            children=[
-                                html.Div(
-                                    dmc.Group(
-                                        [
-                                            dmc.Chip("female", variant="outline", checked=True, color=pdg.c_red, id="chip-female"),
-                                            dmc.Chip("male", variant="outline", checked=True, color=pdg.c_teal, id="chip-male"),
-                                        ]
-                                    )
-                                )
-                            ]
-                        ),
-
-                        html.Div("Select Time Range"),
-                        html.Div(
+def render_overview_content():
+    return dmc.Stack(
+        id="section-overview",
+        children=[
+            dmc.Stack(
+                children = [
+                    html.Div("Select Categories"),
+                    html.Div(
+                        dmc.Group(
                             [
-                                dmc.RangeSlider(
-                                    id="slider-timerange-overview",
-                                    value=[1901, lastyearincluded],
-                                    min=1901,
-                                    max=lastyearincluded,
-                                    minRange=1,
-                                    marks=[
-                                        {"value": 1901, "label": "1901"},
-                                        {"value": 1925, "label": "1925"},
-                                        {"value": 1950, "label": "1950"},
-                                        {"value": 1975, "label": "1975"},
-                                        {"value": 2000, "label": "2000"},
-                                        {"value": int(lastyearincluded), "label": lastyearincluded}
-                                    ],
-                                    mb=35,
-                                    color=pdg.c_teal
-                                ),
-
-                            ],
-                            #justify="left",
-                            style={"margin-top": "0px", "width":"100%"}
+                                dmc.Chip("Medicine", checked=True, color=pdg.c_medicine, id="chip-medicine"),
+                                dmc.Chip("Physics", checked=True, color=pdg.c_physics, id="chip-physics"),
+                                dmc.Chip("Chemistry", checked=True, color=pdg.c_chemistry, id="chip-chemistry"),
+                                dmc.Chip("Economics", checked=True, color=pdg.c_economics, id="chip-economics"),
+                                dmc.Chip("Literature", checked=True, color=pdg.c_literature, id="chip-literature"),
+                                dmc.Chip("Peace", checked=True, color=pdg.c_peace, id="chip-peace")
+                            ]
                         )
-               
 
-                    ],
-                    gap="sm",
-                    className="selection-area"
-                ),
-                  # This is where the content goes; it is customized by the callback responding to the controls. See further down in the code in the callbacks section.
-                  # The various children elements will get stacked, i.e. arranged vertically.
-                  dmc.Stack(
-                    children=[],
-                    id="overview-content",
-                ),
+                    ),
 
+                    html.Div("Select Gender"),
+                    dmc.Stack(
+                        children=[
+                            html.Div(
+                                dmc.Group(
+                                    [
+                                        dmc.Chip("female", variant="outline", checked=True, color=pdg.c_red, id="chip-female"),
+                                        dmc.Chip("male", variant="outline", checked=True, color=pdg.c_teal, id="chip-male"),
+                                    ]
+                                )
+                            )
+                        ]
+                    ),
+
+                    html.Div("Select Time Range"),
+                    html.Div(
+                        [
+                            dmc.RangeSlider(
+                                id="slider-timerange-overview",
+                                value=[1901, lastyearincluded],
+                                min=1901,
+                                max=lastyearincluded,
+                                minRange=1,
+                                marks=[
+                                    {"value": 1901, "label": "1901"},
+                                    {"value": 1925, "label": "1925"},
+                                    {"value": 1950, "label": "1950"},
+                                    {"value": 1975, "label": "1975"},
+                                    {"value": 2000, "label": "2000"},
+                                    {"value": int(lastyearincluded), "label": lastyearincluded}
+                                ],
+                                mb=35,
+                                color=pdg.c_teal
+                            ),
+
+                        ],
+                        #justify="left",
+                        style={"margin-top": "0px", "width":"100%"}
+                    )
             ],
-            shadow="lg",
-            radius="lg",
-            p="lg", 
-            className="mt-3",
-            style={"backgroundColor": "#ffffff"}
-        )
+                gap="sm",
+                className="selection-area"
+            ),
+            # This is where the content goes; it is customized by the callback responding to the controls. See further down in the code in the callbacks section.
+            # The various children elements will get stacked, i.e. arranged vertically.
+            dmc.Stack(
+                children=[],
+                id="overview-content",
+            )
+        ]
+    )
 
-        return content  # Return the content and set the pre-loading-trigger-status to TRUE, i.e. preloading can now start.
 
-    else:
-        return standard_loader_message
+
 
 
 # Dynamic Content for the Overview Tab based of the selected filter values
@@ -1566,480 +1471,723 @@ def update_overview_content(chip_medicine, chip_physics, chip_chemistry, chip_ec
 
 
 ##################################################################################################
-# Tab Current
+# Section Current
 ##################################################################################################
 
 current_prizes = pdg.get_currentlaureatemotivations(df_prizes)
 
-@app.callback(
-    Output('tab-content-current', 'children'),
-    Input('tabs', 'value')
-)
-def render_tab_current_content(active_tab):
-    if active_tab == 'tab_current':
-
-        # Return the content for tab "current"
-        return dmc.Paper(
+def render_current_content():
+    return dmc.Stack(
             children=[
-                dmc.Stack(
-                    children=[
-                        dmc.SimpleGrid(
-                            cols={"base": 1, "xs": 2, "md": 4},
-                            spacing={"base": "sm", "sm": "sm"},
-                            verticalSpacing={"base": "sm", "sm": "sm"},
-                            children=
-                                [
+                dmc.SimpleGrid(
+                    cols={"base": 1, "xs": 2, "md": 4},
+                    spacing={"base": "sm", "sm": "sm"},
+                    verticalSpacing={"base": "sm", "sm": "sm"},
+                    children=
+                        [
 
+                        html.Div(
+                            [
+                                # Top part (Title)
                                 html.Div(
                                     [
-                                        # Top part (Title)
-                                        html.Div(
-                                            [
-                                                html.H4("Physiology or Medicine")
-                                            ],
-                                            className="widget-title",
-                                            #style={"borderBottom": f"1px solid {c_medicine}"}
-                                        ),
-            
-                                        html.Div(
-                                            dcc.Markdown(current_prizes[0], dangerously_allow_html=True),
-                                            className="widget-content"
-                                        ),
-                                        # html.Div(
-                                        #     current_prizes[0],
-                                        #     # children=[
-                                        #             # html.H4(
-                                        #             #     "Victor Ambros",
-                                        #             # ),
-                                        #             # html.H4(
-                                        #             #     "Gary Ruvkun",
-                                        #             # ),
-                                        #             # html.P(
-                                        #             #     "for the discovery of microRNA and its role in post-transcriptional gene regulation",
-                                        #             # )
-                                                
-                                        #     # ],
-                                        #     className="widget-content"
-                                        # ),
+                                        html.H4("Physiology or Medicine")
                                     ],
-                                    className="widget-container",
+                                    className="widget-title",
                                 ),
-
-
+    
                                 html.Div(
-                                    [
-                                        # Top part (Title)
-                                        html.Div(
-                                            [
-                                                html.H4("Physics")
-                                            ],
-                                            className="widget-title",
-                                            #style={"borderBottom": f"1px solid {c_physics}"}
-                                        ),
-            
-                                        html.Div(
-                                            dcc.Markdown(current_prizes[1], dangerously_allow_html=True),
-                                            className="widget-content"
-                                        ),
-                                        # html.Div(
-                                        #     children=[
-                                        #             html.H4(
-                                        #                 "John J. Hopfield",
-                                        #             ),
-                                        #             html.H4(
-                                        #                 "Geoffrey Hinton",
-                                        #             ),
-                                        #             html.P(
-                                        #                 "for foundational discoveries and inventions that enable machine learning with artificial neural networks",
-                                        #             )
-                                        #     ],
-                                        #     className="widget-content"
-                                        # ),
-                                    ],
-                                    className="widget-container",
+                                    dcc.Markdown(current_prizes[0], dangerously_allow_html=True),
+                                    className="widget-content"
                                 ),
-
-
-                                html.Div(
-                                    [
-                                        # Top part (Title)
-                                        html.Div(
-                                            [
-                                                html.H4("Chemistry")
-                                            ],
-                                            className="widget-title",
-                                            # style={"borderBottom": f"1px solid {c_chemistry}"}
-                                        ),
-
-                                        html.Div(
-                                            dcc.Markdown(current_prizes[2], dangerously_allow_html=True),
-                                            className="widget-content"
-                                        ),
-            
-                                        # html.Div(
-                                        #     children=[
-                                        #             html.H4(
-                                        #                 "David Baker"
-                                        #             ),
-                                        #             html.P(
-                                        #                 "for computational protein design",
-                                        #             ),
-                                        #             html.H4(
-                                        #                 "Demis Hassabis",
-                                        #             ),
-                                        #             html.H4(
-                                        #                 "John N. Jumper",
-                                        #             ),
-                                        #             html.P(
-                                        #                 "for protein structure prediction",
-                                        #             )
-                                        #     ],
-                                        #     className="widget-content"
-                                        # ),
-                                    ],
-                                    className="widget-container",
-                                ),
-
-                            ]
+                            ],
+                            className="widget-container",
                         ),
 
 
-                        dmc.SimpleGrid(
-                            cols={"base": 1, "xs": 2, "md": 4},
-                            spacing={"base": "sm", "sm": "sm"},
-                            verticalSpacing={"base": "sm", "sm": "sm"},
-                            children=
-                                [
-
+                        html.Div(
+                            [
+                                # Top part (Title)
                                 html.Div(
                                     [
-                                        # Top part (Title)
-                                        html.Div(
-                                            [
-                                                html.H4("Literature")
-                                            ],
-                                            className="widget-title",
-                                            #style={"borderBottom": f"1px solid {c_medicine}"}
-                                        ),
-            
-                                        html.Div(
-                                            dcc.Markdown(current_prizes[3], dangerously_allow_html=True),
-                                            className="widget-content"
-                                        ),
-
-                                        # html.Div(
-                                        #     children=[
-                                        #             html.H4(
-                                        #                 "Han Kang",
-                                        #             ),
-                                        #             html.P(
-                                        #                 "for her intense poetic prose that confronts historical traumas and exposes the fragility of human life",
-                                        #             )
-                                        #     ],
-                                        #     className="widget-content"
-                                        # ),
+                                        html.H4("Physics")
                                     ],
-                                    className="widget-container",
+                                    className="widget-title",
                                 ),
-
-
+    
                                 html.Div(
-                                    [
-                                        # Top part (Title)
-                                        html.Div(
-                                            [
-                                                html.H4("Peace")
-                                            ],
-                                            className="widget-title",
-                                            #style={"borderBottom": f"1px solid {c_physics}"}
-                                        ),
-            
-                                        html.Div(
-                                            dcc.Markdown(current_prizes[4], dangerously_allow_html=True),
-                                            className="widget-content"
-                                        ),
-
-                                        # html.Div(
-                                        #     children=[
-                                        #             html.H4(
-                                        #                 "Nihon Hidankyo",
-                                        #             ),
-                                        #             html.P(
-                                        #                 "for its efforts to achieve a world free of nuclear weapons and for demonstrating through witness testimony that nuclear weapons must never be used again",
-                                        #             )
-                                        #     ],
-                                        #     className="widget-content"
-                                        # ),
-                                    ],
-                                    className="widget-container",
+                                    dcc.Markdown(current_prizes[1], dangerously_allow_html=True),
+                                    className="widget-content"
                                 ),
-
-
-                                html.Div(
-                                    [
-                                        # Top part (Title)
-                                        html.Div(
-                                            [
-                                                html.H4("Economic Sciences")
-                                            ],
-                                            className="widget-title",
-                                            #style={"borderBottom": f"1px solid {c_chemistry}"}
-                                        ),
-
-                                        html.Div(
-                                            dcc.Markdown(current_prizes[5], dangerously_allow_html=True),
-                                            className="widget-content"
-                                        ),
-            
-                                        # html.Div(
-                                        #     children=[
-                                        #             html.H4(
-                                        #                 "Daron Acemoglu",
-                                        #             ),
-                                        #             html.H4(
-                                        #                 "Simon Johnson",
-                                        #             ),
-                                        #             html.H4(
-                                        #                 "James A. Robinson",
-                                        #             ),
-                                        #             html.P(
-                                        #                 "for studies of how institutions are formed and affect prosperity",
-                                        #             )
-                                        #     ],
-                                        #     className="widget-content"
-                                        # ),
-                                    ],
-                                    className="widget-container",
-                                ),
-
-                            ]
+                            ],
+                            className="widget-container",
                         ),
 
-                        
-                        generate_loader_spinner("fig_sunburst_last"),
 
-                        generate_loader_spinner("fig_map_movement"),
+                        html.Div(
+                            [
+                                # Top part (Title)
+                                html.Div(
+                                    [
+                                        html.H4("Chemistry")
+                                    ],
+                                    className="widget-title",
+                                    # style={"borderBottom": f"1px solid {c_chemistry}"}
+                                ),
 
-                    ],
-                    gap="sm"
-                )
-            ],
-            shadow="lg",
-            radius="lg",
-            p="lg", 
-            className="mt-3",
-            style={"backgroundColor": "#ffffff"}
-        )
+                                html.Div(
+                                    dcc.Markdown(current_prizes[2], dangerously_allow_html=True),
+                                    className="widget-content"
+                                ),
+                      ],
+                            className="widget-container",
+                        ),
 
-    else:
-        return standard_loader_message
-
-
-
-##################################################################################################
-# Tab Geography
-##################################################################################################
-
-@app.callback(
-    Output("tab-content-geography", "children"),  # Output for the tab content
-    Input("tabs", "value"),  # Active tab
-)
-def render_tab_geography(active_tab):
-    if active_tab == 'tab_geography':
-
-        # Return the content for tab Nationality
-        return dmc.Paper(
-            children=[
-                dmc.Stack(
-                    children=[
-                        
-                        generate_loader_spinner("fig_choroplethglobe_prizespercountry"),
-       
-                        generate_loader_spinner("fig_map_cities"),
-
-                        generate_loader_spinner("fig_bubbles_population"),
-
-                        generate_loader_spinner("fig_bar_prizespercountry"),
-
-                        generate_loader_spinner("fig_bar_prizespercountry_rs"),
-
-                    ],
-                    gap="lg"
-                )
-
-            ],
-            shadow="md",
-            radius="md",
-            p="lg", 
-            className="mt-3",
-        )
-
-    else:
-        return standard_loader_message
+                    ]
+                ),
 
 
+                dmc.SimpleGrid(
+                    cols={"base": 1, "xs": 2, "md": 4},
+                    spacing={"base": "sm", "sm": "sm"},
+                    verticalSpacing={"base": "sm", "sm": "sm"},
+                    children=
+                        [
+
+                        html.Div(
+                            [
+                                # Top part (Title)
+                                html.Div(
+                                    [
+                                        html.H4("Literature")
+                                    ],
+                                    className="widget-title",
+                                ),
+    
+                                html.Div(
+                                    dcc.Markdown(current_prizes[3], dangerously_allow_html=True),
+                                    className="widget-content"
+                                ),
+                            ],
+                            className="widget-container",
+                        ),
 
 
-##################################################################################################
-# Tab Demography
-##################################################################################################
-
-@app.callback(
-    Output('tab-content-demography', 'children'),
-    Input('tabs', 'value')
-)
-def render_tab_demography_content(active_tab):
-    if active_tab == 'tab_demography':
-        # Return the content for tab Demography
-        return dmc.Paper(
-            children=[
-                dmc.Stack(
-                    children=[
-
-                        generate_loader_spinner("fig_surface_prizesforwomen"),
-
-                        generate_loader_spinner("fig_surface_prizesformenwomen"),
-
-                        generate_loader_spinner("fig_donut_gender"),
-
-                        generate_loader_spinner("fig_donut_ethnicity"),
-
-                        generate_loader_spinner("fig_donut_religion"),
-
-                    ],
-                    gap="sm"
-                )
-            ],
-            shadow="md",
-            radius="md",
-            p="lg", 
-            className="mt-3",
-        )
-    else:
-        return standard_loader_message
+                        html.Div(
+                            [
+                                # Top part (Title)
+                                html.Div(
+                                    [
+                                        html.H4("Peace")
+                                    ],
+                                    className="widget-title",
+                                ),
+    
+                                html.Div(
+                                    dcc.Markdown(current_prizes[4], dangerously_allow_html=True),
+                                    className="widget-content"
+                                ),
+                            ],
+                            className="widget-container",
+                        ),
 
 
-##################################################################################################
-# Tab Time
-##################################################################################################
-@app.callback(
-    Output('tab-content-time', 'children'),
-    Input('tabs', 'value')
-)
-def render_tab_time_content(active_tab):
-    if active_tab == 'tab_time':
+                        html.Div(
+                            [
+                                # Top part (Title)
+                                html.Div(
+                                    [
+                                        html.H4("Economic Sciences")
+                                    ],
+                                    className="widget-title",
+                                ),
 
-        # Return the content for tab Time
-        return dmc.Paper(
-            children=[
-                dmc.Stack(
-                    children=[
+                                html.Div(
+                                    dcc.Markdown(current_prizes[5], dangerously_allow_html=True),
+                                    className="widget-content"
+                                ),
+                            ],
+                            className="widget-container",
+                        ),
 
-                        generate_loader_spinner("fig_histogram_timegap"),
+                    ]
+                ),
+                
+                generate_loader_spinner("fig_sunburst_last"),
 
-                        generate_loader_spinner("fig_scatter_timegap_trend"),
-
-                        generate_loader_spinner("fig_scatterbox_age"),
-                        
-                        generate_loader_spinner("fig_heatmap_age"),
-
-                    ],
-                    gap="sm"
-                )
+                generate_loader_spinner("fig_map_movement"),
 
             ],
-            shadow="md",
-            radius="md",
-            p="lg", 
-            className="mt-3",
+            gap="sm"
         )
-    else:
-        return standard_loader_message
 
 
 ##################################################################################################
-# Tab Misc
+# Section Geography
 ##################################################################################################
-@app.callback(
-    Output('tab-content-misc', 'children'),
-    Input('tabs', 'value')
-)
-def render_tab_misc_content(active_tab):
-    if active_tab == 'tab_misc':    
 
-        # Return the content for tab Time
-        return dmc.Paper(
-            children=[
-                dmc.Stack(
-                    children=[
+def render_geography_content():
+    return dmc.Stack(
+        children=[
+            generate_loader_spinner("fig_choroplethglobe_prizespercountry"),
+            generate_loader_spinner("fig_map_cities"),
+            generate_loader_spinner("fig_bubbles_population"),
+            generate_loader_spinner("fig_bar_prizespercountry"),
+            generate_loader_spinner("fig_bar_prizespercountry_rs"),
+        ],
+        gap="lg"
+    )
 
-                        # PLOT: Nobel Fields
-                        generate_png_in_layout(   
-                            header = "Nobel Fields",
-                            subheader = "Cube sizes represent the number of Nobel prizes awarded to that field.",
-                            filepath = "/assets/images/fig_cubes_fields.png",
-                            style = {'width':'1000px'},
-                            footer = [
-                                dcc.Markdown("**Interesting Findings**: Researchers with a momentum strategy should focus their research on particle physics or immunology, while contrarians should choose ethnology or chaos theory.")
+##################################################################################################
+# Section Demography
+##################################################################################################
+
+def render_demography_content():
+    return dmc.Stack(
+        children=[
+            generate_loader_spinner("fig_surface_prizesforwomen"),
+            generate_loader_spinner("fig_surface_prizesformenwomen"),
+            generate_loader_spinner("fig_donut_gender"),
+            generate_loader_spinner("fig_donut_ethnicity"),
+            generate_loader_spinner("fig_donut_religion"),
+        ],
+        gap="sm"
+    )
+
+##################################################################################################
+# Section Time
+##################################################################################################
+
+def render_time_content():
+    return dmc.Stack(
+        children=[
+            generate_loader_spinner("fig_histogram_timegap"),
+            generate_loader_spinner("fig_scatter_timegap_trend"),
+            generate_loader_spinner("fig_scatterbox_age"),
+            generate_loader_spinner("fig_heatmap_age"),
+        ],
+        gap="sm"
+    )
+
+##################################################################################################
+# Section Misc
+##################################################################################################
+
+def render_misc_content():
+    return dmc.Stack(
+        children=[
+
+            # PLOT: Nobel Fields
+            generate_png_in_layout(   
+                header = "Nobel Fields",
+                subheader = "Cube sizes represent the number of Nobel prizes awarded to that field.",
+                filepath = "/assets/images/fig_cubes_fields.png",
+                style = {'width':'1000px'},
+                footer = [
+                    dcc.Markdown("**Interesting Findings**: Researchers with a momentum strategy should focus their research on particle physics or immunology, while contrarians should choose ethnology or chaos theory.")
+                    ],
+            ),
+            generate_loader_spinner("fig_mostcommon_firstnames"),
+            generate_loader_spinner("fig_line_prizemoney")
+        ],
+        gap="sm"
+    )
+
+
+
+##################################################################################################
+# Section Migration
+##################################################################################################
+
+def render_migration_content():
+    return dmc.Stack(
+        children=[
+
+            generate_loader_spinner("fig_parcat_migration_dwp"),
+
+            generate_loader_spinner("fig_parcat_migration_bpd"),
+
+            generate_loader_spinner('fig_globe_movement')
+        ],
+        gap="sm"
+    )
+
+##################################################################################################
+# Section List Generator
+##################################################################################################
+
+def render_listgenerator_content():
+
+    return dmc.Stack(
+        children=[
+
+            # 1st inner stack for the filter options
+            dmc.Stack(
+                children = [
+
+                    # 1st row
+                    html.Div("Prize Categories"),
+                    html.Div(
+                        dmc.Group(
+                            [
+                                dmc.Chip("Medicine", checked=True, color=pdg.c_medicine, id="chip-medicine"),
+                                dmc.Chip("Physics", checked=True, color=pdg.c_physics, id="chip-physics"),
+                                dmc.Chip("Chemistry", checked=True, color=pdg.c_chemistry, id="chip-chemistry"),
+                                dmc.Chip("Economics", checked=True, color=pdg.c_economics, id="chip-economics"),
+                                dmc.Chip("Literature", checked=True, color=pdg.c_literature, id="chip-literature"),
+                                dmc.Chip("Peace", checked=True, color=pdg.c_peace, id="chip-peace")
+                            ]
+                        )
+                    ),
+
+                    dmc.Divider(
+                        variant="dotted", 
+                        color="gray", 
+                        size="xs",
+                        style={"width": "100%"}
+                    ),
+
+
+                    # 2nd row                    
+                    dmc.Grid(
+                        style={"width": "100%"},
+                        children=[
+                            dmc.GridCol(
+                                dmc.Stack(
+                                    children=[
+                                        html.Div("Gender"),
+                                        html.Div(
+                                            dmc.Group(
+                                                [
+                                                    dmc.Chip("female", variant="outline", checked=True, color=pdg.c_red, id="chip-female"),
+                                                    dmc.Chip("male", variant="outline", checked=True, color=pdg.c_teal, id="chip-male"),
+                                                ]
+                                            )
+                                        )
+                                    ]
+                                ),
+                                span={'base': 24, 'md': 6}
+                            ),
+
+                            dmc.GridCol(       
+                                dmc.Stack(
+                                    children=[
+                                        html.Div("Type"),
+                                        html.Div(
+                                            dmc.Group(
+                                                [
+                                                    dmc.Chip("Humans", variant="outline", checked=True, id="chip-humans"),
+                                                    dmc.Chip("Organizations", variant="outline", checked=True, id="chip-organizations"),
+                                                ]
+                                            )
+                                        )
+                                    ]
+                                ),
+                                span={'base': 24, 'md': 8}
+                            ),  
+
+                            dmc.GridCol(  
+                                dmc.Stack(
+                                    children=[
+                                        html.Div("Alive"),
+                                        html.Div(
+                                            dmc.Group(
+                                                [
+                                                    dmc.Chip("Alive", variant="outline", checked=True, id="chip-alive"),
+                                                    dmc.Chip("Dead", variant="outline", checked=True, id="chip-dead"),
+                                                ]
+                                            )
+                                        )
+                                    ]
+                                ),
+                                span={'base': 24, 'md': 6}
+                            ),  # End Alive/Dead Chip Stack
+
+                            dmc.GridCol(  
+                                dmc.Stack(
+                                    children=[
+                                        html.Div("Number of Prizes"),
+                                        html.Div(
+                                            [
+                                                dmc.Slider(
+                                                    id="slider-numberofprizes",
+                                                    value=1,
+                                                    min=1,
+                                                    max=3,
+                                                    step=1,                       
+                                                    marks=[
+                                                        {"value": 1},
+                                                        {"value": 2},
+                                                        {"value": 3}
+                                                    ],
+                                                    color=pdg.c_teal,
+                                                    # style={"width": "50"}, 
+                                                    mt=10
+                                                ),
+                                            ],
+                                        )  # End number of prizes Slider
+                                    ]
+                                ),  # End Number of Prizes Slider Stack
+                                span={'base': 24, 'md': 4}
+                            ),  # End Number of Prizes Slider Stack
+
+
+                        ],
+                        columns=24
+                    ),  # End of Line 2 Grid
+
+                    dmc.Divider(
+                        variant="dotted", 
+                        color="gray", 
+                        size="xs",
+                        style={"width": "100%"}
+                    ),
+
+
+                    #3rd row
+                    dmc.SimpleGrid(
+                        cols={"base": 1, "sm": 2, "lg": 2},
+                        spacing="xl",
+                        style={"width": "100%"},
+                        children=[
+
+                            dmc.Stack(
+                                children=[
+
+                                    html.Div("Countries of Birth"),
+                                    html.Div(
+                                        [
+                                            dmc.MultiSelect(
+                                                # label="Select your favorite libraries",
+                                                placeholder="Select countries",
+                                                id="ms-countriesofbirth",
+                                                #value=["pd", "torch"],
+                                                data=pdg.countries_to_list(column="BirthCountryNow"),
+                                                clearable=True,
+                                                searchable=True,
+                                                #w=400,
+                                                mb=10,
+                                            ),
+                                            dmc.Text(id="ms-countriesofbirth-text"),
+                                        ]
+                                    ),
+
+
+
+                                ]
+                            ),
+
+                            dmc.Stack(
+                                children=[
+                                    html.Div("Countries of Affiliation at the Time of the Award"),
+                                    html.Div(
+                                        [
+                                            dmc.MultiSelect(
+                                                #label="Select your favorite libraries",
+                                                placeholder="Select countries",
+                                                id="ms-countriesofaffiliation",
+                                                #value=["pd", "torch"],
+                                                data=pdg.countries_to_list(column="Prize0_Affiliation0_CountryNow"),
+                                                clearable=True,
+                                                searchable=True,
+                                                #w=400,
+                                                mb=10,
+                                            ),
+                                            dmc.Text(id="ms-countriesofaffiliation-text"),
+                                        ]
+                                    )
+
+
+                                ]
+                            )
+
+
+
+                        ]
+                    ),
+
+                    dmc.Divider(
+                        variant="dotted", 
+                        color="gray", 
+                        size="xs",
+                        style={"width": "100%"}
+                    ),
+
+
+                    # 4th row
+                    dmc.SimpleGrid(
+                        cols={"base": 1, "sm": 2, "lg": 2},
+                        spacing="xl",
+                        style={"width": "100%"},
+                        children=[
+                            dmc.Stack(
+                                children=[
+                                    html.Div("Year of Birth"),
+                                    html.Div(
+                                        [
+                                            dmc.RangeSlider(
+                                                id="slider-timerange-birth",
+                                                value=[1817, lastyearincluded],
+                                                min=1817,
+                                                max=lastyearincluded-25,
+                                                minRange=1,
+                                                marks=[
+                                                    #{"value": 1817, "label": "1817"},
+                                                    {"value": 1825, "label": "1825"},
+                                                    {"value": 1850, "label": "1850"},
+                                                    {"value": 1875, "label": "1875"},
+                                                    {"value": 1900, "label": "1900"},
+                                                    {"value": 1925, "label": "1925"},
+                                                    {"value": 1950, "label": "1950"},
+                                                    {"value": 1975, "label": "1975"},
+                                                    {"value": 2000, "label": "2000"},
+                                                    #{"value": int(lastyearincluded), "label": lastyearincluded}
+                                                ],
+                                                mb=35,
+                                                color=pdg.c_teal
+                                            ),
+
+                                        ],
+                                    )
                                 ],
-                        ),
+                            ),
 
-                        # PLOT: Most Common First Names
-                        generate_loader_spinner("fig_mostcommon_firstnames"),
+                            dmc.Stack(
+                                children=[
+                                    html.Div("Year of Award"),
+                                    html.Div(
+                                        [
+                                            dmc.RangeSlider(
+                                                id="slider-timerange-award",
+                                                value=[1901, lastyearincluded],
+                                                min=1901,
+                                                max=lastyearincluded,
+                                                minRange=1,
+                                                marks=[
+                                                    {"value": 1901, "label": "1901"},
+                                                    {"value": 1925, "label": "1925"},
+                                                    {"value": 1950, "label": "1950"},
+                                                    {"value": 1975, "label": "1975"},
+                                                    {"value": 2000, "label": "2000"},
+                                                    {"value": int(lastyearincluded), "label": lastyearincluded}
+                                                ],
+                                                mb=35,
+                                                color=pdg.c_teal
+                                            ),
+                                        ],
+                                    )  # End Time Range Slider
+                                ],
+                            )  # End Stack for Time Range Slider
+                        ]
+                    ),
 
-                        generate_loader_spinner("fig_line_prizemoney")
-                    ],
-                    gap="sm"
-                )
-            ],
-            shadow="md",
-            radius="md",
-            p="lg", 
-            className="mt-3",
-        )
-    else:
-        return standard_loader_message
+
+                    dmc.Divider(
+                        variant="dotted", 
+                        color="gray", 
+                        size="xs",
+                        style={"width": "100%"}
+                    ),
 
 
 
-##################################################################################################
-# Tab Migration
-##################################################################################################
+                    # 5th row
+                    dmc.Group(
+                        children=[
+                            dmc.Stack(
+                                children=[
+                                    html.Div("Free Text Search on Prize Motivation"),
+                                    html.Div(
+                                        [
+                                            dmc.TagsInput(
+                                                # label="Select frameworks",
+                                                placeholder="Enter free text (e.g. 'quantum dot')",
+                                                id="motivation-input",
+                                                # value=["ng", "vue"],
+                                                # w=400,
+                                                mb=10,
+                                            )
+                                        ]
+                                    )
+                                ]
+                            ),  # End Stack for Prize Motivation Search
+
+                            dmc.Stack(
+                                children=[
+                                    html.Div("Search Mode"),
+                                    html.Div(
+                                        [
+                                            dmc.SegmentedControl(
+                                                id="search-mode",
+                                                value="any",
+                                                data=[
+                                                    {"value": "any", "label": "any term"},
+                                                    {"value": "all", "label": "all terms"},
+                                                ],
+                                                # mb=10,
+                                                pb=0,
+                                            ),
+                                        ]
+                                    )
+                                ]
+                            )  # End Stack for Output Options
+
+
+                        ]
+                    ),
+
+
+
+                    dmc.Divider(
+                        variant="dotted", 
+                        color="gray", 
+                        size="xs",
+                        style={"width": "100%"}
+                    ),
+
+                    # 6th row
+                    dmc.Stack(
+                        children=[
+                            html.Div("List Output Options"),
+                            html.Div(
+                                [
+                                    dmc.SegmentedControl(
+                                        id="output-options",
+                                        value="compact",
+                                        data=[
+                                            {"value": "names", "label": "Names Only"},
+                                            {"value": "compact", "label": "Compact"},
+                                            {"value": "extended", "label": "Extended"},
+                                            {"value": "full", "label": "Everything"},
+                                        ],
+                                        pb=-1,
+                                    ),
+                                ]
+                            )
+                        ]
+                    )  # End Stack for Output Options
+
+                ],
+                gap="sm",
+                className="selection-area"
+            ),  # End Filtering Area
+
+
+            # 2nd inner stack for the results
+            # This is where the content goes; it is customized by the callback responding to the controls. 
+            dmc.Stack(
+                children=[],
+                id="listgenerator-content",
+            )
+
+        # End outer stack
+        ]
+    )
+
+
+# Dynamic Content for the List Generator Section based of the selected filter values
+# ##################################################################################################
 
 @app.callback(
-    Output('tab-content-migration', 'children'),
-    Input('tabs', 'value')
+    Output("listgenerator-content", "children"), 
+    [   Input("chip-medicine", "checked"),
+        Input("chip-physics", "checked"),
+        Input("chip-chemistry", "checked"),
+        Input("chip-economics", "checked"),
+        Input("chip-literature", "checked"),
+        Input("chip-peace", "checked"),
+        Input("chip-female", "checked"),
+        Input("chip-male", "checked"),
+        Input("chip-humans", "checked"),
+        Input("chip-organizations", "checked"),
+        Input("chip-alive", "checked"),
+        Input("chip-dead", "checked"),
+        Input("slider-numberofprizes", "value"),
+        Input("ms-countriesofbirth", "value"),
+        Input("ms-countriesofaffiliation", "value"),
+        Input("slider-timerange-birth", "value"),
+        Input("slider-timerange-award", "value"),
+        Input("motivation-input", "value"),
+        Input("search-mode", "value"),
+        Input("output-options", "value")
+    ],
+        # prevent_initial_call=True
 )
-def render_tab_migration_content(active_tab):
-    if active_tab == 'tab_migration':
+def update_listgenerator_content(chip_medicine, chip_physics, chip_chemistry, chip_economics, chip_literature, chip_peace, chip_female, chip_male, chip_humans, chip_organizations, chip_alive, chip_dead, slider_numberofprizes, ms_countriesofbirth, ms_countriesofaffiliation, timerange_birth, timerange_award, motivation_input, search_mode, output_options):
 
-        # Return the content for tab Time
-        return dmc.Paper(
-            children=[
-                dmc.Stack(
-                    children=[
+    selected_categories = pdg.define_category_states(chip_medicine, chip_physics, chip_chemistry, chip_economics, chip_literature, chip_peace)
+    selected_gender = pdg.define_gender_states(chip_female, chip_male)
+    selected_type = pdg.define_type_states(chip_humans, chip_organizations)
+    selected_alive = pdg.define_alive_states(chip_alive, chip_dead)
 
-                        generate_loader_spinner("fig_parcat_migration_dwp"),
+    df_filtered_laureates = pdg.extended_filter(categories=selected_categories, gender=selected_gender, type=selected_type, alive=selected_alive, numberofprizes=slider_numberofprizes, countries_of_birth=ms_countriesofbirth, countries_of_affiliation=ms_countriesofaffiliation,  timerange_birth=timerange_birth, timerange_award=timerange_award, motivation_input=motivation_input, search_mode=search_mode, output_options=output_options)
 
-                        generate_loader_spinner("fig_parcat_migration_bpd"),
+    ag_df_listresults = dag.AgGrid(
+        id="lg-aggrid",
+        rowData=df_filtered_laureates.to_dicts(),  
+        columnDefs=[{"field": i} for i in df_filtered_laureates.columns],
+        defaultColDef={
+            "filter": True, 
+            "sortable": True, 
+            "resizable": True,
+            "maxWidth": 700,     # Maximale Breite
+            "minWidth": 100,      # Minimale Breite
+            "flex": 1            # Spalten füllen verfügbaren Platz
+        },
+        dashGridOptions={
+            "pagination": True,
+            "autoSizeStrategy": {
+                "type": "fitGridWidth",  # Spalten füllen Grid-Breite
+                "defaultMinWidth": 100,
+                "defaultMaxWidth": 500
+            }
+        },
+        csvExportParams={
+        "fileName": "nobel_laureates_filtered.csv",
+        "allColumns": True,
+        "suppressQuotes": False
+    },
+        style={
+        "height": "60vh",  # 60% der Viewport-Höhe
+        "width": "100%"
+    }
+    )
 
-                        generate_loader_spinner('fig_globe_movement')
-                    ],
-                    gap="sm"
-                )
-            ],
-            shadow="md",
-            radius="md",
-            p="lg", 
-            className="mt-3",
-        )
-    else:
-        return standard_loader_message
+    # Return the Content
+    return dmc.Stack(
+        children=[
+            # Top part (Title)
+            html.Div([
+                dmc.Group([
+                    html.H3(f"List Results ({df_filtered_laureates.shape[0]})"),
+                    dmc.Button("Export CSV", id="export-csv-btn", variant="outline", size="sm")
+                ], justify="space-between"),
+                html.P("Please also see the section 'Data and References' for more explanation."),
+            ], className="widget-title"),
+
+            # Bottom part (Content)
+            html.Div([ag_df_listresults],
+                className="widget-content"
+            )
+        ]
+    )
+
+
+# Callback to trigger export
+@app.callback(
+    Output("lg-aggrid", "exportDataAsCsv"),
+    Input("export-csv-btn", "n_clicks"),
+    prevent_initial_call=True
+)
+def export_csv(n_clicks):
+    return True
+
+
+
 
 ##################################################################################################
-# Tab Data
+# Section Data
 ##################################################################################################
-
 
 # Ethnicity
 df_ethnicity = pd.read_csv('df_ethnicity.csv', sep=';', encoding="UTF-8")
@@ -2074,98 +2222,295 @@ ag_df_religion = dag.AgGrid(
     dashGridOptions={"pagination": True}
 )
 
-@app.callback(
-    Output('tab-content-data', 'children'),
-    Input('tabs', 'value')
-)
-def render_tab_data_content(active_tab):
-    if active_tab == 'tab_data':
+def render_data_content():
+    return dmc.Stack(
+        id="section-data",
+        children=[
+            html.H3("About", className="text-header"),
+            html.Div(dcc.Markdown(["The Nobel Laureate Data Dashboard is a project of Wolfgang Huang. If you want to learn more about my other projects, please see my portfolio page www.virtuousvector.ai ([Link](https://www.virtuousvector.ai)), or email me at mail-at-virtuousvector.ai."]), className="text-copy"),
+            dmc.Space(h="xl"),
+            
+            html.H3("Data", className="text-header"),
 
-        # Return the content for tab Time
-        return dmc.Paper(
-            children=[
-                html.H3("About", className="text-header"),
-                html.Div(dcc.Markdown(["The Nobel Laureate Data Dashboard is a project of Wolfgang Huang. If you want to learn more about my other projects, please see my portfolio page www.virtuousvector.ai ([Link](https://www.virtuousvector.ai)), or email me at mail-at-virtuousvector.ai."]), className="text-copy"),
-                dmc.Space(h="xl"),
-                
-                html.H3("Data", className="text-header"),
+            html.H5("Nobel Laureate Base Data", className="text-subheader"),
+            html.Div("The core of the data is provided by Nobel Prize Outreach via their API. You can view it below, or access it via the API yourself. By the way, you can also sort and filter the data by clicking on the column headers / the column burger menu.", className="text-copy"),
+            dmc.Space(h="xl"),
+            html.Div([ag_df_laureates]),
 
-                html.H5("Nobel Laureate Base Data", className="text-subheader"),
-                html.Div("The core of the data is provided by Nobel Prize Outreach via their API. You can view it below, or access it via the API yourself. By the way, you can also sort and filter the data by clicking on the column headers / the column burger menu.", className="text-copy"),
-                dmc.Space(h="xl"),
-                html.Div([ag_df_laureates]),
+            dmc.Space(h="xl"),
 
-                dmc.Space(h="xl"),
+            html.H5("Timegap Analysis", className="text-subheader"),
+            html.Div("The data used for timegap analysis is published here:", className="text-copy"),
+            html.Div(dcc.Markdown(["Li, Jichao; Yin, Yian; Fortunato, Santo; Wang Dashun, 2018, \"A dataset of publication records for Nobel laureates\", Harvard Dataverse, [Link](https://doi.org/10.7910/DVN/6NJ5RN)"]), className="text-copy"),
 
-                html.H5("Timegap Analysis", className="text-subheader"),
-                html.Div("The data used for timegap analysis is published here:", className="text-copy"),
-                html.Div(dcc.Markdown(["Li, Jichao; Yin, Yian; Fortunato, Santo; Wang Dashun, 2018, \"A dataset of publication records for Nobel laureates\", Harvard Dataverse, [Link](https://doi.org/10.7910/DVN/6NJ5RN)"]), className="text-copy"),
+            dmc.Space(h="xl"),
 
-                dmc.Space(h="xl"),
+            html.H5("Degree - Work - Prize Migration Analysis", className="text-subheader"),
+            html.Div("The data used for migration analysis is published here:", className="text-copy"),
+            html.Div(dcc.Markdown(["Schlagberger, E.M., Bornmann, L. & Bauer, J.: \"At what institutions did Nobel laureates do their prize-winning work? An analysis of biographical information on Nobel laureates from 1994 to 2014\". Scientometrics 109, 723–767 (2016). [Link](https://doi.org/10.1007/s11192-016-2059-2)"]), className="text-copy"),
 
-                html.H5("Degree - Work - Prize Migration Analysis", className="text-subheader"),
-                html.Div("The data used for migration analysis is published here:", className="text-copy"),
-                html.Div(dcc.Markdown(["Schlagberger, E.M., Bornmann, L. & Bauer, J.: \"At what institutions did Nobel laureates do their prize-winning work? An analysis of biographical information on Nobel laureates from 1994 to 2014\". Scientometrics 109, 723–767 (2016). [Link](https://doi.org/10.1007/s11192-016-2059-2)"]), className="text-copy"),
+            dmc.Space(h="xl"),
 
-                dmc.Space(h="xl"),
-
-                html.H5("Population & Life Expectancy", className="text-subheader"),
-                html.Div("The data used for population numbers and life expectancy is published here:", className="text-copy"),
-                html.Div(dcc.Markdown(["Gapminder.org Data Downloads [Link](https://www.gapminder.org/data/)"]), className="text-copy"),
+            html.H5("Population & Life Expectancy", className="text-subheader"),
+            html.Div("The data used for population numbers and life expectancy is published here:", className="text-copy"),
+            html.Div(dcc.Markdown(["Gapminder.org Data Downloads [Link](https://www.gapminder.org/data/)"]), className="text-copy"),
 
 
-                dmc.Space(h="xl"),
+            dmc.Space(h="xl"),
 
-                html.H5("Ethnicity", className="text-subheader"),
-                html.Div("The data used for ethnicity is self-compiled. Further details are provided alongside the plot. Feel free to contact me if you have constructive criticism.", className="text-copy"),
-                dmc.Space(h="xl"),
-                html.Div([ag_df_ethnicity]),
+            html.H5("Ethnicity", className="text-subheader"),
+            html.Div("The data used for ethnicity is self-compiled. Further details are provided alongside the plot. Feel free to contact me if you have constructive criticism.", className="text-copy"),
+            dmc.Space(h="xl"),
+            html.Div([ag_df_ethnicity]),
 
-                dmc.Space(h="xl"),
+            dmc.Space(h="xl"),
 
-                html.H5("Religion", className="text-subheader"),
-                html.Div("The data used for religion is self-compiled. Further details are provided alongside the plot. Feel free to contact me if you have constructive criticism.", className="text-copy"),
-                dmc.Space(h="xl"),
-                html.Div([ag_df_religion]),
+            html.H5("Religion", className="text-subheader"),
+            html.Div("The data used for religion is self-compiled. Further details are provided alongside the plot. Feel free to contact me if you have constructive criticism.", className="text-copy"),
+            dmc.Space(h="xl"),
+            html.Div([ag_df_religion]),
 
-                dmc.Space(h="xl"),
+            dmc.Space(h="xl"),
 
-                html.H5("Download the Data", className="text-subheader"),
-                html.Div(dcc.Markdown(["You can download all the data from my Github repository \"nobeldashboard\". [Link](https://github.com/WolfgangHuang/nobeldashboard)"]), className="text-copy"),
-                dmc.Space(h="xl"),
+            html.H5("Download the Data", className="text-subheader"),
+            html.Div(dcc.Markdown(["You can download all the data from my Github repository \"nobeldashboard\". [Link](https://github.com/WolfgangHuang/nobeldashboard)"]), className="text-copy"),
+            dmc.Space(h="xl"),
 
-                dmc.Space(h="xl"),
+            dmc.Space(h="xl"),
 
-                html.H5("Version History", className="text-subheader"),
-                html.Div(dcc.Markdown(["Version 1.7 (February 2025): Unified hover labels style, new color scheme"]), className="text-copy"),
-                html.Div(dcc.Markdown(["Version 1.6 (January 2025): New plot 'Most Common Firstnames', design updates"]), className="text-copy"),
-                html.Div(dcc.Markdown(["Version 1.5 (January 2025): Finalized New Filters"]), className="text-copy"),
-                html.Div(dcc.Markdown(["Version 1.4 (January 2025): New Filters using pattern matching; rewrote plot configs as class instances."]), className="text-copy"),
-                html.Div(dcc.Markdown(["Version 1.3 (December 2024): Rewrote all plots as functions, removed pickle storage."]), className="text-copy"),
-                html.Div(dcc.Markdown(["Version 1.2 (November 2024): Design Upgrades / Improved Layout."]), className="text-copy"),
-                dmc.Space(h="xl"),
-            ],
-            shadow="md",
-            radius="md",
-            p="lg",  
-            className="mt-3",
-        )
+            html.H5("Version History", className="text-subheader"),
+            html.Div(dcc.Markdown(["Version 1.8 (July 2025): List generator, new layout, section URLs"]), className="text-copy"),
+            html.Div(dcc.Markdown(["Version 1.7 (February 2025): Unified hover labels style, new color scheme"]), className="text-copy"),
+            html.Div(dcc.Markdown(["Version 1.6 (January 2025): New plot 'Most Common Firstnames', design updates"]), className="text-copy"),
+            html.Div(dcc.Markdown(["Version 1.5 (January 2025): Finalized New Filters"]), className="text-copy"),
+            html.Div(dcc.Markdown(["Version 1.4 (January 2025): New Filters using pattern matching; rewrote plot configs as class instances."]), className="text-copy"),
+            html.Div(dcc.Markdown(["Version 1.3 (December 2024): Rewrote all plots as functions, removed pickle storage."]), className="text-copy"),
+            html.Div(dcc.Markdown(["Version 1.2 (November 2024): Design Upgrades / Improved Layout."]), className="text-copy"),
+            dmc.Space(h="xl"),
+        ]
+    )
+
+
+
+
+##################################################################################################
+# Navigation Setup
+##################################################################################################
+
+def create_nav_link(label, value, url, icon=None):
+    return dcc.Link(
+        dmc.NavLink(
+            label=label,
+            leftSection=dmc.ThemeIcon(DashIconify(icon=icon, width=20), size="sm", variant="light", color=pdg.c_brand_color_main) if icon else None,
+            style={"cursor": "pointer"},
+            mb="xs"
+        ),
+        href=url,
+        style={"textDecoration": "none", "color": "inherit"}
+    )
+
+nav_items = [
+    {"label": "Overview", "value": "overview", "url": "/overview", "icon": "material-symbols:space-dashboard-outline"},
+    {"label": f"{lastyearincluded} Prizes", "value": "current", "url": "/current", "icon": "material-symbols:trophy-outline-rounded"},
+    {"label": "Geography", "value": "geography", "url": "/geography", "icon": "material-symbols:globe-location-pin-rounded"},
+    {"label": "Demography", "value": "demography", "url": "/demography", "icon": "material-symbols:group-outline-rounded"},
+    {"label": "Time Analysis", "value": "time", "url": "/time", "icon": "material-symbols:calendar-clock-outline-rounded"},
+    {"label": "Migration", "value": "migration", "url": "/migration", "icon": "material-symbols:houseboat-outline-rounded"},
+    {"label": "Miscellaneous", "value": "misc", "url": "/misc", "icon": "material-symbols:award-star-outline-rounded"},
+    {"label": "List Generator", "value": "list_generator", "url": "/list", "icon": "material-symbols:blur-linear-outline-rounded"},
+    {"label": "Data & References", "value": "data", "url": "/data", "icon": "material-symbols:data-table-outline-rounded"},
+]
+
+# URL-Mapping Funktionen
+def get_section_from_url(pathname):
+    """Konvertiert URL-Pfad zu Section-Name"""
+    url_to_section = {item["url"]: item["value"] for item in nav_items}
+    return url_to_section.get(pathname, "overview")
+
+def get_url_from_section(section):
+    """Konvertiert Section-Name zu URL-Pfad"""
+    section_to_url = {item["value"]: item["url"] for item in nav_items}
+    return section_to_url.get(section, "/overview")
+
+def render_section_content(section):
+    """Rendert Content basierend auf Section-Name"""
+    if section == "overview":
+        return render_overview_content()
+    elif section == "current":
+        return render_current_content()
+    elif section == "geography":
+        return render_geography_content()
+    elif section == "demography":
+        return render_demography_content()
+    elif section == "time":
+        return render_time_content()
+    elif section == "migration":
+        return render_migration_content()
+    elif section == "misc":
+        return render_misc_content()
+    elif section == "list_generator":
+        return render_listgenerator_content()
+    elif section == "data":
+        return render_data_content()
     else:
-        return standard_loader_message
+        return render_overview_content()
 
+##################################################################################################
+# AppShell Layout
+##################################################################################################
 
+layout = dmc.AppShell(
+    [
+        dcc.Location(id="url", refresh=False),
+        # html.Div(id="scroll-dummy", style={"display": "none"}),
+        dmc.AppShellHeader(
+            dmc.Group(
+                [
+                    dmc.Burger(id="burger", size="sm", hiddenFrom="sm", opened=False),
+                    html.Img(src="assets/logo-md.png", style={"width": "120px", "height": "40px"}),
+                    dmc.Title("Nobel Laureate Data Dashboard", order=2, c=pdg.c_brand_color_main),
+                    dmc.Space(style={"flex": 1}),
+                    dmc.Badge("v1.8", variant="light", color="blue"),
+                ],
+                h="100%",
+                px="md",
+                justify="space-between",
+                align="center"
+            ),
+            style={"borderBottom": f"1px solid {pdg.c_grey_light}"}
+        ),
+        dmc.AppShellNavbar(
+            id="navbar",
+            children=[
+                dmc.Stack([
+                    dmc.Title("Navigation", order=4, mb="md", c=pdg.c_brand_color_main),
+                    *[create_nav_link(item["label"], item["value"], item["url"], item.get("icon")) for item in nav_items]
+                ], gap="xs")
+            ],
+            p="md",
+        ),
+        dmc.AppShellMain(
+            dmc.Container(
+                html.Div(id="main-content", children=[
+                    # dmc.Stack([
+                    #     dmc.Title("Hej.", order=1),
+                    #     dmc.Text("This dashboard provides a great variety of plots, analyses and tables " \
+                    #     "related to the Nobel Prize. Its core data comes from the official API, " \
+                    #     "guaranteeing maximum data quality. " \
+                    #     "In addition, various additional data sources have been integrated. " \
+                    #     "To explore the plots, choose your preferred category from the menu." \
+                    #     "The latest feature addition is the list generator, which offers a variety of filtering options," \
+                    #     "and also lets you download the results.", size="md", style={"maxWidth": "700px"},),
 
+                    #     dmc.SimpleGrid(
+                    #         cols={"base": 1, "sm": 2, "md": 3},
+                    #         spacing="xl",
+                    #         style={"maxWidth": "700px"},
+                    #         p="md",
+                    #         children=[
+                    #             dmc.Image(h=200, w="auto", fit="contain", src="assets/images/fig_cubes_fields.png", radius="md", style={"margin": "auto"}),
+                    #             dmc.Image(h=200, w="auto", fit="contain", src="assets/images/fig_parcat.png", radius="md", style={"margin": "auto"}),
+                    #             dmc.Image(h=200, w="auto", fit="contain", src="assets/images/jsglobe.png", radius="md", style={"margin": "auto"}),
+                    #             dmc.Image(h=200, w="auto", fit="contain", src="assets/images/fig_globe_birth.png", radius="md", style={"margin": "auto"}),
+                    #             dmc.Image(h=200, w="auto", fit="contain", src="assets/images/fig_sunburst.png", radius="md", style={"margin": "auto"}),
+                    #             dmc.Image(h=200, w="auto", fit="contain", src="assets/images/fig_map_cities.png", radius="md", style={"margin": "auto"}),
+                    #             dmc.Image(h=200, w="auto", fit="contain", src="assets/images/fig_surface_mw.png", radius="md", style={"margin": "auto"}),
+                    #             dmc.Image(h=200, w="auto", fit="contain", src="assets/images/fig_bubbles.png", radius="md", style={"margin": "auto"}),
+                    #             dmc.Image(h=200, w="auto", fit="contain", src="assets/images/fig_countries_year.png", radius="md", style={"margin": "auto"}),                           
+                    #         ]
+                    #     ),
+
+                    #     dmc.Text(
+                    #         children=[
+                    #             "For more details, please refer to the ",
+                    #             dcc.Link("Data & References", href="/data", style={"textDecoration": "underline"}),
+                    #             " section."
+                    #         ],
+                    #         style={"maxWidth": "700px"}
+                    # )
+
+                    # ], align="left", mt="xl")
+                ]),
+                fluid=True,
+                p="md"
+            )
+        ),
+    ],
+    header={"height": 100},
+    navbar={
+        "width": 220,
+        "breakpoint": "sm",
+        "collapsed": {"mobile": True},
+    },
+    padding="md",
+    id="appshell",
+)
+
+app.layout = dmc.MantineProvider(layout)
+
+##################################################################################################
+# Callbacks
+##################################################################################################
+
+# Burger menu callback
+@app.callback(
+    Output("appshell", "navbar"),
+    Input("burger", "opened"),
+    State("appshell", "navbar"),
+)
+def navbar_is_open(opened, navbar):
+    navbar["collapsed"] = {"mobile": not opened}
+    return navbar
+
+# URL-basierter Navigation Callback (erweitert)
+@app.callback(
+    [Output("main-content", "children"),
+     Output("url", "pathname")],
+    [Input({"type": "nav-item", "index": ALL}, "n_clicks"),
+     Input("url", "pathname")],
+    prevent_initial_call=True
+)
+def update_main_content_and_url(nav_clicks, pathname):
+    ctx = callback_context
+    
+    # Check if URL changed (direct navigation)
+    if ctx.triggered and ctx.triggered[0]['prop_id'] == 'url.pathname':
+        
+        # Handle plot-specific URLs (e.g., /geography/fig_choroplethglobe_prizespercountry)
+        path_parts = pathname.strip('/').split('/')
+        if len(path_parts) >= 2:
+            section = path_parts[0]
+            # Convert URL section to internal section name
+            section = get_section_from_url('/' + section)
+            content = render_section_content(section)
+            return content, dash.no_update
+        
+        # Handle section URLs
+        else:
+            section = get_section_from_url(pathname)
+            content = render_section_content(section)
+            return content, dash.no_update
+    
+    # Check if navigation was clicked
+    elif ctx.triggered and 'nav-item' in ctx.triggered[0]['prop_id']:
+        # Find which nav item was clicked
+        for i, clicks in enumerate(nav_clicks):
+            if clicks:
+                section = nav_items[i]["value"]
+                url = nav_items[i]["url"]
+                content = render_section_content(section)
+                return content, url
+    
+    # Default: show overview
+    content = render_section_content("overview")
+    return content, "/overview"
 
 
 ##################################################################################################
 # Running the app
 ##################################################################################################
 
-# Run the app (locally)
-# if __name__ == "__main__":
-#     app.run(debug=True, port=5085) 
-
-# # # Run the app on the server
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 8050))  # Fallback to port 8050 if PORT isn't set
-    app.run_server(host='0.0.0.0', port=port, debug=False)
+    port = int(os.environ.get('PORT', 8050))
+    debug_mode = os.environ.get('DEBUG', 'True').lower() == 'true'
+    app.run(host='0.0.0.0', port=port, debug=debug_mode)

@@ -5,10 +5,12 @@
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
+import polars as pl
 import os
 import numpy as np
 from sklearn.linear_model import LinearRegression
 import yfinance as yf
+from yfinance.exceptions import YFRateLimitError
 
 
 ##################################################################################################
@@ -382,6 +384,13 @@ df_prizes_enriched_redux_clean = df_prizes.copy()
 
 
 ##################################################################################################
+# Create Polars dataframes
+##################################################################################################
+
+pldf_laureates_enriched_redux_clean = pl.DataFrame(df_laureates_enriched_redux_clean)
+pldf_prizes_enriched_redux_clean = pl.DataFrame(df_prizes_enriched_redux_clean)
+
+##################################################################################################
 # Functions for Prize Statistics
 ##################################################################################################
 
@@ -536,6 +545,29 @@ def define_gender_states(chip_female, chip_male):
         return ""
 
 
+def define_type_states(chip_humans, chip_organizations):
+    # Determine the type filter based on the chip states
+    if chip_humans and chip_organizations:
+        return "all"
+    elif chip_humans:
+        return "human"
+    elif chip_organizations:
+        return "organization"
+    else:
+        return ""
+    
+def define_alive_states(chip_alive, chip_dead):
+    # Determine the alive/dead filter based on the chip states
+    if chip_alive and chip_dead:
+        return "all"
+    elif chip_alive:
+        return "alive"
+    elif chip_dead:
+        return "dead"
+    else:
+        return ""   
+
+
 def standard_filter(data, categories="all", gender="all", timerange=[1901, lastyearincluded], timerange_field="award", callsign=""):
 
     # Replace short handles with lists
@@ -558,7 +590,8 @@ def standard_filter(data, categories="all", gender="all", timerange=[1901, lasty
         df_filtered = df_filtered[df_filtered["LaureateGender"] == gender]
     else:
         df_filtered = df_filtered
-    
+
+
     # print(f"Time Range: {timerange}")
     # print(f"Time Range Field: {timerange_field}")
     #print("Columns in DataFrame:", df_filtered.columns)
@@ -604,6 +637,290 @@ def replace_country_designations(country):
     country = country.replace("affiliation", "Prize0_Affiliation0_CountryNow")
     country = country.replace("death", "DeathCountryNow")
     return country
+
+
+##################################################################################################
+# Extended Filter (POLARS)
+##################################################################################################
+
+def extended_filter(data=pldf_laureates_enriched_redux_clean, categories="all", gender="all", type="all", alive="all", numberofprizes=1, countries_of_birth="all", countries_of_affiliation="all", timerange_birth=[1817, lastyearincluded-25], timerange_award=[1901, lastyearincluded], motivation_input="", search_mode="all", output_options="compact", callsign=""):
+    
+    # Replace short for categories handles with lists
+    if categories == "all":
+        categories=["Medicine", "Physics", "Chemistry", "Economic Sciences", "Literature", "Peace"]
+    elif categories == "sci":
+        categories=["Medicine", "Physics", "Chemistry", "Economic Sciences"]
+    elif categories == "natsci":
+        categories=["Medicine", "Physics", "Chemistry"]
+    else:
+        pass
+
+        
+    # Replace short handles for countries_of_birth with lists
+    if countries_of_birth in ["all", None, []]:
+        countries_of_birth = countries_to_list(data)
+        countries_of_birth.append("")
+    else:
+        pass
+    
+    
+    # Replace short handles for countries_of_affiliation with lists
+    if countries_of_affiliation in ["all", None, []]:
+        countries_of_affiliation = countries_to_list(data, column="Prize0_Affiliation0_CountryNow")
+    else:
+        pass
+   
+
+    def is_not_empty(column_name):
+        """Prüft ob eine Spalte nicht leer ist (String oder INT)"""
+        return (
+            ~pl.col(column_name).is_null() &
+            ~pl.col(column_name).cast(pl.Utf8).str.strip_chars().is_in(["", "None", "NaN", "null"])
+        )
+
+    
+    ### FILTER: CATEGORIES ###
+    # print(f"Categories: {categories}")
+    # print(f"Größe Datensatz vorher: {data.shape}")
+    # Apply category filter
+    df_filtered = data.filter(pl.col("Prize0_Category").is_in(categories))
+    # print(f"Größe Datensatz nachher: {df_filtered.shape}")
+
+
+    ### FILTER: GENDER ###
+    # print(f"Gender: {gender}")
+    # print(f"Größe Datensatz vorher: {df_filtered.shape}")
+    # Apply gender filter if not "all"
+    if gender.lower() != "all":
+        df_filtered = df_filtered.filter(pl.col("LaureateGender") == gender)
+    else:
+        pass
+    # print(f"Größe Datensatz nachher: {df_filtered.shape}")
+
+    #print("type:", type)
+    ### FILTER: TYPE ###
+    if type.lower() == "all":
+        pass
+    elif type.lower() == "organization":
+        df_filtered = df_filtered.filter(is_not_empty("OrganisationName"))
+    elif type.lower() == "human":
+        df_filtered = df_filtered.filter(is_not_empty("LaureateNameLast"))
+    elif type.lower() == "":
+        df_filtered = df_filtered.filter(~is_not_empty("AwardeeDisplayName"))
+
+    #print("alive:", alive)
+    ### FILTER: ALIVE/DEAD ###
+    if alive.lower() == "all":
+        pass
+    elif alive.lower() == "alive":
+        df_filtered = df_filtered.filter(~is_not_empty("DeathDate"))
+    elif alive.lower() == "dead":
+        df_filtered = df_filtered.filter(is_not_empty("DeathDate"))
+    elif alive.lower() == "":
+        df_filtered = df_filtered.filter(~is_not_empty("AwardeeDisplayName"))
+
+
+    ### FILTER: NUMBER OF PRIZES ###  
+    if numberofprizes == 1:
+        pass
+    elif numberofprizes == 2:
+        df_filtered = df_filtered.filter(is_not_empty("Prize1_AwardYear")
+        )
+    elif numberofprizes == 3:
+        df_filtered = df_filtered.filter(is_not_empty("Prize2_AwardYear")
+        )
+
+
+    # print(f"CoB: {countries_of_birth}")
+    # print(f"Größe Datensatz vorher: {df_filtered.shape}")
+    # Apply countries_of_birth filter
+    df_filtered = df_filtered.filter(pl.col("BirthCountryNow").is_in(countries_of_birth) | pl.col("BirthCountryNow").is_null() | (pl.col("BirthCountryNow") =="") | (pl.col("BirthCountryNow") =="None"))
+
+    # print(f"Größe Datensatz nachher: {df_filtered.shape}")
+    
+
+    # print(f"CoA: {countries_of_affiliation}")
+    # print(f"Größe Datensatz vorher: {df_filtered.shape}")
+    # Apply countries_of_affiliation filter
+    df_filtered = df_filtered.filter(pl.col("Prize0_Affiliation0_CountryNow").is_in(countries_of_affiliation)  | pl.col("Prize0_Affiliation0_CountryNow").is_null() | (pl.col("Prize0_Affiliation0_CountryNow") =="") | (pl.col("Prize0_Affiliation0_CountryNow") =="None"))
+    # print(f"Größe Datensatz nachher: {df_filtered.shape}")
+          
+    # print(f"Timerange Birth: {timerange_birth}")
+    # print(f"Größe Datensatz vorher: {df_filtered.shape}")
+    # Birth year filter
+    if timerange_birth is not None:
+        df_filtered = df_filtered.with_columns([
+            pl.col("BirthDate")
+            .str.to_datetime(format="%Y-%m-%d", strict=False)
+            .dt.year()
+            .fill_null(0)
+            .cast(pl.Int32)
+            .alias("BirthYear")
+        ])
+        
+        df_filtered = df_filtered.filter(
+            pl.col("BirthYear").is_between(timerange_birth[0], timerange_birth[1])  | (pl.col("BirthYear")==0)
+        )
+    # print(f"Größe Datensatz nachher: {df_filtered.shape}")
+
+    # print(f"Timerange Award: {timerange_award}")
+    # print(f"Größe Datensatz vorher: {df_filtered.shape}")
+    # Award year filter
+    if timerange_award is not None:  
+        df_filtered = df_filtered.with_columns([
+            pl.col("Prize0_AwardYear")
+            .cast(pl.Int32, strict=False)
+            .fill_null(0)
+        ])
+               
+        df_filtered = df_filtered.filter(
+            pl.col("Prize0_AwardYear").is_between(timerange_award[0], timerange_award[1])  | (pl.col("Prize0_AwardYear")==0)
+        )
+    # print(f"Größe Datensatz nachher: {df_filtered.shape}")
+
+
+    ### FILTER: MOTIVATION ###
+
+    columns = ['Prize0_Motivation', 'Prize1_Motivation', 'Prize2_Motivation']
+
+    def search_in_columns_simple(search_terms, columns, mode="any"):
+        
+        # concatenate all columns into a single string column
+        combined_text = pl.concat_str([
+            pl.col(col).cast(pl.Utf8).fill_null("") for col in columns
+        ], separator=" ")
+        
+        if mode.lower() == "any":
+            # at least one term must be present
+            conditions = [
+                combined_text.str.contains(f"(?i){term}") 
+                for term in search_terms
+            ]
+            return pl.any_horizontal(conditions)
+        
+        elif mode.lower() == "all":
+            # all terms must be present
+            conditions = [
+                combined_text.str.contains(f"(?i){term}") 
+                for term in search_terms
+            ]
+            return pl.all_horizontal(conditions)
+
+    # Only filter if there is a motivation input
+    if motivation_input and len(motivation_input) > 0:
+        df_filtered = df_filtered.filter(search_in_columns_simple(motivation_input, columns, mode=search_mode))
+    else:
+        pass 
+
+    #print(f"Größe Datensatz nachher: {df_filtered.shape}")
+
+    
+    ### OUTPUT OPTIONS ###
+    if output_options == "names":
+        # Select only the names of the laureates
+        df_filtered = df_filtered.select([
+            pl.col("AwardeeDisplayName").alias("Name"),
+        ])
+
+    elif output_options == "compact":
+        # Select a compact set of columns
+        df_filtered = df_filtered.select([
+            pl.col("AwardeeDisplayName").alias("Name"),
+            pl.col("Prize0_AwardYear").alias("Award Year"),
+            pl.col("Prize0_Category").alias("Category"),
+            pl.col("Prize0_Motivation").alias("Motivation"),
+            pl.col("BirthCountryNow").alias("Birth Country"),
+            pl.col("Prize0_Affiliation0_NameNow").alias("Affiliation at Time of Award"),
+            pl.col("Prize0_Affiliation0_CountryNow").alias("Affiliation Country")
+        ])
+
+    elif output_options == "extended":
+        # base columns for the extended output
+        base_columns = [
+            pl.col("AwardeeDisplayName").alias("Name"),
+            pl.col("LaureateNameLast").alias("Last Name"),
+            pl.col("LaureateNameFirst").alias("First Name"),
+            pl.col("OrganisationName").alias("Organisation Name"),
+            pl.col("LaureateGender").alias("Gender"),
+            pl.col("BirthCountryNow").alias("Birth Country"),
+            pl.col("BirthDate").alias("Birth Date"),
+            pl.col("DeathCountryNow").alias("Death Country"),
+            pl.col("DeathDate").alias("Death Date"),
+            pl.col("Prize0_AwardYear").alias("Prize Award Year"),
+            pl.col("Prize0_Category").alias("Prize Category"),
+            pl.col("Prize0_Motivation").alias("Prize Motivation"),
+            pl.col("Prize0_Affiliation0_NameNow").alias("Affiliation at Time of Award"),
+            pl.col("Prize0_Affiliation0_CityNow").alias("Affiliation City at Time of Award"),
+            pl.col("Prize0_Affiliation0_CountryNow").alias("Affiliation Country at Time of Award")
+        ]
+        
+        # if there is a second prize, add the columns for the second prize
+        has_prize1 = df_filtered.filter(~pl.col("Prize1_AwardYear").is_null()).height > 0
+        if has_prize1:
+            base_columns.extend([
+                pl.col("Prize1_AwardYear").alias("Second Prize Award Year"),
+                pl.col("Prize1_Category").alias("Second Prize Category"),
+                pl.col("Prize1_Motivation").alias("Second Prize Motivation"),
+                pl.col("Prize1_Affiliation0_NameNow").alias("Second Prize Affiliation at Time of Award"),
+                pl.col("Prize1_Affiliation0_CityNow").alias("Second Prize Affiliation City at Time of Award"),
+                pl.col("Prize1_Affiliation0_CountryNow").alias("Second Prize Affiliation Country at Time of Award")
+            ])
+        
+        # Prüfe ob Prize2 Daten vorhanden sind
+    #    has_prize2 = df_filtered.filter(~pl.col("Prize2_AwardYear").is_null()).height > 0
+        has_prize2 = df_filtered.filter(~pl.col("Prize2_AwardYear").is_null()).height > 0
+        if has_prize2:
+                base_columns.extend([
+                pl.col("Prize2_AwardYear").alias("Third Prize Award Year"),
+                pl.col("Prize2_Category").alias("Third Prize Category"),
+                pl.col("Prize2_Motivation").alias("Third Prize Motivation"),
+                # pl.col("Prize2_Affiliation0_NameNow").alias("Third Prize Affiliation at Time of Award"),
+                # pl.col("Prize2_Affiliation0_CityNow").alias("Third Prize Affiliation City at Time of Award"),
+                # pl.col("Prize2_Affiliation0_CountryNow").alias("Third Prize Affiliation Country at Time of Award"),
+            ])
+        
+        df_filtered = df_filtered.select(base_columns)
+
+    elif output_options == "full":
+        pass
+
+    else:
+        raise ValueError(f"Invalid output option: {output_options}")
+
+
+
+    return df_filtered
+
+
+##################################################################################################
+# List of Countries (POLARS)
+##################################################################################################
+
+def countries_to_list(data=pldf_laureates_enriched_redux_clean, column="BirthCountryNow"):
+    """
+   Extract alphabetically sorted list of unique countries from a Polars DataFrame.
+   
+   Args:
+       data (pl.DataFrame): Polars DataFrame containing Nobel laureate data.
+                          Default: pldf_laureates_enriched_redux_clean
+       column (str): Column name to extract countries from. Default: "BirthCountryNow"
+   
+   Returns:
+       list[str]: Alphabetically sorted list of unique country names, excluding "None" values.
+       
+   Example:
+       >>> countries = countries_to_list()
+       >>> print(countries[:3])
+       ['Austria', 'Belgium', 'Canada']
+       
+       >>> death_countries = countries_to_list(column="DeathCountryNow")
+   """
+    pldf_result = data.select(
+        pl.col(column)
+        .filter(pl.col(column) != "None")
+        .unique()
+        .sort()).to_series().to_list()
+    return pldf_result
 
 
 ##################################################################################################
@@ -2011,7 +2328,7 @@ def generate_scatterbox_age(data=df_laureates, categories="all", gender="all", t
         x="Prize0_AwardYear", 
         y="Avg_Age_at_Award_Years", 
         color="Prize0_Category",
-        trendline="ols",  # Ordinary Least Squares trendline
+        # trendline="ols",  # Ordinary Least Squares trendline
         labels={
             "Prize0_AwardYear": "Year of Award",
             "Avg_Age_at_Award_Years": "Average Age at Award",
@@ -2019,6 +2336,29 @@ def generate_scatterbox_age(data=df_laureates, categories="all", gender="all", t
         },
         color_discrete_map=colors,  # Custom color mapping
     )
+
+    categories = data['Prize0_Category'].unique()
+    for category in categories:
+        subset = data[data['Prize0_Category'] == category]
+        
+        # Linear regression für die Trendline
+        from sklearn.linear_model import LinearRegression
+        X = subset["Prize0_AwardYear"].values.reshape(-1, 1)
+        y = subset["Avg_Age_at_Award_Years"].values
+        
+        if len(X) > 1:
+            model = LinearRegression()
+            model.fit(X, y)
+            y_pred = model.predict(X)
+            
+            # Trendline hinzufügen
+            fig.add_trace(go.Scatter(
+                x=subset["Prize0_AwardYear"], 
+                y=y_pred,  
+                mode='lines', 
+                name=f"{category} Trendline",
+                line=dict(color=colors[category], dash='dot'),
+            ))
 
     fig.update_layout(
         template='plotly_white',
@@ -2273,19 +2613,26 @@ def generate_parcat_migration(data=df_laureates, loc1="ParCatDegreeCountry", loc
 def get_conversion_rates():
     """
     Fetches the latest conversion rates for SEK to EUR and SEK to USD using yfinance.
+    If the API call fails, returns a default rate of 1:10 for both EUR:SEK and USD:SEK.
 
     Returns:
         tuple: the two exchange rates (SEK-EUR, SEK-USD)
     """
-    # Fetch SEK to EUR conversion rate
-    sek_to_eur_ticker = yf.Ticker("SEKEUR=X")
-    sek_to_eur_rate = sek_to_eur_ticker.history(period="1d").iloc[-1]["Close"]
+    try:
+        # Fetch SEK to EUR conversion rate
+        sek_to_eur_ticker = yf.Ticker("SEKEUR=X")
+        sek_to_eur_rate = sek_to_eur_ticker.history(period="1d").iloc[-1]["Close"]
 
-    # Fetch SEK to USD conversion rate
-    sek_to_usd_ticker = yf.Ticker("SEKUSD=X")
-    sek_to_usd_rate = sek_to_usd_ticker.history(period="1d").iloc[-1]["Close"]
+        # Fetch SEK to USD conversion rate
+        sek_to_usd_ticker = yf.Ticker("SEKUSD=X")
+        sek_to_usd_rate = sek_to_usd_ticker.history(period="1d").iloc[-1]["Close"]
 
-    return sek_to_eur_rate, sek_to_usd_rate
+        return sek_to_eur_rate, sek_to_usd_rate
+
+    except (YFRateLimitError, IndexError, KeyError, Exception) as e:
+        print(f"Error fetching conversion rates: {e}. Using default rate 1:10.")
+        return 0.1, 0.1  # Default rates for EUR:SEK and USD:SEK
+    
 
 def generate_line_prizemoney(data=df_prizes, categories="all", gender="all", timerange=[1901, lastyearincluded], timerange_field="award", currency="EUR"):
     """
