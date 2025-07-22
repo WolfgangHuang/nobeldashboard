@@ -1,9 +1,0 @@
-dash
-dash-bootstrap-components
-dash-mantine-components
-plotly
-pandas
-dash-ag-grid
-numpy
-scikit-learn
-openpyxl
