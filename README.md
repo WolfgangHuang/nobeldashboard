@@ -7,7 +7,7 @@ Head to www.nbldata.org for a live dashboard.
 - It's also about data storytelling; while there is not a single narrative, you will find interestign facts about the prizes.
 - The most recent addition is the list generator, which allows you to filter, output and export pretty much any list of Nobel laureates.
 
-- There are also further improvements planned for the future, such as better mobile responsiveness, a complete swith from pandas to polars, a dark mode, unified filters, and much more.
+- There are also further improvements planned for the future, such as better mobile responsiveness, a complete switch from pandas to polars, a dark mode, unified filters, and much more.
 
 *If you want to use the code:*
 The main files are app.py (which runs the Dash/Flask app, and contains the layout and the filter logic), and plotdatagenerator.py (which contains alle the functions for filtering and generating the plots). There are extensive comments in these files.
