@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"import dash, dash_cytoscape; print\\('cytoscape OK', dash_cytoscape.__version__\\)\")",
+      "Bash(python -c \"import dash; print\\('dash', dash.__version__\\)\")"
+    ]
+  }
+}

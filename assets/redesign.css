@@ -1,0 +1,582 @@
+/* ===============================================================================================
+   Nobel-Spektrum redesign — neutral surfaces, typography, nav, cards, spectrum logo.
+   Tokens mirror theme.py. Light/dark keyed off [data-mantine-color-scheme].
+   =============================================================================================== */
+
+:root {
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'IBM Plex Sans', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+}
+
+/* ---- Light neutrals (default) ------------------------------------------------------------- */
+[data-mantine-color-scheme="light"] {
+    --page-bg: #EEF1F4;
+    --surface: #FFFFFF;
+    --header-bg: #FFFFFF;
+    --hairline: #E6E9ED;
+    --card-border: #E4E7EC;
+    --divider: #EFF1F4;
+    --text-primary: #14181E;
+    --text-secondary: #5B636E;
+    --text-muted: #9AA1AB;
+    --text-faint: #A7AEB8;
+    --track: #EAECF0;
+    --search-bg: #F2F4F7;
+    --nav-active-bg: #F4F0FB;
+    --card-shadow: 0 1px 3px rgba(16, 24, 40, .06);
+    --card-shadow-inner: 0 1px 2px rgba(16, 24, 40, .04);
+}
+
+/* ---- Dark neutrals ------------------------------------------------------------------------ */
+[data-mantine-color-scheme="dark"] {
+    --page-bg: #0C0F14;
+    --surface: #111722;
+    --header-bg: #111722;
+    --hairline: #20262F;
+    --card-border: #20262F;
+    --divider: #1B2027;
+    --text-primary: #FFFFFF;
+    --text-secondary: #9BA3AE;
+    --text-muted: #6B7280;
+    --text-faint: #5B626C;
+    --track: #1B2027;
+    --search-bg: #1B2027;
+    --nav-active-bg: #241A33;
+    --card-shadow: none;
+    --card-shadow-inner: none;
+}
+
+/* ---- Base --------------------------------------------------------------------------------- */
+body {
+    font-family: var(--font-body);
+}
+
+.mantine-AppShell-main,
+.mantine-AppShell-root {
+    background-color: var(--page-bg);
+}
+
+.material-symbols-rounded {
+    font-family: 'Material Symbols Rounded';
+    font-weight: normal;
+    font-style: normal;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+.material-symbols-rounded.filled {
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* ===============================================================================================
+   Header
+   =============================================================================================== */
+.mantine-AppShell-header {
+    background-color: var(--header-bg);
+    border-bottom: 1px solid var(--hairline);
+}
+
+.nbl-wordmark {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 21px;
+    line-height: 1.1;
+    color: var(--text-primary);
+}
+
+.nbl-subtitle {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.nbl-search input {
+    background-color: var(--search-bg) !important;
+    border: none !important;
+}
+
+.nbl-icon-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-secondary);
+    background-color: var(--search-bg);
+    border: none;
+    transition: background-color .15s ease;
+}
+.nbl-icon-btn:hover {
+    background-color: var(--track);
+}
+
+/* ===============================================================================================
+   Spectrum logo — six rounded bars in canonical order
+   =============================================================================================== */
+.nbl-logo {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 3px;
+}
+.nbl-logo .bar {
+    width: 8px;
+    height: 26px;
+    border-radius: 4px;
+}
+.nbl-logo.sm .bar {
+    width: 6px;
+    height: 20px;
+    border-radius: 3px;
+}
+
+/* Jewel (light) */
+.nbl-logo .bar-medicine   { background: #B23A48; }
+.nbl-logo .bar-physics    { background: #2A4D9B; }
+.nbl-logo .bar-chemistry  { background: #C2682A; }
+.nbl-logo .bar-economics  { background: #6D3A9C; }
+.nbl-logo .bar-literature { background: #B08A1E; }
+.nbl-logo .bar-peace      { background: #1F7A5A; }
+
+/* Neon (dark) */
+[data-mantine-color-scheme="dark"] .nbl-logo .bar-medicine   { background: #FF6B6E; }
+[data-mantine-color-scheme="dark"] .nbl-logo .bar-physics    { background: #6E8BFF; }
+[data-mantine-color-scheme="dark"] .nbl-logo .bar-chemistry  { background: #FF8A3D; }
+[data-mantine-color-scheme="dark"] .nbl-logo .bar-economics  { background: #B97BE6; }
+[data-mantine-color-scheme="dark"] .nbl-logo .bar-literature { background: #F2C04B; }
+[data-mantine-color-scheme="dark"] .nbl-logo .bar-peace      { background: #4CD389; }
+
+/* V2.0-style mono badge */
+.nbl-badge {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 999px;
+    color: #1F7A5A;
+    background: rgba(31, 122, 90, .12);
+}
+[data-mantine-color-scheme="dark"] .nbl-badge {
+    color: #4CD389;
+    background: rgba(76, 211, 137, .14);
+}
+
+/* ===============================================================================================
+   Sidebar / navigation
+   =============================================================================================== */
+.mantine-AppShell-navbar {
+    background-color: var(--surface);
+    border-right: 1px solid var(--hairline);
+}
+
+.nbl-nav-section-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    padding: 0 12px;
+    margin: 14px 0 6px;
+}
+
+.nbl-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 12px;
+    border-radius: 10px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-decoration: none;
+    position: relative;
+    cursor: pointer;
+    transition: background-color .15s ease, color .15s ease;
+}
+.nbl-nav-item:hover {
+    background-color: var(--divider);
+    color: var(--text-primary);
+}
+.nbl-nav-item .material-symbols-rounded {
+    font-size: 20px;
+}
+.nbl-nav-item.active {
+    background-color: var(--nav-active-bg);
+    color: var(--text-primary);
+    font-weight: 600;
+}
+.nbl-nav-item.active::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 8px;
+    bottom: 8px;
+    width: 3px;
+    border-radius: 999px;
+    background-color: var(--nav-accent, #6D3A9C);
+}
+.nbl-nav-item.active .material-symbols-rounded {
+    color: var(--nav-accent, #6D3A9C);
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Collapsed icon-rail state */
+.nbl-navbar.collapsed .nbl-nav-label,
+.nbl-navbar.collapsed .nbl-nav-section-label {
+    display: none;
+}
+.nbl-navbar.collapsed .nbl-nav-item {
+    justify-content: center;
+    padding: 11px;
+    width: 44px;
+    height: 44px;
+}
+
+/* ===============================================================================================
+   Cards & generic surfaces
+   =============================================================================================== */
+.nbl-card {
+    background-color: var(--surface);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    box-shadow: var(--card-shadow);
+}
+
+.nbl-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+}
+
+.nbl-card-title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--text-primary);
+}
+
+/* ---- KPI cards ---------------------------------------------------------------------------- */
+.nbl-kpi {
+    background-color: var(--surface);
+    border: 1px solid var(--card-border);
+    border-left: 4px solid var(--kpi-accent, #2A4D9B);
+    border-radius: 14px;
+    box-shadow: var(--card-shadow-inner);
+    padding: 16px 18px;
+}
+.nbl-kpi-value {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 36px;
+    line-height: 1.1;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+}
+.nbl-kpi-label {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    color: var(--text-muted);
+}
+.nbl-kpi-sub {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+/* Generic helpers reused across plot cards */
+.text-copy {
+    font-family: var(--font-body);
+    color: var(--text-secondary);
+}
+
+/* ===============================================================================================
+   Overview filter toolbar
+   =============================================================================================== */
+.filter-toolbar {
+    background-color: var(--surface);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    box-shadow: var(--card-shadow);
+    padding: 14px 18px;
+    margin-bottom: 4px;
+}
+.toolbar-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 8px;
+}
+.toolbar-range {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    font-variant-numeric: tabular-nums;
+}
+.toolbar-divider {
+    width: 1px;
+    align-self: stretch;
+    background-color: var(--track);
+    margin: 0 4px;
+}
+
+/* Segmented control — pill track on the search-bg */
+.filter-toolbar .mantine-SegmentedControl-root {
+    background-color: var(--search-bg);
+}
+
+/* Year RangeSlider — left-to-right Spektrum gradient rail, white thumbs with colored ring */
+.spectrum-slider [class*="RangeSlider-track"] {
+    height: 6px;
+}
+.spectrum-slider [class*="RangeSlider-track"]::before {
+    background: linear-gradient(90deg, #B23A48, #2A4D9B, #C2682A, #6D3A9C, #B08A1E, #1F7A5A);
+    opacity: 1;
+}
+.spectrum-slider [class*="RangeSlider-bar"] {
+    background: transparent;
+}
+.spectrum-slider [class*="RangeSlider-thumb"] {
+    background: #FFFFFF;
+    border: 2px solid #6D3A9C;
+    width: 16px;
+    height: 16px;
+}
+[data-mantine-color-scheme="dark"] .spectrum-slider [class*="RangeSlider-track"]::before {
+    background: linear-gradient(90deg, #FF6B6E, #6E8BFF, #FF8A3D, #B97BE6, #F2C04B, #4CD389);
+}
+[data-mantine-color-scheme="dark"] .spectrum-slider [class*="RangeSlider-thumb"] {
+    background: #111722;
+    border-color: #B97BE6;
+}
+
+/* ===============================================================================================
+   2025 Prizes page — header + per-category cards
+   =============================================================================================== */
+.page-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 24px;
+    color: var(--text-primary);
+    line-height: 1.15;
+}
+.page-subtitle {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+}
+.laureate-count-pill {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 999px;
+    color: #FFFFFF;
+    background: #14181E;
+    white-space: nowrap;
+}
+[data-mantine-color-scheme="dark"] .laureate-count-pill {
+    background: #1B2027;
+    color: var(--text-primary);
+    border: 1px solid var(--card-border);
+}
+
+.prize-card {
+    background-color: var(--surface);
+    border: 1px solid var(--card-border);
+    border-top: 5px solid var(--prize-accent, #B23A48);
+    border-radius: 14px;
+    box-shadow: var(--card-shadow);
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 100%;
+}
+.prize-cat-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--prize-accent, #B23A48);
+}
+.prize-cat-label .material-symbols-rounded {
+    font-size: 18px;
+}
+.prize-names {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 1.25;
+    color: var(--text-primary);
+}
+.prize-motivation {
+    font-family: var(--font-body);
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text-secondary);
+    border-top: 1px solid var(--divider);
+    padding-top: 10px;
+    margin-top: 2px;
+}
+
+/* Per-category accent (Jewel light / Neon dark) */
+.prize-card.cat-medicine   { --prize-accent: #B23A48; }
+.prize-card.cat-physics    { --prize-accent: #2A4D9B; }
+.prize-card.cat-chemistry  { --prize-accent: #C2682A; }
+.prize-card.cat-economics  { --prize-accent: #6D3A9C; }
+.prize-card.cat-literature { --prize-accent: #B08A1E; }
+.prize-card.cat-peace      { --prize-accent: #1F7A5A; }
+[data-mantine-color-scheme="dark"] .prize-card.cat-medicine   { --prize-accent: #FF6B6E; }
+[data-mantine-color-scheme="dark"] .prize-card.cat-physics    { --prize-accent: #6E8BFF; }
+[data-mantine-color-scheme="dark"] .prize-card.cat-chemistry  { --prize-accent: #FF8A3D; }
+[data-mantine-color-scheme="dark"] .prize-card.cat-economics  { --prize-accent: #B97BE6; }
+[data-mantine-color-scheme="dark"] .prize-card.cat-literature { --prize-accent: #F2C04B; }
+[data-mantine-color-scheme="dark"] .prize-card.cat-peace      { --prize-accent: #4CD389; }
+
+/* ===============================================================================================
+   Spektrum-Verteilung card — per-category horizontal bars
+   =============================================================================================== */
+.spektrum-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 12px;
+}
+.spektrum-row {
+    display: grid;
+    grid-template-columns: 84px 1fr 40px;
+    align-items: center;
+    gap: 10px;
+}
+.spektrum-label {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+.spektrum-track {
+    height: 8px;
+    border-radius: 999px;
+    background-color: var(--track);
+    overflow: hidden;
+}
+.spektrum-fill {
+    height: 100%;
+    border-radius: 999px;
+    min-width: 4px;
+}
+.spektrum-count {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ===============================================================================================
+   Legacy card classes (dmc-styles.css) re-tokenised so they follow light/dark color scheme.
+   These selectors mirror dmc-styles.css and load later (assets are alphabetical) → they win.
+   =============================================================================================== */
+.widget-container,
+.loader-spinner {
+    background-color: var(--surface);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    box-shadow: var(--card-shadow);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+}
+
+.selection-area {
+    background-color: var(--surface);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    box-shadow: var(--card-shadow);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+}
+
+/* KPI number */
+.widget-container h1 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 36px;
+    line-height: 1.1;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+    margin: 4px 0 0;
+}
+
+.widget-title {
+    border-bottom: 1px solid var(--divider);
+}
+.widget-title h3,
+.widget-content h4 {
+    font-family: var(--font-display);
+    color: var(--text-primary);
+}
+.widget-title h4 {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    color: var(--text-muted);
+}
+.widget-title p,
+.widget-content p,
+.widget-footer p {
+    color: var(--text-secondary);
+}
+.widget-footer {
+    border-top: 1px solid var(--divider);
+}
+/* The big laureate name under the KPI number */
+.widget-container > div > h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.plot-header {
+    font-family: var(--font-display);
+    color: var(--text-primary);
+}
+.plot-subheader {
+    font-family: var(--font-body);
+    color: var(--text-secondary);
+}
+
+/* Plotly hover tooltips pick up the surface in dark mode */
+[data-mantine-color-scheme="dark"] .hoverlayer .hovertext path,
+[data-mantine-color-scheme="dark"] .hoverlayer .hovertext rect {
+    fill: var(--surface) !important;
+    stroke: var(--card-border) !important;
+}
