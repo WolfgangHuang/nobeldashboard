@@ -1233,7 +1233,6 @@ def generate_choroplethglobe(data=df_laureates, country="birth", gender="all", c
         font=dict(
             family = 'IBM Plex Sans, sans-serif',
             size = 11,
-            color = cf.c_brand_color_main,
         ),
         # showlegend = True,
         # title=dict(
@@ -1249,32 +1248,21 @@ def generate_choroplethglobe(data=df_laureates, country="birth", gender="all", c
         height=800,
         autosize=True,
         geo=dict(
-            # bgcolor='#ffffff',
-            # landcolor='#f0f0f0',
-            # showcountries=True,
-            # oceancolor=' #f0f005',
-            # rivercolor=' #f0f0f5',
-            # lakecolor=' #f0f0f5',
-            # showframe=False,
-            # showcoastlines=False,
-            # projection_type='orthographic'
-
             projection_type="orthographic",
             showland=True,
-            countrycolor=cf.c_black,  # Darker color for country borders
+            countrycolor=th.GEO_LIGHT["stroke"],
             countrywidth=0.8,  # Border width
-            coastlinecolor=cf.c_black,  # Darker coastlines
+            coastlinecolor=th.GEO_LIGHT["stroke"],
             coastlinewidth=0.5,  # Coastline width
             showlakes=True,
             showcountries=True,
             showocean=True,
             showframe=False,  # Removes the box frame
-            bgcolor='#ffffff',
-            landcolor='#f0f0f0',
-            oceancolor=' #e6f2ff',
-            rivercolor=' #e6f2ff',
-            lakecolor=' #e6f2ff',
-
+            bgcolor=th.GEO_LIGHT["frame"],
+            landcolor=th.GEO_LIGHT["land"],
+            oceancolor=th.GEO_LIGHT["water"],
+            rivercolor=th.GEO_LIGHT["water"],
+            lakecolor=th.GEO_LIGHT["water"],
         )
     )
 
@@ -1288,14 +1276,7 @@ def generate_choroplethglobe(data=df_laureates, country="birth", gender="all", c
         )
     )
 
-    # Hover label styling
-    fig.update_layout(
-        hoverlabel=dict(
-            bgcolor=cf.c_plot_background,
-            font_size=12,
-            font_family="IBM Plex Sans"
-        )
-    )
+    # Hover label styling comes from the theme template (theme-aware surface color).
 
     return fig
 
@@ -1385,7 +1366,7 @@ def generate_scattermapbox_cities(data=df_laureates, city="birth", gender="all",
         mode='markers',
         marker=go.scattermap.Marker(
             size=9,   # Marker size
-            color=cf.c_blue_light,  # Color of the marker (your brand color)
+            color=th.SPECTRUM_LIGHT["Physics"],  # spectrum blue; swaps to Neon in dark mode
             opacity=0.8
         ),
         text=data['AwardeeDisplayName'],  # Laureate name (used for hover)
@@ -1398,30 +1379,12 @@ def generate_scattermapbox_cities(data=df_laureates, city="birth", gender="all",
         template='nbl_light',
         plot_bgcolor=cf.c_plot_background,
         margin={"r":0,"t":0,"l":0,"b":0},
-        font=dict(
-            family = 'IBM Plex Sans, sans-serif',
-            size = 14,
-            color = cf.c_brand_color_main
-        ),
-        hoverlabel=dict(
-                bgcolor=cf.c_hoverlabel_bg,
-                font_size=12,
-                font_family="IBM Plex Sans"
-        ),
-
-        # title=dict(
-        #     text = f"1.c: Places of {city.capitalize()} of Nobel Laureates",
-        #     font=dict(size = 20),
-        #     x = 0,                            # Left align the title
-        #     xanchor = 'left',                 # Align to the left edge
-        #     y = 1,                         # Adjust Y to position title above the map
-        #     yanchor = 'top',                  # Anchor at the top of the title box
-        #     pad=dict(t = 20, b = 20)
-        # ),
-        # width = 800,
+        # font + hoverlabel styling come from the theme template (theme-aware).
         height = 800,
-        mapbox=dict(
-            style="carto-positron",  # Free CartoDB Positron map style
+        # go.Scattermap (MapLibre) reads layout.map — the earlier layout.mapbox
+        # settings were silently ignored. Style swaps to carto-darkmatter in dark mode.
+        map=dict(
+            style=th.MAPBOX_STYLE_LIGHT,
             zoom=1,  # Set default zoom level
             center=dict(lat=20, lon=0)  # Default map center
         ),
@@ -1670,7 +1633,6 @@ def generate_bubbles_perpopulation(data=df_prizes, country="birth", gender="all"
             font=dict(
                 family = 'IBM Plex Sans, sans-serif',
                 size = 11,
-                color = cf.c_brand_color_main,
             ),
             showlegend = False,
             autosize=True,
@@ -1858,7 +1820,6 @@ def generate_bar_percountry(data=df_prizes, country="birth", gender="all", categ
         font=dict(
             family='IBM Plex Sans, sans-serif',
             size=11,
-            color=cf.c_brand_color_main,
         ),
         hoverlabel=dict(
             bgcolor=cf.c_plot_background,
@@ -2256,7 +2217,6 @@ def generate_histogram_timegap(data=df_prizes, categories="all", gender="all", t
         font=dict(
             family = 'IBM Plex Sans, sans-serif',
             size = 14,
-            color = cf.c_brand_color_main,
         ),
         # title=dict(
         #     text = "3.a: Histogram of Timegap between Seminal Paper and Nobel Prize",
@@ -2383,7 +2343,7 @@ def generate_scatterbox_timegaptrend(data=df_laureates, df_lifeexpectancy=df_lif
         y=df_lifeexpectancy["World"], 
         mode='lines', 
         name="Life Expectancy World",
-        line=dict(color=cf.c_black, width=2),  # Red line for the new data
+        line=dict(color=th.FIG_INK_LIGHT, width=2),  # ink line; swaps to light in dark mode
         hovertemplate=(
             "<b>%{x}</b><br>" +  # Years
             "Life Expectancy: %{y:.1f} years<br>"  # life expectancy
@@ -2397,7 +2357,7 @@ def generate_scatterbox_timegaptrend(data=df_laureates, df_lifeexpectancy=df_lif
         y=df_lifeexpectancy["Europe"], 
         mode='lines', 
         name="Life Expectancy Europe",
-        line=dict(color=cf.c_blue_light, width=2),  # Red line for the new data
+        line=dict(color=th.SPECTRUM_LIGHT["Physics"], width=2),  # spectrum blue
         hovertemplate=(
             "<b>%{x}</b><br>" +  # Years
             "Life Expectancy: %{y:.1f} years<br>"  # life expectancy
@@ -2417,7 +2377,6 @@ def generate_scatterbox_timegaptrend(data=df_laureates, df_lifeexpectancy=df_lif
         font=dict(
             family = 'IBM Plex Sans, sans-serif',
             size = 14,
-            color = cf.c_brand_color_main,
         ),
         # title=dict(
         #     text = "3.b: Timegap between Seminal Paper and Nobel Prize with Trendlines",
@@ -2576,7 +2535,6 @@ def generate_scatterbox_age(data=df_laureates, categories="all", gender="all", t
         font=dict(
             family = 'IBM Plex Sans, sans-serif',
             size = 14,
-            color = cf.c_brand_color_main,
         ),        
         # title=dict(
         #     text = "3.c: Laureate Age at Time of Award (with trendlines)",
@@ -2672,7 +2630,6 @@ def generate_heatmap_age(data=df_laureates, categories="all", gender="all", time
         font=dict(
             family = 'IBM Plex Sans, sans-serif',
             size = 14,
-            color = cf.c_brand_color_main,
         ),
         # title=dict(
         #     text = f"3.c: Laureate Age at Time of Award",
@@ -2786,7 +2743,6 @@ def generate_parcat_migration(data=df_laureates, loc1="ParCatDegreeCountry", loc
         font=dict(
             family = 'IBM Plex Sans, sans-serif',
             size = 14,
-            color = cf.c_brand_color_main,
         ),
         # title=dict(
         #     text = "4.a: Movement from Locations of Degree / Achievement / Prize",
@@ -2920,7 +2876,6 @@ def generate_line_prizemoney(data=df_prizes, categories="all", gender="all", tim
         font=dict(
             family = 'IBM Plex Sans, sans-serif',
             size = 11,
-            color = cf.c_brand_color_main,
         ),
         
         # showlegend = True,
@@ -2939,10 +2894,7 @@ def generate_line_prizemoney(data=df_prizes, categories="all", gender="all", tim
             y=0.93,            # Position from top; adjust for padding
             xanchor='left',    # Anchor legend by the left
             yanchor='top',     # Anchor legend by the top
-            bgcolor='rgba(255, 255, 255, 0.5)', # Optional: Background color with transparency
-            bordercolor='rgba(0, 0, 0, 0.2)',   # Optional: Border color
-            borderwidth=1,     # Optional: Border width
-            # borderpad=10,      # Padding around the legend box
+            # bgcolor/bordercolor come from the theme template (transparent, theme-aware)
             font=dict(size=10) # Font size of legend text
         ),
 
@@ -3224,7 +3176,7 @@ def generate_globe_movement(data=df_laureates, year="all", categories="all", gen
         mode="markers",
         marker=dict(
             size=4,
-            color=cf.c_black,
+            color=th.FIG_INK_LIGHT,  # ink markers; swap to light in dark mode
             line=dict(width=0.5, color="rgba(68, 68, 68, 0)")
         ),
         name="Birth Cities"
@@ -3255,34 +3207,25 @@ def generate_globe_movement(data=df_laureates, year="all", categories="all", gen
         geo=go.layout.Geo(
             projection_type="orthographic",
             showland=True,
-            countrycolor=cf.c_black,  # Darker color for country borders
+            countrycolor=th.GEO_LIGHT["stroke"],
             countrywidth=0.8,  # Border width
-            coastlinecolor=cf.c_black,  # Darker coastlines
+            coastlinecolor=th.GEO_LIGHT["stroke"],
             coastlinewidth=0.5,  # Coastline width
             showlakes=True,
             showcountries=True,
             showocean=True,
             showframe=False,  # Removes the box frame
-            bgcolor='#ffffff',
-            landcolor='#f0f0f0',
-            oceancolor='#f1f6ff',
-            rivercolor=' #e6f2ff',
-            lakecolor=' #e6f2ff',
-
-
+            bgcolor=th.GEO_LIGHT["frame"],
+            landcolor=th.GEO_LIGHT["land"],
+            oceancolor=th.GEO_LIGHT["water"],
+            rivercolor=th.GEO_LIGHT["water"],
+            lakecolor=th.GEO_LIGHT["water"],
         ),
         height=900,
         #autosize=True
     )
 
-    # Hover label styling
-    fig.update_layout(
-        hoverlabel=dict(
-            bgcolor=cf.c_plot_background,
-            font_size=12,
-            font_family="IBM Plex Sans"
-        )
-    )
+    # Hover label styling comes from the theme template (theme-aware surface color).
 
     return fig
 
@@ -3360,7 +3303,7 @@ def generate_map_movement(data=df_laureates, year="last", categories="all", gend
         mode="markers",
         marker=go.scattermapbox.Marker(
             size=10,
-            color=cf.c_teal,
+            color=th.SPECTRUM_LIGHT["Peace"],  # spectrum green; swaps to Neon in dark mode
             opacity=0.7
         ),
         name="Birth Cities"
@@ -3375,15 +3318,14 @@ def generate_map_movement(data=df_laureates, year="last", categories="all", gend
         mode="markers",
         marker=go.scattermapbox.Marker(
             size=10,
-            color=cf.c_teal,
+            color=th.SPECTRUM_LIGHT["Peace"],  # spectrum green; swaps to Neon in dark mode
             opacity=0.9
         ),
         name="Affiliation Cities"
     ))
 
     # Add migration paths for each laureate with curvature
-    # colors = [cf.c_brown, cf.c_darkmagenta, cf.c_lightblue, cf.c_orange, cf.c_pink, cf.c_red, cf.c_teal]
-    colors = cf.c_colorscale_palette
+    colors = th.colorway(False)  # spectrum colors; swap to Neon in dark mode
     for i, row in data.iterrows():
         color = colors[int(i) % len(colors)]  # Cycle through the colors list
 
@@ -3413,17 +3355,11 @@ def generate_map_movement(data=df_laureates, year="last", categories="all", gend
         title_text="Places of Birth & Affiliation",
         showlegend=False,
         mapbox=dict(
-            style="carto-positron",  # Other styles: "streets", "dark", "light", "satellite", etc.
+            style=th.MAPBOX_STYLE_LIGHT,  # swaps to carto-darkmatter in dark mode
             center=dict(lat=30, lon=0),  # Center the map globally
             zoom=0.8,
-        
         ),
-
-        hoverlabel=dict(
-                bgcolor=cf.c_hoverlabel_bg,
-                font_size=12,
-                font_family="IBM Plex Sans"
-        ),
+        # hoverlabel styling comes from the theme template (theme-aware)
         # height=800,
         margin=dict(l=0, r=0, t=0, b=0),  # Reduce the margins
     )
@@ -3451,33 +3387,10 @@ def generate_mostcommon_firstnames(data=df_laureates, categories="all", gender="
 
     top_names = df_filtered['LaureateNameFirst'].value_counts().head(25)
 
-    bar_colors = [
-        cf.c_black_light,
-        cf.c_blue_light,
-        cf.c_teal_light,
-        cf.c_green_light,
-        cf.c_yellow_light,
-        cf.c_orange_light,
-        cf.c_red_light,
-        cf.c_purple_light,
-        cf.c_grey_light,
-        cf.c_black,
-        cf.c_blue,
-        cf.c_teal,
-        cf.c_green,
-        cf.c_yellow,
-        cf.c_orange,
-        cf.c_red,
-        cf.c_purple,
-        cf.c_grey,
-        cf.c_black_dark,
-        cf.c_blue_dark,
-        cf.c_teal_dark,
-        cf.c_green_dark,
-        cf.c_yellow_dark,
-        cf.c_orange_dark,
-        cf.c_red_dark
-    ][:len(top_names)]
+    # Cycle the Nobel-Spektrum colorway (swaps to Neon in dark mode) instead of the
+    # pre-redesign palette.
+    spectrum = th.colorway(False)
+    bar_colors = [spectrum[i % len(spectrum)] for i in range(len(top_names))]
 
     # Create a bar chart (single trace so colors/hover data stay aligned per bar)
     fig = px.bar(
@@ -3504,10 +3417,10 @@ def generate_mostcommon_firstnames(data=df_laureates, categories="all", gender="
             ),
             margin={"r":20,"t":20,"l":0,"b":0},
 
+            # font color comes from the theme template (theme-aware)
             font=dict(
                 family = 'IBM Plex Sans, sans-serif',
                 size = 11,
-                color = cf.c_brand_color_main,
             ),
 
             showlegend = False,

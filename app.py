@@ -142,7 +142,7 @@ def generate_loader_spinner(id):
             html.Div(
                 dmc.Loader(
                     id={'type':'spinner', 'index':id},
-                    color= cf.c_grey,
+                    color="economics",  # Mantine theme ramp (auto-adjusts in dark mode)
                     size="md",  # Available sizes: xs, sm, md, lg, xl
                     variant="dots",  # Available variants: oval, dots, bars
                 ),
@@ -270,7 +270,7 @@ def generate_plot_in_layout_standard(plot_config):
                                         dmc.Button(
                                             "Filter", 
                                             variant="gradient", 
-                                            gradient={"from": cf.c_blue_light, "to": cf.c_green_dark}, 
+                                            gradient={"from": "economics", "to": "physics"}, 
                                             size="xs", 
                                             id={"type": "filter-button", "index": plot_config.plot_id},
                                         ),
@@ -518,7 +518,7 @@ def generate_plot_in_layout_nominations(plot_config):
                                         dmc.Button(
                                             "Filter", 
                                             variant="gradient", 
-                                            gradient={"from": cf.c_blue_light, "to": cf.c_green_dark}, 
+                                            gradient={"from": "economics", "to": "physics"}, 
                                             size="xs", 
                                             id={"type": "nom-filter-button", "index": plot_config.plot_id},
                                         ),
@@ -534,7 +534,7 @@ def generate_plot_in_layout_nominations(plot_config):
                     dcc.Loading(
                         id={"type": "nom-loading", "index": plot_config.plot_id},
                         type="circle",
-                        color=cf.c_grey,
+                        color=th.SPECTRUM_LIGHT["Economics"],  # brand accent (readable in both modes)
                         children=[
                             html.Div([
                                 dcc.Graph(
@@ -623,7 +623,7 @@ def generate_network_in_layout_cytoscape(plot_config):
                                         dmc.Button(
                                             "Filter",
                                             variant="gradient",
-                                            gradient={"from": cf.c_blue_light, "to": cf.c_green_dark},
+                                            gradient={"from": "economics", "to": "physics"},
                                             size="xs",
                                             id={"type": "nom-filter-button", "index": plot_config.plot_id},
                                         ),
@@ -1200,7 +1200,7 @@ def generate_png_in_layout(
     subheader="", 
     datafrom="1901", 
     datato=lastyearincluded, 
-    badges=[dmc.Badge("All Categories", variant="outline", color= cf.c_brand_color_alt)],
+    badges=[dmc.Badge("All Categories", variant="outline", color="economics")],
     code="", 
     filepath="",
     style={'width': '80vw', 'height': '50vh'}, 
@@ -1220,7 +1220,7 @@ def generate_png_in_layout(
                             html.P(subheader, className="plot-subheader") if subheader else None,
                             dmc.Group(
                                 [
-                                    dmc.Badge(f"{datafrom} - {datato}", variant="outline", color= cf.c_brand_color_alt),
+                                    dmc.Badge(f"{datafrom} - {datato}", variant="outline", color="economics"),
                                     *badges,
                                 ]
                             ),
@@ -1339,12 +1339,12 @@ def render_overview_content():
                                 html.Div("CATEGORIES", className="toolbar-eyebrow"),
                                 dmc.Group(
                                     [
-                                        dmc.Chip("Medicine", checked=True, color=cf.c_medicine, id="chip-medicine"),
-                                        dmc.Chip("Physics", checked=True, color=cf.c_physics, id="chip-physics"),
-                                        dmc.Chip("Chemistry", checked=True, color=cf.c_chemistry, id="chip-chemistry"),
-                                        dmc.Chip("Economics", checked=True, color=cf.c_economics, id="chip-economics"),
-                                        dmc.Chip("Literature", checked=True, color=cf.c_literature, id="chip-literature"),
-                                        dmc.Chip("Peace", checked=True, color=cf.c_peace, id="chip-peace"),
+                                        dmc.Chip("Medicine", checked=True, color="medicine", id="chip-medicine"),
+                                        dmc.Chip("Physics", checked=True, color="physics", id="chip-physics"),
+                                        dmc.Chip("Chemistry", checked=True, color="chemistry", id="chip-chemistry"),
+                                        dmc.Chip("Economics", checked=True, color="economics", id="chip-economics"),
+                                        dmc.Chip("Literature", checked=True, color="literature", id="chip-literature"),
+                                        dmc.Chip("Peace", checked=True, color="peace", id="chip-peace"),
                                     ],
                                     gap="xs",
                                 ),
@@ -1917,12 +1917,12 @@ def render_listgenerator_content():
                     html.Div(
                         dmc.Group(
                             [
-                                dmc.Chip("Medicine", checked=True, color=cf.c_medicine, id="chip-medicine"),
-                                dmc.Chip("Physics", checked=True, color=cf.c_physics, id="chip-physics"),
-                                dmc.Chip("Chemistry", checked=True, color=cf.c_chemistry, id="chip-chemistry"),
-                                dmc.Chip("Economics", checked=True, color=cf.c_economics, id="chip-economics"),
-                                dmc.Chip("Literature", checked=True, color=cf.c_literature, id="chip-literature"),
-                                dmc.Chip("Peace", checked=True, color=cf.c_peace, id="chip-peace")
+                                dmc.Chip("Medicine", checked=True, color="medicine", id="chip-medicine"),
+                                dmc.Chip("Physics", checked=True, color="physics", id="chip-physics"),
+                                dmc.Chip("Chemistry", checked=True, color="chemistry", id="chip-chemistry"),
+                                dmc.Chip("Economics", checked=True, color="economics", id="chip-economics"),
+                                dmc.Chip("Literature", checked=True, color="literature", id="chip-literature"),
+                                dmc.Chip("Peace", checked=True, color="peace", id="chip-peace")
                             ]
                         )
                     ),
@@ -1946,8 +1946,8 @@ def render_listgenerator_content():
                                         html.Div(
                                             dmc.Group(
                                                 [
-                                                    dmc.Chip("female", variant="outline", checked=True, color=cf.c_red, id="chip-female"),
-                                                    dmc.Chip("male", variant="outline", checked=True, color=cf.c_teal, id="chip-male"),
+                                                    dmc.Chip("female", variant="outline", checked=True, color="medicine", id="chip-female"),
+                                                    dmc.Chip("male", variant="outline", checked=True, color="peace", id="chip-male"),
                                                 ]
                                             )
                                         )
@@ -2007,7 +2007,7 @@ def render_listgenerator_content():
                                                         {"value": 2},
                                                         {"value": 3}
                                                     ],
-                                                    color=cf.c_teal,
+                                                    color="peace",
                                                     # style={"width": "50"}, 
                                                     mt=10
                                                 ),
@@ -2131,7 +2131,7 @@ def render_listgenerator_content():
                                                     #{"value": int(lastyearincluded), "label": lastyearincluded}
                                                 ],
                                                 mb=35,
-                                                color=cf.c_teal
+                                                color="peace"
                                             ),
 
                                         ],
@@ -2159,7 +2159,7 @@ def render_listgenerator_content():
                                                     {"value": int(lastyearincluded), "label": lastyearincluded}
                                                 ],
                                                 mb=35,
-                                                color=cf.c_teal
+                                                color="peace"
                                             ),
                                         ],
                                     )  # End Time Range Slider

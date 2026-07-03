@@ -260,7 +260,7 @@ class PlotConfig:
         """
         badges_code = []
         for badge in self.badges:
-            badges_code.append(dmc.Badge(badge, variant="outline", color=c_brand_color_alt, mr="xs"))
+            badges_code.append(dmc.Badge(badge, variant="outline", color="economics", mr="xs"))
         return badges_code
 
 # List of Generator Functions and the plots generated
@@ -911,12 +911,12 @@ def render_filter_standard(plot_config):
                 html.Div("Prize Categories"),
                 html.Div(
                     dmc.Group([
-                        dmc.Chip("Medicine", size="xs", variant="outline", checked=False if "Medicine" in plot_config.chips_notchecked else True, disabled=True if "Medicine" in plot_config.chips_disabled else False, color=c_brand_color_main, id={"type": "chip-medicine", "index": plot_config.plot_id}),
-                        dmc.Chip("Physics", size="xs", variant="outline", checked=False if "Physics" in plot_config.chips_notchecked else True, disabled=True if "Physics" in plot_config.chips_disabled else False, color=c_brand_color_main, id={"type": "chip-physics", "index": plot_config.plot_id}),
-                        dmc.Chip("Chemistry", size="xs", variant="outline", checked=False if "Chemistry" in plot_config.chips_notchecked else True, disabled=True if "Chemistry" in plot_config.chips_disabled else False, color=c_brand_color_main, id={"type": "chip-chemistry", "index": plot_config.plot_id}),
-                        dmc.Chip("Economics", size="xs", variant="outline", checked=False if "Economics" in plot_config.chips_notchecked else True, disabled=True if "Economics" in plot_config.chips_disabled else False, color=c_brand_color_main, id={"type": "chip-economics", "index": plot_config.plot_id}),
-                        dmc.Chip("Literature", size="xs", variant="outline", checked=False if "Literature" in plot_config.chips_notchecked else True, disabled=True if "Literature" in plot_config.chips_disabled else False, color=c_brand_color_main, id={"type": "chip-literature", "index": plot_config.plot_id}),
-                        dmc.Chip("Peace", size="xs", variant="outline", checked=False if "Peace" in plot_config.chips_notchecked else True, disabled=True if "Peace" in plot_config.chips_disabled else False, color=c_brand_color_main, id={"type": "chip-peace", "index": plot_config.plot_id}),
+                        dmc.Chip("Medicine", size="xs", variant="outline", checked=False if "Medicine" in plot_config.chips_notchecked else True, disabled=True if "Medicine" in plot_config.chips_disabled else False, color="economics", id={"type": "chip-medicine", "index": plot_config.plot_id}),
+                        dmc.Chip("Physics", size="xs", variant="outline", checked=False if "Physics" in plot_config.chips_notchecked else True, disabled=True if "Physics" in plot_config.chips_disabled else False, color="economics", id={"type": "chip-physics", "index": plot_config.plot_id}),
+                        dmc.Chip("Chemistry", size="xs", variant="outline", checked=False if "Chemistry" in plot_config.chips_notchecked else True, disabled=True if "Chemistry" in plot_config.chips_disabled else False, color="economics", id={"type": "chip-chemistry", "index": plot_config.plot_id}),
+                        dmc.Chip("Economics", size="xs", variant="outline", checked=False if "Economics" in plot_config.chips_notchecked else True, disabled=True if "Economics" in plot_config.chips_disabled else False, color="economics", id={"type": "chip-economics", "index": plot_config.plot_id}),
+                        dmc.Chip("Literature", size="xs", variant="outline", checked=False if "Literature" in plot_config.chips_notchecked else True, disabled=True if "Literature" in plot_config.chips_disabled else False, color="economics", id={"type": "chip-literature", "index": plot_config.plot_id}),
+                        dmc.Chip("Peace", size="xs", variant="outline", checked=False if "Peace" in plot_config.chips_notchecked else True, disabled=True if "Peace" in plot_config.chips_disabled else False, color="economics", id={"type": "chip-peace", "index": plot_config.plot_id}),
                     ])
                 ),
             ],
@@ -932,8 +932,8 @@ def render_filter_standard(plot_config):
                 html.Div("Gender"),
                 html.Div(
                     dmc.Group([
-                        dmc.Chip("female", size="xs", variant="outline", checked=True, color=c_brand_color_main, id={"type": "chip-female", "index": plot_config.plot_id}),
-                        dmc.Chip("male", size="xs", variant="outline", checked=True, color=c_brand_color_main, id={"type": "chip-male", "index": plot_config.plot_id}),
+                        dmc.Chip("female", size="xs", variant="outline", checked=True, color="economics", id={"type": "chip-female", "index": plot_config.plot_id}),
+                        dmc.Chip("male", size="xs", variant="outline", checked=True, color="economics", id={"type": "chip-male", "index": plot_config.plot_id}),
                     ])
                 ),
             ],
@@ -967,7 +967,7 @@ def render_filter_standard(plot_config):
                             minRange=1,
                             marks=marks_life,
                             style={"width": "400px"},
-                            color=c_teal
+                            color="peace"
                         ),
                     ], mb=35)
                 )
@@ -1005,7 +1005,7 @@ def render_filter_standard(plot_config):
                 className="selection-area",
             ),
             dmc.Group([
-                dmc.Button("Submit", id={"type": "submit-button", "index": plot_config.plot_id}, color=c_brand_color_main),
+                dmc.Button("Submit", id={"type": "submit-button", "index": plot_config.plot_id}, color="economics"),
                 dmc.Button("Close", color="c_red", variant="outline", id={"type": "close-button", "index": plot_config.plot_id}),
             ], justify="flex-end"),
         ],
@@ -1074,10 +1074,9 @@ def render_filter_nominations(plot_config):
                     id={"type": "nom-nomination-count", "index": plot_config.plot_id},
                     size="md",
                     #fw=700,
-                    c=c_brand_color_main
                 )
             ],
-            color=c_brand_color_main,
+            color="economics",
             variant="light",
             style={"margin-bottom": "10px"}
         ),
@@ -1086,12 +1085,12 @@ def render_filter_nominations(plot_config):
         html.Div("Prize Categories"),
         html.Div(
             dmc.Group([
-                dmc.Chip("Medicine", checked=True, color=c_medicine, id={"type": "nom-chip-medicine", "index": plot_config.plot_id}),
-                dmc.Chip("Physics", checked=True, color=c_physics, id={"type": "nom-chip-physics", "index": plot_config.plot_id}),
-                dmc.Chip("Chemistry", checked=True, color=c_chemistry, id={"type": "nom-chip-chemistry", "index": plot_config.plot_id}),
-                dmc.Chip("Economics", checked=True, color=c_economics, id={"type": "nom-chip-economics", "index": plot_config.plot_id}),
-                dmc.Chip("Literature", checked=True, color=c_literature, id={"type": "nom-chip-literature", "index": plot_config.plot_id}),
-                dmc.Chip("Peace", checked=True, color=c_peace, id={"type": "nom-chip-peace", "index": plot_config.plot_id})
+                dmc.Chip("Medicine", checked=True, color="medicine", id={"type": "nom-chip-medicine", "index": plot_config.plot_id}),
+                dmc.Chip("Physics", checked=True, color="physics", id={"type": "nom-chip-physics", "index": plot_config.plot_id}),
+                dmc.Chip("Chemistry", checked=True, color="chemistry", id={"type": "nom-chip-chemistry", "index": plot_config.plot_id}),
+                dmc.Chip("Economics", checked=True, color="economics", id={"type": "nom-chip-economics", "index": plot_config.plot_id}),
+                dmc.Chip("Literature", checked=True, color="literature", id={"type": "nom-chip-literature", "index": plot_config.plot_id}),
+                dmc.Chip("Peace", checked=True, color="peace", id={"type": "nom-chip-peace", "index": plot_config.plot_id})
             ])
         ),
 
@@ -1108,8 +1107,8 @@ def render_filter_nominations(plot_config):
                             html.Div("Nominator Gender"),
                             html.Div(
                                 dmc.Group([
-                                    dmc.Chip("female", size="xs", variant="outline", checked=True, color=c_brand_color_main, id={"type": "nom-chip-nominator-female", "index": plot_config.plot_id}),
-                                    dmc.Chip("male", size="xs", variant="outline", checked=True, color=c_brand_color_main, id={"type": "nom-chip-nominator-male", "index": plot_config.plot_id}),
+                                    dmc.Chip("female", size="xs", variant="outline", checked=True, color="economics", id={"type": "nom-chip-nominator-female", "index": plot_config.plot_id}),
+                                    dmc.Chip("male", size="xs", variant="outline", checked=True, color="economics", id={"type": "nom-chip-nominator-male", "index": plot_config.plot_id}),
                                 ])
                             ),
                         ],
@@ -1125,8 +1124,8 @@ def render_filter_nominations(plot_config):
                             html.Div("Nominee Gender"),
                             html.Div(
                                 dmc.Group([
-                                    dmc.Chip("female", size="xs", variant="outline", checked=True, color=c_brand_color_main, id={"type": "nom-chip-nominee-female", "index": plot_config.plot_id}),
-                                    dmc.Chip("male", size="xs", variant="outline", checked=True, color=c_brand_color_main, id={"type": "nom-chip-nominee-male", "index": plot_config.plot_id}),
+                                    dmc.Chip("female", size="xs", variant="outline", checked=True, color="economics", id={"type": "nom-chip-nominee-female", "index": plot_config.plot_id}),
+                                    dmc.Chip("male", size="xs", variant="outline", checked=True, color="economics", id={"type": "nom-chip-nominee-male", "index": plot_config.plot_id}),
                                 ])
                             ),
                         ],
@@ -1212,7 +1211,7 @@ def render_filter_nominations(plot_config):
                                     minRange=1,
                                     marks=marks_nomination,
                                     style={"width": "100%"},
-                                    color=c_teal
+                                    color="peace"
                                 ),
                             ], mb=35)
                         )
@@ -1366,7 +1365,7 @@ def render_filter_nominations(plot_config):
                                 {"value": 2.0, "label": "2.0"},
                                 {"value": 3.0, "label": "3.0"}
                             ],
-                            color=c_teal,
+                            color="peace",
                             style={"width": "100%"}
                         )
                     ],
@@ -1385,7 +1384,7 @@ def render_filter_nominations(plot_config):
                                 {"value": 2.0, "label": "2.0"},
                                 {"value": 3.0, "label": "3.0"}
                             ],
-                            color=c_teal,
+                            color="peace",
                             style={"width": "100%"}
                         )
                     ],
@@ -1447,7 +1446,7 @@ def render_filter_nominations(plot_config):
                 className="selection-area",
             ),
             dmc.Group([
-                dmc.Button("Submit", id={"type": "nom-submit-button", "index": plot_config.plot_id}, color=c_brand_color_main),
+                dmc.Button("Submit", id={"type": "nom-submit-button", "index": plot_config.plot_id}, color="economics"),
                 dmc.Button("Close", color="c_red", variant="outline", id={"type": "nom-close-button", "index": plot_config.plot_id}),
             ], justify="flex-end"),
         ],

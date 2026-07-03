@@ -48,8 +48,11 @@
 }
 
 /* ---- Base --------------------------------------------------------------------------------- */
+/* color/background also neutralize the bootstrap body rule (light-only #fff / brown text). */
 body {
     font-family: var(--font-body);
+    color: var(--text-primary);
+    background-color: var(--page-bg);
 }
 
 .mantine-AppShell-main,
@@ -570,6 +573,17 @@ body {
     color: var(--text-primary);
 }
 .plot-subheader {
+    font-family: var(--font-body);
+    color: var(--text-secondary);
+}
+
+/* Data-page text blocks (legacy classes in dmc-styles.css used fixed dark colors,
+   invisible on the dark surface). */
+.text-header {
+    font-family: var(--font-display);
+    color: var(--text-primary);
+}
+.text-subheader {
     font-family: var(--font-body);
     color: var(--text-secondary);
 }

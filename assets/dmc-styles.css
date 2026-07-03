@@ -48,8 +48,7 @@
 }
 
 
-/* Import the Rubik font */
-@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;700&display=swap');
+/* Legacy Rubik font removed — the redesign uses IBM Plex Sans / Space Grotesk (redesign.css). */
 
 /* Styling the div box */
 .info-box {
@@ -70,7 +69,7 @@
     background: linear-gradient(135deg, #f0f0f0, #fafafa);
 
     color: var(--black);;
-    font-family: 'Rubik', sans-serif;
+    font-family: var(--font-body);
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -91,7 +90,7 @@
 
     border-bottom-style: solid;
     border-bottom-width: 5px;
-    border-bottom-color: var(--timberwolf);
+    border-bottom-color: var(--grey_light);
 
     margin-bottom: 20px;
 
@@ -99,7 +98,7 @@
     background: linear-gradient(135deg, #f0f0f0, #fafafa);
 
     color: #47382a;
-    font-family: 'Rubik', sans-serif;
+    font-family: var(--font-body);
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -116,13 +115,13 @@
 
     border-bottom-style: solid;
     border-bottom-width: 5px;
-    border-bottom-color:var(--timberwolf);
+    border-bottom-color:var(--grey_light);
 
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background-color: #ffffff;
 
     color: var(--black);
-    font-family: 'Rubik', sans-serif;
+    font-family: var(--font-body);
 
     width: 100%; /* Allow the box to shrink and grow */
     max-width: 785px; /* Maximum size for the box */
@@ -222,7 +221,7 @@
     margin-bottom: 30px;
 
     color: var(--black);;
-    font-family: 'Rubik', sans-serif;
+    font-family: var(--font-body);
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -246,7 +245,7 @@
 .p{
     color: #0000ff;;
     font-size: 12;
-    font-family: 'Rubik', sans-serif;
+    font-family: var(--font-body);
     text-align: flex-start;
 }
 
@@ -254,7 +253,7 @@
     color: #ff00ff;;
     font-size: 16;
     font-weight: 700;
-    font-family: 'Rubik', sans-serif;
+    font-family: var(--font-body);
     text-align: flex-start;
 }
 **/
@@ -338,7 +337,7 @@
 .plot-header {
     font-size: 18px;
     font-weight: 500;
-    font-family: 'Rubik', sans-serif;
+    font-family: var(--font-body);
     color:var(--black);
     margin-bottom: 10px;
 }
@@ -346,7 +345,7 @@
 .plot-subheader {
     font-size: 12px;
     font-weight: 400;
-    font-family: 'Rubik', sans-serif;
+    font-family: var(--font-body);
     color:var(--blue);
     margin-bottom: 10px;
 }
@@ -354,7 +353,7 @@
 .dashboard-title {
     font-size: 32px;
     font-weight: 400;
-    font-family: 'Rubik', sans-serif;
+    font-family: var(--font-body);
     color: var(--blue);
     margin-top: 30px;
     margin-bottom: 30px;
@@ -363,14 +362,14 @@
 .dashboard-tab {
     font-size: 14px;
     font-weight: 300;
-    font-family: 'Rubik', sans-serif;
+    font-family: var(--font-body);
     color:var(--blue);
 }
 
 .text-header {
     font-size: 18px;
     font-weight: 500;
-    font-family: 'Rubik', sans-serif;
+    font-family: var(--font-body);
     color: var(--black);
     margin-bottom: 10px;
 }
@@ -378,7 +377,7 @@
 .text-subheader {
     font-size: 14px;
     font-weight: 600;
-    font-family: 'Rubik', sans-serif;
+    font-family: var(--font-body);
     color:var(--blue);
     margin-bottom: 10px;
 }
@@ -386,7 +385,7 @@
 .text-copy {
     font-size: 14px;
     font-weight: 400;
-    font-family: 'Rubik', sans-serif;
+    font-family: var(--font-body);
     color: #000000;
     margin-bottom: 10px;
 }
@@ -394,7 +393,7 @@
 
 .tooltip {
     background-color: #f7f7f7; /* Hover label background color */
-    font-family: Rubik, sans-serif;
+    font-family: var(--font-body);
     font-size: 12px;
     color: #333; /* Text color */
 }
