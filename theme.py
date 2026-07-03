@@ -250,9 +250,49 @@ def apply_theme(fig: go.Figure, dark: bool = False) -> go.Figure:
     return fig
 
 
+# ------------------------------------------------------------------------------------------------
+# Figure neutrals (light <-> dark pairs)
+# ------------------------------------------------------------------------------------------------
+# Some figure elements cannot come from the transparent template: globe/geo surfaces,
+# mapbox tile styles, ink-colored lines/markers. Generators stay theme-agnostic and use
+# the *_LIGHT values below; recolor_figure()/retheme_dict() swap them to their dark
+# counterparts alongside the category colors. Every value must be unique across all
+# swap pairs (the swap is a plain string mapping and must stay reversible).
+
+GEO_LIGHT = {
+    "frame":  "#FEFEFE",   # geo bgcolor around the globe (visually = light surface)
+    "land":   "#F0F0F1",
+    "water":  "#E6F2FE",
+    "stroke": "#27272D",   # country borders / coastlines (near-black on light land)
+}
+GEO_DARK = {
+    "frame":  "#101620",
+    "land":   "#232B36",
+    "water":  "#0D1725",
+    "stroke": "#57606C",
+}
+
+FIG_INK_LIGHT = "#26262B"   # near-black accent lines/markers on light ground
+FIG_INK_DARK = "#D7DCE3"    # ...become near-white on dark ground
+
+MAPBOX_STYLE_LIGHT = "carto-positron"
+MAPBOX_STYLE_DARK = "carto-darkmatter"
+
+_NEUTRAL_LIGHT_TO_DARK = {
+    **{GEO_LIGHT[k].upper(): GEO_DARK[k] for k in GEO_LIGHT},
+    FIG_INK_LIGHT.upper(): FIG_INK_DARK,
+    MAPBOX_STYLE_LIGHT.upper(): MAPBOX_STYLE_DARK,
+}
+_NEUTRAL_DARK_TO_LIGHT = {v.upper(): GEO_LIGHT[k] for k, v in GEO_DARK.items()}
+_NEUTRAL_DARK_TO_LIGHT[FIG_INK_DARK.upper()] = FIG_INK_LIGHT
+_NEUTRAL_DARK_TO_LIGHT[MAPBOX_STYLE_DARK.upper()] = MAPBOX_STYLE_LIGHT
+
 # Jewel (light) hex <-> Neon (dark) hex, for centrally re-theming finished figures.
+# Includes the figure-neutral pairs above, so one swap handles categories + neutrals.
 JEWEL_TO_NEON = {SPECTRUM_LIGHT[c].upper(): SPECTRUM_DARK[c] for c in CATEGORY_ORDER}
 NEON_TO_JEWEL = {SPECTRUM_DARK[c].upper(): SPECTRUM_LIGHT[c] for c in CATEGORY_ORDER}
+JEWEL_TO_NEON.update(_NEUTRAL_LIGHT_TO_DARK)
+NEON_TO_JEWEL.update(_NEUTRAL_DARK_TO_LIGHT)
 
 
 def _swap_hex(obj, mapping):
