@@ -1,0 +1,52 @@
+[project]
+name = "nobel-data-dashboard"
+version = "1.0.0"
+description = "Interactive Dash dashboard exploring Nobel Prize data (nbldata.org)"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.12"
+
+# Direct dependencies only, pinned to the currently tested versions (July 2026).
+# Transitive packages from the old requirements.txt (pip freeze) are resolved by
+# uv into uv.lock. Loosen pins deliberately when upgrading (e.g. "dash>=4.3,<5").
+dependencies = [
+    # Dash stack
+    "dash==4.3.0",
+    "dash-mantine-components==2.8.0",
+    "dash-cytoscape==1.0.2",
+    "dash-ag-grid==35.2.0",
+    "dash-iconify==0.1.2",
+    "plotly==6.8.0",
+    # Data
+    "pandas==3.0.3",
+    "polars==1.42.0",
+    "numpy==2.5.0",
+    "pyarrow==24.0.0",        # polars .to_pandas() interchange
+    "openpyxl==3.1.5",        # pd.read_excel (df_population.xlsx, df_life-expectancy.xlsx)
+    "networkx==3.6.1",
+    "scikit-learn==1.9.0",    # LinearRegression trend lines (figs_time.py)
+    # Data update / scraping (update_data.py, scrape_nominations.py)
+    "requests==2.34.2",
+    "beautifulsoup4==4.15.0",
+    "tqdm==4.68.3",
+    # Production WSGI server (gunicorn -w 4 --preload -b 0.0.0.0:8050 app:server)
+    "gunicorn>=23.0",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.9",
+]
+
+[tool.uv]
+# Flat app layout (app.py etc. at repo root) — nothing to build or install as a
+# package; `uv sync` only manages the environment.
+package = false
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+# F821 (undefined names) is the guard that caught real bugs after the module
+# split; the rest can be enabled incrementally.
+select = ["F821", "F401", "E722"]

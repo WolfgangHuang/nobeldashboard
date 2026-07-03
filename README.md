@@ -217,6 +217,17 @@ The codebase uses several optimization techniques:
 
 ## Running the Application
 
+Environment (uv — dependencies are declared in `pyproject.toml`, exact versions in `uv.lock`):
+```bash
+uv sync                # creates .venv/ and installs the locked dependencies
+uv run python app.py   # run inside the environment
+```
+`requirements.txt` is generated from the lock (`uv export --format requirements-txt
+--no-dev --no-hashes -o requirements.txt`) for pip-based deploys — don't edit it by hand.
+
+Note: if this folder is synced (Nextcloud), exclude `.venv/` from sync, or place the
+environment elsewhere via `UV_PROJECT_ENVIRONMENT=~/.venvs/nobel-dashboard`.
+
 Development:
 ```bash
 python app.py                          # binds 127.0.0.1:8050, debug off
