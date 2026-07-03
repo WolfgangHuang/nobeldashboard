@@ -331,9 +331,11 @@ def network_layout_options(name: str = "cola") -> dict:
     """
     Cytoscape layout config for the nominations network.
 
-    'cola' runs a continuous (infinite) force simulation so grabbing a node makes
-    its neighbours drift along smoothly (the D3 "live drag" feel) — the option the
-    PoC settled on. fcose/cose are run-once force layouts; the rest are static.
+    'cola' animates the force simulation but runs it *finite*: it settles for a few
+    seconds and stops. (The earlier infinite mode kept simulating every animation
+    frame for the life of the page — with hundreds of nodes that pinned a CPU core
+    and made pan/zoom/drag stutter.) fcose/cose are run-once force layouts; the
+    rest are static.
     """
     opts = {"name": name, "animate": True, "fit": True, "padding": 40}
     if name in ("fcose", "cose"):
@@ -342,8 +344,9 @@ def network_layout_options(name: str = "cola") -> dict:
         opts.update({"concentric": "function(n){ return n.degree(); }",
                      "levelWidth": "function(){ return 2; }"})
     elif name == "cola":
-        opts.update({"infinite": True, "fit": False, "edgeLength": 110,
-                     "nodeSpacing": 8, "handleDisconnected": True, "randomize": False})
+        opts.update({"infinite": False, "maxSimulationTime": 4000, "fit": False,
+                     "edgeLength": 110, "nodeSpacing": 8, "handleDisconnected": True,
+                     "randomize": False})
     return opts
 
 
