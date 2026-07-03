@@ -67,3 +67,6 @@ urllib3==2.7.0
 uvicorn==0.49.0
 werkzeug==3.1.8
 zipp==4.1.0
+
+# Production WSGI server (README: gunicorn -w 4 --preload -b 0.0.0.0:8050 app:server)
+gunicorn>=23.0

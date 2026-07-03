@@ -20,6 +20,7 @@ pio.templates['nbl_dark'] = th.build_plotly_template(dark=True)
 pio.templates.default = 'nbl_light'
 import networkx as nx
 from collections import defaultdict
+from fractions import Fraction
 import time
 try:
     import pygraphviz  # noqa: F401  (optional; graphviz layouts fall back to spring if missing)
@@ -2864,9 +2865,9 @@ def generate_line_prizemoney(data=df_prizes, categories="all", gender="all", tim
     # Create a deep copy of the relevant columns to avoid the SettingWithCopyWarning
     df_prizemoney = data[["Prize0_AwardYear", "Prize0_Category", "Prize0_Portion", "Prize0_Amount", "Prize0_AmountAdjusted_"]].copy(deep=True)
 
-    # Convert Prize0_Portion to numeric (direct assignment replaces the column dtype;
-    # newer pandas rejects in-place dtype changes via .loc)
-    df_prizemoney["Prize0_Portion"] = df_prizemoney["Prize0_Portion"].apply(lambda x: float(eval(x)))
+    # Convert Prize0_Portion ("1", "1/2", "1/4", ...) to numeric (direct assignment
+    # replaces the column dtype; newer pandas rejects in-place dtype changes via .loc)
+    df_prizemoney["Prize0_Portion"] = df_prizemoney["Prize0_Portion"].apply(lambda x: float(Fraction(x)))
 
     # Calculate PrizeAmountShared
     df_prizemoney["PrizeAmountShared"] = df_prizemoney["Prize0_Amount"] * df_prizemoney["Prize0_Portion"] * conversionrate
@@ -3000,9 +3001,9 @@ def generate_var_prizeamount(data=df_prizes, currency="EUR"):
     # Create a deep copy of the relevant columns to avoid the SettingWithCopyWarning
     df_prizemoney = data[["Prize0_AwardYear", "Prize0_Category", "Prize0_Portion", "Prize0_Amount", "Prize0_AmountAdjusted_"]].copy(deep=True)
 
-    # Convert Prize0_Portion to numeric (direct assignment replaces the column dtype;
-    # newer pandas rejects in-place dtype changes via .loc)
-    df_prizemoney["Prize0_Portion"] = df_prizemoney["Prize0_Portion"].apply(lambda x: float(eval(x)))
+    # Convert Prize0_Portion ("1", "1/2", "1/4", ...) to numeric (direct assignment
+    # replaces the column dtype; newer pandas rejects in-place dtype changes via .loc)
+    df_prizemoney["Prize0_Portion"] = df_prizemoney["Prize0_Portion"].apply(lambda x: float(Fraction(x)))
 
     # Calculate PrizeAmountShared
     df_prizemoney["PrizeAmountShared"] = df_prizemoney["Prize0_Amount"] * df_prizemoney["Prize0_Portion"] * conversionrate
