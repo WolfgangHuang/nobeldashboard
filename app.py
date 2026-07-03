@@ -1336,7 +1336,7 @@ def render_overview_content():
                         # Category toggle chips
                         html.Div(
                             [
-                                html.Div("KATEGORIEN", className="toolbar-eyebrow"),
+                                html.Div("CATEGORIES", className="toolbar-eyebrow"),
                                 dmc.Group(
                                     [
                                         dmc.Chip("Medicine", checked=True, color=cf.c_medicine, id="chip-medicine"),
@@ -1356,14 +1356,14 @@ def render_overview_content():
                         # Gender segmented control
                         html.Div(
                             [
-                                html.Div("GESCHLECHT", className="toolbar-eyebrow"),
+                                html.Div("GENDER", className="toolbar-eyebrow"),
                                 dmc.SegmentedControl(
                                     id="segmented-gender-overview",
                                     value="all",
                                     data=[
-                                        {"label": "Alle", "value": "all"},
-                                        {"label": "Weiblich", "value": "female"},
-                                        {"label": "Männlich", "value": "male"},
+                                        {"label": "All", "value": "all"},
+                                        {"label": "Female", "value": "female"},
+                                        {"label": "Male", "value": "male"},
                                     ],
                                     radius="xl",
                                     size="sm",
@@ -1378,7 +1378,7 @@ def render_overview_content():
                             [
                                 dmc.Group(
                                     [
-                                        html.Div("ZEITRAUM", className="toolbar-eyebrow"),
+                                        html.Div("TIME RANGE", className="toolbar-eyebrow"),
                                         html.Div(f"{1901}–{lastyearincluded}", id="overview-range-label",
                                                  className="toolbar-range"),
                                     ],
@@ -1587,7 +1587,7 @@ def update_overview_content(chip_medicine, chip_physics, chip_chemistry, chip_ec
                         [
                             html.Div(
                                 [
-                                    html.H4("Spektrum-Verteilung"),
+                                    html.H4("Spectrum Distribution"),
                                     html.P("Prizes per category in the current selection"),
                                 ],
                                 className="widget-title",
@@ -1769,12 +1769,12 @@ def render_current_content():
                 [
                     html.Div(
                         [
-                            html.Div(f"Preisträger {lastyearincluded}", className="page-title"),
+                            html.Div(f"Laureates {lastyearincluded}", className="page-title"),
                             html.Div("The Nobel Prize laureates of the most recent award year",
                                      className="page-subtitle"),
                         ]
                     ),
-                    html.Div(f"{total} Laureaten", className="laureate-count-pill"),
+                    html.Div(f"{total} laureates", className="laureate-count-pill"),
                 ],
                 justify="space-between",
                 align="center",
@@ -2634,7 +2634,7 @@ layout = dmc.AppShell(
                         [
                             dmc.TextInput(
                                 id="laureate-search",
-                                placeholder="Suche Laureate…",
+                                placeholder="Search laureates…",
                                 leftSection=msym("search"),
                                 radius="xl",
                                 className="nbl-search",

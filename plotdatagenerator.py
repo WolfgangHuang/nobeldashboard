@@ -3936,189 +3936,162 @@ def statistics_edges(df_edges, skipped_nominations, skipped_nominations_list):
 # BUILD NETWORKX GRAPH - OPTIMIZED VERSION
 # ============================================================================
 
-def build_network_graph(df_edges=df_edges, df_nominations=df_nominations):
-    
-    # Use MultiDiGraph to allow multiple edges between same nodes
-    # (same person can nominate another person in different years)
-    G = nx.MultiDiGraph()
-    
-    # ========================================================================
-    # STEP 1: Pre-compute laureate IDs (MUCH faster than repeated checks)
-    # ========================================================================
-    
-    #print("Pre-computing laureate IDs...")
-    laureate_ids = set()
-    
-    # Cast all nominee_id columns to int once
-    for i in range(1, max_nominees + 1):
-        col = f'nominee_{i}_id'
-        if col in df_nominations.columns:
-            df_nominations = df_nominations.with_columns(
-                pl.col(col).cast(pl.Int64, strict=False)
-            )
-    
-    # Find all laureates by checking awarded_prizes columns
+def _compute_laureate_ids(df_noms):
+    """IDs of everyone who ever won a prize (any nominee_*_awarded_prizes set)."""
+    ids = set()
     for i in range(1, max_nominees + 1):
         id_col = f'nominee_{i}_id'
         award_col = f'nominee_{i}_awarded_prizes'
-        
-        if id_col in df_nominations.columns and award_col in df_nominations.columns:
-            # Filter rows where this nominee won
-            laureates = df_nominations.filter(
-                pl.col(award_col).is_not_null() & (pl.col(award_col) != '')
-            ).select(id_col).unique()
-            
-            # Add to set
-            for laureate_id in laureates[id_col].to_list():
-                if laureate_id is not None:
-                    laureate_ids.add(laureate_id)
-    
-   
+        if id_col in df_noms.columns and award_col in df_noms.columns:
+            laureates = (
+                df_noms
+                .filter(pl.col(award_col).is_not_null() & (pl.col(award_col) != ''))
+                .select(pl.col(id_col).cast(pl.Int64, strict=False))
+                .unique()
+            )
+            ids.update(v for v in laureates[id_col].to_list() if v is not None)
+    return ids
+
+
+# Laureate status never changes at runtime — compute it once at import for the
+# module-level nominations frame instead of re-deriving it on every graph build.
+_NOMINATIONS_DEFAULT = df_nominations
+_LAUREATE_IDS = _compute_laureate_ids(df_nominations)
+
+
+def build_network_graph(df_edges=df_edges, df_nominations=df_nominations):
+
+    # Use MultiDiGraph to allow multiple edges between same nodes
+    # (same person can nominate another person in different years)
+    G = nx.MultiDiGraph()
+
     # ========================================================================
-    # STEP 2: Build person data from edges (single pass)
+    # STEP 1: Laureate IDs (precomputed for the module-level frame)
     # ========================================================================
-    
-    # print("Building person data...")
+
+    if df_nominations is _NOMINATIONS_DEFAULT:
+        laureate_ids = _LAUREATE_IDS
+    else:
+        laureate_ids = _compute_laureate_ids(df_nominations)
+
+    # ========================================================================
+    # STEP 2: One pass over the edge rows builds person data, category counts,
+    # graph edges and co-nominee groups (was four separate iterrows loops)
+    # ========================================================================
+
     all_people = {}
-    
+
     # Track which persons are primary (matched the name filter directly)
     primary_person_ids = set()
-    
-    # Convert to pandas for faster iteration (Polars iter_rows is slow)
+
+    # Count category appearances for each person
+    category_counts = defaultdict(lambda: defaultdict(int))
+
+    edges_to_add = []
+
+    # Group nominees by nomination_id (for co-nominee info)
+    nomination_groups = defaultdict(list)
+
+    # Convert to pandas for fast iteration (Polars iter_rows is slow)
     df_edges_pd = df_edges.to_pandas()
-    
+
     # Check if primary marker columns exist
     has_primary_markers = 'is_primary_nominator' in df_edges_pd.columns
-    
-    for _, row in df_edges_pd.iterrows():
-        nominator_id = row['nominator_id']
-        nominee_id = row['nominee_id']
-        category = row['category']
-        
+
+    for row in df_edges_pd.itertuples(index=False):
+        nominator_id = row.nominator_id
+        nominee_id = row.nominee_id
+        category = row.category
+
         # Track primary persons
         if has_primary_markers:
-            if row.get('is_primary_nominator', False):
+            if row.is_primary_nominator:
                 primary_person_ids.add(nominator_id)
-            if row.get('is_primary_nominee', False):
+            if row.is_primary_nominee:
                 primary_person_ids.add(nominee_id)
-        
+
         # Add/update nominator
-        if nominator_id not in all_people:
+        person = all_people.get(nominator_id)
+        if person is None:
             all_people[nominator_id] = {
-                'name': row['nominator_name'],
-                'country': row['nominator_country'],
+                'name': row.nominator_name,
+                'country': row.nominator_country,
                 'type': 'nominator',
                 'categories': {category},
                 'is_laureate': nominator_id in laureate_ids
             }
         else:
-            all_people[nominator_id]['categories'].add(category)
-        
+            person['categories'].add(category)
+
         # Add/update nominee
-        if nominee_id not in all_people:
+        person = all_people.get(nominee_id)
+        if person is None:
             all_people[nominee_id] = {
-                'name': row['nominee_name'],
-                'country': row['nominee_country'],
+                'name': row.nominee_name,
+                'country': row.nominee_country,
                 'type': 'nominee',
                 'categories': {category},
                 'is_laureate': nominee_id in laureate_ids
             }
         else:
-            all_people[nominee_id]['categories'].add(category)
+            person['categories'].add(category)
             # Update type if person is both nominator and nominee
-            if all_people[nominee_id]['type'] == 'nominator':
-                all_people[nominee_id]['type'] = 'both'
-    
+            if person['type'] == 'nominator':
+                person['type'] = 'both'
+
+        category_counts[nominator_id][category] += 1
+        category_counts[nominee_id][category] += 1
+
+        edges_to_add.append((
+            nominator_id,
+            nominee_id,
+            {
+                'nomination_id': row.nomination_id,
+                'year': row.year,
+                'category': category,
+                'motivation': row.motivation
+            }
+        ))
+
+        nomination_groups[row.nomination_id].append(row.nominee_name)
+
     # ========================================================================
     # STEP 3: Determine main category and finalize person data
     # ========================================================================
-    
-    #print("Computing main categories...")
-    
-    # Count category appearances for each person
-    category_counts = defaultdict(lambda: defaultdict(int))
-    
-    for _, row in df_edges_pd.iterrows():
-        nominator_id = row['nominator_id']
-        nominee_id = row['nominee_id']
-        category = row['category']
-        
-        category_counts[nominator_id][category] += 1
-        category_counts[nominee_id][category] += 1
-    
-    # Set main_category and is_primary for each person
+
     for person_id, person_data in all_people.items():
         # Convert set to list
         person_data['categories'] = list(person_data['categories'])
-        
+
         # Set main_category to most frequent
         if person_id in category_counts:
             person_data['main_category'] = max(
-                category_counts[person_id], 
+                category_counts[person_id],
                 key=category_counts[person_id].get
             )
         else:
             person_data['main_category'] = 'Unknown'
-        
+
         # Mark if this person is primary (matched the name filter)
         # If no primary markers exist, all persons are considered primary
         person_data['is_primary'] = person_id in primary_person_ids if primary_person_ids else True
-    
+
     # ========================================================================
-    # STEP 4: Add nodes to graph (batch operation)
+    # STEP 4: Add nodes + edges to graph (batch operations)
     # ========================================================================
-    
-    #print("Adding nodes to graph...")
-    node_data = [(person_id, person_attrs) for person_id, person_attrs in all_people.items()]
-    G.add_nodes_from(node_data)
-    
-  
-    # ========================================================================
-    # STEP 5: Add edges (batch operation)
-    # ========================================================================
-    
-    #print("Adding edges to graph...")
-    edges_to_add = []
-    
-    for _, row in df_edges_pd.iterrows():
-        edges_to_add.append((
-            row['nominator_id'],
-            row['nominee_id'],
-            {
-                'nomination_id': row['nomination_id'],
-                'year': row['year'],
-                'category': row['category'],
-                'motivation': row['motivation']
-            }
-        ))
-    
+
+    G.add_nodes_from(all_people.items())
     G.add_edges_from(edges_to_add)
-    
-   
+
     # ========================================================================
-    # STEP 6: Add co-nominee information
+    # STEP 5: Add co-nominee information
     # ========================================================================
-    
-    #print("Computing co-nominees...")
-    
-    # Group nominees by nomination_id
-    nomination_groups = defaultdict(list)
-    for _, row in df_edges_pd.iterrows():
-        nomination_groups[row['nomination_id']].append(row['nominee_name'])
-    
-    # Add co-nominees info to edges
+
     for u, v, data in G.edges(data=True):
         nomination_id = data['nomination_id']
         data['co_nominees'] = nomination_groups[nomination_id]
         data['is_group_nomination'] = len(nomination_groups[nomination_id]) > 1
-    
-    # Statistics
-    group_edges = sum(1 for u, v, d in G.edges(data=True) if d['is_group_nomination'])
-    single_edges = G.number_of_edges() - group_edges
-    
 
-    #print("Graph building complete!")
-    
     return G
 
 
@@ -5188,8 +5161,16 @@ def generate_network_elements(data=df_nominations,
     is done in the browser by Cytoscape, so no calculate_layout / create_network_figure.
     Extra kwargs (algorithm, sfdp_*) are accepted for call-signature parity and ignored.
     """
-    edges_list, skipped_nominations, skipped_nominations_list = transform_to_edges(data)
-    df_edges_local = clean_edges(edges_list)
+    if data is df_nominations:
+        # Reuse the module-level precomputed df_edges (edge list + country/coordinate/
+        # prize joins, done once at import) — the same source the map path and the
+        # live nomination count already use. Rebuilding it here from the raw
+        # nominations (transform_to_edges + clean_edges, incl. two CSV reads from
+        # disk) cost ~400 ms per callback; filtering the precomputed frame is ~20 ms.
+        df_edges_local = df_edges
+    else:
+        edges_list, _skipped, _skipped_list = transform_to_edges(data)
+        df_edges_local = clean_edges(edges_list)
     df_edges_local = filter_edges(df_edges_local, categories, timerange_nomination, timerange_field, nominator_name, nominator_search_mode, nominator_gender, nominator_country, nominator_islaureate, nominee_name, nominee_search_mode, nominee_gender, nominee_country, nominee_islaureate)
     G = build_network_graph(df_edges_local, data)
     elements = graph_to_cytoscape_elements(G)
@@ -5505,3 +5486,17 @@ if __name__ == "__main__":
 
     df_prizes_enriched_redux_clean.to_csv("df_prizes_enriched_redux_clean.csv", sep=';', encoding="UTF-8")
     print("df_prizes_enriched_redux_clean.csv has been saved.")
+
+    # Regenerate the precomputed edge list from the current nominations. df_edges.csv
+    # feeds the network, the nominations map and the live count at import time — if it
+    # is not rewritten here, those widgets silently serve the state of the last export
+    # (it once sat at 1901-1956 while nominations_full.csv already reached 1974).
+    _edges_list, _skipped, _ = transform_to_edges(df_nominations)
+    _df_edges_export = pl.DataFrame(_edges_list).select([
+        "nomination_id", "year", "category", "motivation",
+        "nominator_id", "nominator_name", "nominator_gender", "nominator_country",
+        "nominee_id", "nominee_name", "nominee_gender", "nominee_country",
+    ])
+    _df_edges_export.write_csv("df_edges.csv", separator=';')
+    print(f"df_edges.csv has been saved ({len(_df_edges_export)} edges, "
+          f"{_skipped} nominations skipped for missing nominator id).")
