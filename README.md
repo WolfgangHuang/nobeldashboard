@@ -14,13 +14,28 @@ A comprehensive interactive dashboard for exploring Nobel Prize data, built with
 ## Project Structure
 
 ```
-├── app.py                    # Main Dash application
-├── config.py                 # Configuration and plot definitions
-├── plotdatagenerator.py      # Data processing and plot generation
+├── app.py                    # Main Dash application (layout, callbacks, routing)
+├── layouts.py                # Widget layout builders (plot shells, network widget)
+├── config.py                 # App settings + color constants
+├── plot_config.py            # PlotConfig class + per-plot configuration data
+├── filters_ui.py             # Filter drawer renderers (standard + nominations)
+├── theme.py                  # Nobel-Spektrum design system (colors, templates)
+├── plotdatagenerator.py      # Facade re-exporting the modules below; script mode
+│                             #   regenerates the derived CSVs (used by update_data.py)
+├── data.py                   # Data loading, cleaning, enrichment (runs at import)
+├── filters.py                # standard_filter / extended_filter + chip-state helpers
+├── figs_geography.py         # Globe, city map, population bubbles, country bars
+├── figs_demography.py        # 3D surface, donuts, sunburst, first names
+├── figs_time.py              # Time gap, age at award
+├── figs_migration.py         # Parallel categories, movement globe/map
+├── figs_prizemoney.py        # Prize money figures
+├── network.py                # Nominations network (edges, graph, cytoscape, map)
+├── overview_stats.py         # Overview KPIs
 ├── update_data.py            # API data update script
 ├── scrape_nominations.py     # Nomination archive scraper
 ├── df_laureates.csv          # Laureate data (from Nobel API)
 ├── nominations_full.csv      # Historical nomination data
+├── _archive/                 # Stale backups + dead code (not loaded)
 └── [additional data files]   # Supporting datasets
 ```
 
