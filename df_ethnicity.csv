@@ -1,0 +1,993 @@
+﻿ID_Laureate;AwardeeDisplayName;BirthCountry;Ethnicity
+1004;Abdulrazak Gurnah;Tanzania;African
+966;Denis Mukwege;Belgian Congo;African
+798;Mohamed ElBaradei;Egypt;African
+665;Naguib Mahfouz;Egypt;African
+292;Ahmed Zewail;Egypt;African
+538;Anwar al-Sadat;Egypt;African
+981;Abiy Ahmed Ali;Ethiopia;African
+749;Kofi Annan;Gold Coast;African
+783;Wangari Maathai;Kenya;African
+869;Ellen Johnson Sirleaf;Liberia;African
+870;Leymah Gbowee;Liberia;African
+663;Wole Soyinka;Nigeria;African
+546;Desmond Tutu;South Africa;African
+555;Nelson Mandela;South Africa;African
+519;Albert Lutuli;Southern Rhodesia;African
+693;Sir Arthur Lewis;British West Indies;African American
+511;Ralph Bunche;USA;African American
+670;Toni Morrison;USA;African American
+845;Barack H. Obama;USA;African American
+524;Martin Luther King Jr.;USA;African American
+809;Muhammad Yunus;British India;Asian
+553;Aung San Suu Kyi;Burma;Asian
+838;Charles K. Kao;China;Asian
+68;Chen Ning Yang;China;Asian
+157;Daniel C. Tsui;China;Asian
+852;Ei-ichi Negishi;China;Asian
+734;Gao Xingjian;China;Asian
+855;Liu Xiaobo;China;Asian
+880;Mo Yan;China;Asian
+69;Tsung-Dao Lee;China;Asian
+918;Tu Youyou;China;Asian
+562;Carlos Filipe Ximenes Belo;East Timor;Asian
+114;Abdus Salam;India;Asian
+982;Abhijit Banerjee;India;Asian
+719;Amartya Sen;India;Asian
+389;H. Gobind Khorana;India;Asian
+913;Kailash Satyarthi;India;Asian
+583;Rabindranath Tagore;India;Asian
+294;Ronald Ross;India;Asian
+37;Sir Chandrasekhara Venkata Raman;India;Asian
+122;Subrahmanyan Chandrasekhar;India;Asian
+841;Venkatraman Ramakrishnan;India;Asian
+1033;Narges Mohammadi;Iran;Asian
+773;Shirin Ebadi;Iran;Asian
+967;Nadia Murad;Iraq;Asian
+853;Akira Suzuki;Japan;Asian
+978;Akira Yoshino;Japan;Asian
+533;Eisaku Satō;Japan;Asian
+731;Hideki Shirakawa;Japan;Asian
+54;Hideki Yukawa;Japan;Asian
+907;Hiroshi Amano;Japan;Asian
+906;Isamu Akasaki;Japan;Asian
+947;Kazuo Ishiguro;Japan;Asian
+257;Kenichi Fukui;Japan;Asian
+671;Kenzaburo Oe;Japan;Asian
+757;Koichi Tanaka;Japan;Asian
+97;Leo Esaki;Japan;Asian
+827;Makoto Kobayashi;Japan;Asian
+754;Masatoshi Koshiba;Japan;Asian
+829;Osamu Shimomura;Japan;Asian
+742;Ryoji Noyori;Japan;Asian
+917;Satoshi Ōmura;Japan;Asian
+875;Shinya Yamanaka;Japan;Asian
+908;Shuji Nakamura;Japan;Asian
+84;Sin-Itiro Tomonaga;Japan;Asian
+436;Susumu Tonegawa;Japan;Asian
+999;Syukuro Manabe;Japan;Asian
+919;Takaaki Kajita;Japan;Asian
+959;Tasuku Honjo;Japan;Asian
+828;Toshihide Maskawa;Japan;Asian
+642;Yasunari Kawabata;Japan;Asian
+826;Yoichiro Nambu;Japan;Asian
+927;Yoshinori Ohsumi;Japan;Asian
+725;Kim Dae-jung;Korea;Asian
+998;Ardem Patapoutian;Lebanon;Asian
+914;Malala Yousafzai;Pakistan;Asian
+1005;Maria Ressa;Philippines;Asian
+265;Yuan T. Lee;Taiwan;Asian
+551;The 14th Dalai Lama;Tibet;Asian
+923;Aziz Sancar;Turkey;Asian
+808;Orhan Pamuk;Turkey;Asian
+831;Roger Y. Tsien;USA;Asian
+106;Samuel C.C. Ting;USA;Asian
+152;Steven Chu;USA;Asian
+531;Le Duc Tho ;Vietnam;Asian
+871;Tawakkol Karman;Yemen;Asian
+541;Adolfo Pérez Esquivel;Argentina;European
+345;Bernardo Houssay;Argentina;European
+431;César Milstein;Argentina;European
+83;Aleksandr M. Prokhorov;Australia;European
+789;Barry J. Marshall;Australia;European
+835;Elizabeth H. Blackburn;Australia;European
+790;J. Robin Warren;Australia;European
+247;John Cornforth;Australia;European
+21;Lawrence Bragg;Australia;European
+455;Peter C. Doherty;Australia;European
+369;Sir Frank Macfarlane Burnet;Australia;European
+341;Sir Howard Florey;Australia;European
+375;Sir John Eccles;Australia;European
+479;Alfred Fried;Austria;European
+1014;Anton Zeilinger;Austria;European
+782;Elfriede Jelinek;Austria;European
+724;Eric Kandel;Austria;European
+39;Erwin Schrödinger;Austria;European
+685;Friedrich von Hayek;Austria;European
+317;Julius Wagner-Jauregg;Austria;European
+400;Karl von Frisch;Austria;European
+401;Konrad Lorenz;Austria;European
+889;Martin Karplus;Austria;European
+226;Max F. Perutz;Austria;European
+980;Peter Handke;Austria;European
+308;Robert Bárány;Austria;European
+42;Victor F. Hess;Austria;European
+290;Walter Kohn;Austria;European
+50;Wolfgang Pauli;Austria;European
+332;Albert Szent-Györgyi;Austria-Hungary;European
+343;Carl Cori;Austria-Hungary;European
+78;Eugene Wigner;Austria-Hungary;European
+181;Fritz Pregl;Austria-Hungary;European
+201;George de Hevesy;Austria-Hungary;European
+344;Gerty Cori;Austria-Hungary;European
+49;Isidor Isaac Rabi;Austria-Hungary;European
+223;Jaroslav Heyrovsky;Austria-Hungary;European
+661;Jaroslav Seifert;Austria-Hungary;European
+200;Leopold Ruzicka;Austria-Hungary;European
+198;Richard Kuhn;Austria-Hungary;European
+639;Shmuel Agnon;Austria-Hungary;European
+248;Vladimir Prelog;Austria-Hungary;European
+468;Bertha von Suttner;Austrian Empire;European
+471;Ernesto Teodoro Moneta;Austrian Empire;European
+321;Karl Landsteiner;Austrian Empire;European
+182;Richard Zsigmondy;Austrian Empire;European
+166;Eduard Buchner;Bavaria;European
+403;Albert Claude;Belgium;European
+475;Auguste Beernaert;Belgium;European
+333;Corneille Heymans;Belgium;European
+887;François Englert;Belgium;European
+517;Georges Pire;Belgium;European
+481;Henri La Fontaine;Belgium;European
+309;Jules Bordet;Belgium;European
+581;Maurice Maeterlinck;Belgium;European
+794;Yves Chauvin;Belgium;European
+633;Ivo Andrić;Bosnia;European
+577;Rudyard Kipling;British India;European
+843;Ada E. Yonath;British Mandate of Palestine;European
+891;Arieh Warshel;British Mandate of Palestine;European
+867;Dan Shechtman;British Mandate of Palestine;European
+759;Daniel Kahneman;British Mandate of Palestine;European
+559;Yitzhak Rabin;British Mandate of Palestine;European
+779;Aaron Ciechanover;British Protectorate of Palestine;European
+658;Elias Canetti;Bulgaria;European
+892;Alice Munro;Canada;European
+920;Arthur B. McDonald;Canada;European
+145;Bertram N. Brockhouse;Canada;European
+384;Charles B. Huggins;Canada;European
+1007;David Card;Canada;European
+423;David H. Hubel;Canada;European
+962;Donna Strickland;Canada;European
+313;Frederick G. Banting;Canada;European
+260;Henry Taube;Canada;European
+973;James Peebles;Canada;European
+516;Lester Bowles Pearson;Canada;European
+718;Myron Scholes;Canada;European
+863;Ralph M. Steinman;Canada;European
+140;Richard E. Taylor;Canada;European
+720;Robert Mundell;Canada;European
+277;Rudolph A. Marcus;Canada;European
+652;Saul Bellow;Canada;European
+273;Sidney Altman;Canada;European
+839;Willard S. Boyle;Canada;European
+209;William F. Giauque;Canada;European
+716;William Vickrey;Canada;European
+615;Gabriela Mistral;Chile;European
+645;Pablo Neruda;Chile;European
+446;Edmond H. Fischer;China;European
+67;Walter H. Brattain;China;European
+659;Gabriel García Márquez;Colombia;European
+934;Juan Manuel Santos;Colombia;European
+549;Oscar Arias Sánchez;Costa Rica;European
+655;Odysseus Elytis;Crete;European
+858;Christopher A. Pissarides;Cyprus;European
+815;Peter Grünberg;Czechoslovakia;European
+102;Aage N. Bohr;Denmark;European
+310;August Krogh;Denmark;European
+474;Fredrik Bajer;Denmark;European
+335;Henrik Dam;Denmark;European
+587;Henrik Pontoppidan;Denmark;European
+289;Jens C. Skou;Denmark;European
+316;Johannes Fibiger;Denmark;European
+614;Johannes V. Jensen;Denmark;European
+586;Karl Gjellerup;Denmark;European
+1016;Morten Meldal;Denmark;European
+27;Niels Bohr;Denmark;European
+230;Dorothy Crowfoot Hodgkin;Egypt;European
+295;Niels Ryberg Finsen;Faroe Islands (Denmark);European
+936;Bengt Holmström;Finland;European
+833;Martti Ahtisaari;Finland;European
+1012;Alain Aspect;France;European
+814;Albert Fert;France;European
+306;Alexis Carrel;France;European
+174;Alfred Werner;France;European
+300;Alphonse Laveran;France;European
+590;Anatole France;France;European
+360;André F. Cournand;France;European
+618;André Gide;France;European
+381;André Lwoff;France;European
+1028;Anne L’Huillier;France;European
+1017;Annie Ernaux;France;European
+490;Aristide Briand;France;European
+318;Charles Nicolle;France;European
+307;Charles Richet;France;European
+991;Emmanuelle Charpentier;France;European
+983;Esther Duflo;France;European
+492;Ferdinand Buisson;France;European
+380;François Jacob;France;European
+623;François Mauriac;France;European
+824;Françoise Barré-Sinoussi;France;European
+193;Frédéric Joliot;France;European
+573;Frédéric Mistral;France;European
+463;Frédéric Passy;France;European
+697;Gerard Debreu;France;European
+961;Gérard Mourou;France;European
+4;Henri Becquerel;France;European
+600;Henri Bergson;France;European
+165;Henri Moissan;France;European
+194;Irène Joliot-Curie;France;European
+382;Jacques Monod;France;European
+32;Jean Baptiste Perrin;France;European
+420;Jean Dausset;France;European
+915;Jean Tirole;France;European
+832;Jean-Marie Gustave Le Clézio;France;European
+268;Jean-Marie Lehn;France;European
+637;Jean-Paul Sartre;France;European
+931;Jean-Pierre Sauvage;France;European
+484;Léon Bourgeois;France;European
+512;Léon Jouhaux;France;European
+36;Louis de Broglie;France;European
+92;Louis Néel;France;European
+472;Louis Renault;France;European
+825;Luc Montagnier;France;European
+239;Luis Leloir;France;European
+702;Maurice Allais;France;European
+912;Patrick Modiano;France;European
+476;Paul Henri d'Estournelles de Constant;France;European
+173;Paul Sabatier;France;European
+5;Pierre Curie;France;European
+141;Pierre-Gilles de Gennes;France;European
+526;René Cassin;France;European
+411;Roger Guillemin;France;European
+609;Roger Martin du Gard;France;European
+584;Romain Rolland;France;European
+532;Seán MacBride;France;European
+569;Sully Prudhomme;France;European
+172;Victor Grignard;France;European
+676;Günter Grass;Free City of Danzig;European
+628;Albert Camus;French Algeria;European
+153;Claude Cohen-Tannoudji;French Algeria;European
+1026;Pierre Agostini;French protectorate of Tunisia;European
+126;Klaus von Klitzing;German-occupied Poland;European
+199;Adolf Butenandt;Germany;European
+185;Adolf Windaus;Germany;European
+26;Albert Einstein;Germany;European
+513;Albert Schweitzer;Germany;European
+87;Alfred Kastler;Germany;European
+111;Arno Penzias;Germany;European
+1002;Benjamin List;Germany;European
+445;Bert Sakmann;Germany;European
+189;Carl Bosch;Germany;European
+500;Carl von Ossietzky;Germany;European
+453;Christiane Nüsslein-Volhard;Germany;European
+340;Ernst B. Chain;Germany;European
+244;Ernst Otto Fischer;Germany;European
+127;Ernst Ruska;Germany;European
+444;Erwin Neher;Germany;European
+379;Feodor Lynen;Germany;European
+190;Friedrich Bergius;Germany;European
+355;Fritz Lipmann;Germany;European
+253;Georg Wittig;Germany;European
+430;Georges J.F. Köhler;Germany;European
+334;Gerhard Domagk;Germany;European
+816;Gerhard Ertl;Germany;European
+240;Gerhard Herzberg;Germany;European
+461;Günter Blobel;Germany;European
+31;Gustav Hertz;Germany;European
+491;Gustav Stresemann;Germany;European
+88;Hans Bethe;Germany;European
+188;Hans Fischer;Germany;European
+354;Hans Krebs;Germany;European
+187;Hans von Euler-Chelpin;Germany;European
+823;Harald zur Hausen;Germany;European
+647;Heinrich Böll;Germany;European
+184;Heinrich Wieland;Germany;European
+530;Henry Kissinger;Germany;European
+727;Herbert Kroemer;Germany;European
+617;Hermann Hesse;Germany;European
+216;Hermann Staudinger;Germany;European
+80;J. Hans D. Jensen;Germany;European
+134;Jack Steinberger;Germany;European
+30;James Franck;Germany;European
+945;Joachim Frank;Germany;European
+270;Johann Deisenhofer;Germany;European
+24;Johannes Stark;Germany;European
+976;John B. Goodenough;Germany;European
+266;John C. Polanyi;Germany;European
+228;Karl Ziegler;Germany;European
+1000;Klaus Hasselmann;Germany;European
+378;Konrad Bloch;Germany;European
+493;Ludwig Quidde;Germany;European
+233;Manfred Eigen;Germany;European
+79;Maria Goeppert Mayer;Germany;European
+61;Max Born;Germany;European
+391;Max Delbrück;Germany;European
+19;Max von Laue;Germany;European
+640;Nelly Sachs;Germany;European
+210;Otto Diels;Germany;European
+202;Otto Hahn;Germany;European
+331;Otto Loewi;Germany;European
+312;Otto Meyerhof;Germany;European
+48;Otto Stern;Germany;European
+169;Otto Wallach;Germany;European
+322;Otto Warburg;Germany;European
+64;Polykarp Kusch;Germany;European
+941;Rainer Weiss;Germany;European
+989;Reinhard Genzel;Germany;European
+713;Reinhard Selten;Germany;European
+176;Richard Willstätter;Germany;European
+271;Robert Huber;Germany;European
+799;Robert J. Aumann;Germany;European
+297;Robert Koch;Germany;European
+76;Rudolf Mössbauer;Germany;European
+394;Sir Bernard Katz;Germany;European
+793;Theodor W. Hänsch;Germany;European
+886;Thomas C. Südhof;Germany;European
+602;Thomas Mann;Germany;European
+62;Walther Bothe;Germany;European
+361;Werner Forssmann;Germany;European
+38;Werner Heisenberg;Germany;European
+529;Willy Brandt;Germany;European
+137;Wolfgang Paul;Germany;European
+631;Saint-John Perse;Guadeloupe, France;European
+14;Ferdinand Braun;Hesse-Kassel;European
+780;Avram Hershko;Hungary;European
+93;Dennis Gabor;Hungary;European
+1027;Ferenc Krausz;Hungary;European
+371;Georg von Békésy;Hungary;European
+280;George A. Olah;Hungary;European
+761;Imre Kertész;Hungary;European
+711;John C. Harsanyi;Hungary;European
+1024;Katalin Karikó;Hungary;European
+9;Philipp Lenard;Hungary;European
+626;Halldór Laxness;Iceland;European
+57;Ernest T.S. Walton;Ireland;European
+596;George Bernard Shaw;Ireland;European
+643;Samuel Beckett;Ireland;European
+593;William Butler Yeats;Ireland;European
+916;William C. Campbell;Ireland;European
+298;Camillo Golgi;Italy;European
+124;Carlo Rubbia;Italy;European
+674;Dario Fo;Italy;European
+72;Emilio Segrè;Italy;European
+46;Enrico Fermi;Italy;European
+651;Eugenio Montale;Italy;European
+699;Franco Modigliani;Italy;European
+1001;Giorgio Parisi;Italy;European
+229;Giulio Natta;Italy;European
+597;Grazia Deledda;Italy;European
+13;Guglielmo Marconi;Italy;European
+607;Luigi Pirandello;Italy;European
+811;Mario R. Capecchi;Italy;European
+407;Renato Dulbecco;Italy;European
+755;Riccardo Giacconi;Italy;European
+435;Rita Levi-Montalcini;Italy;European
+393;Salvador E. Luria;Italy;European
+630;Salvatore Quasimodo;Italy;European
+315;Willem Einthoven;Java, Dutch East Indies;European
+259;Aaron Klug;Lithuania;European
+12;Gabriel Lippmann;Luxembourg;European
+862;Jules A. Hoffmann;Luxembourg;European
+662;Claude Simon;Madagascar;European
+304;Albrecht Kossel;Mecklenburg;European
+282;Mario J. Molina;Mexico;European
+730;Alan MacDiarmid;New Zealand;European
+167;Ernest Rutherford;New Zealand;European
+374;Maurice Wilkins;New Zealand;European
+535;Betty Williams;Northern Ireland;European
+567;David Trimble;Northern Ireland;European
+566;John Hume;Northern Ireland;European
+536;Mairead Corrigan;Northern Ireland;European
+672;Seamus Heaney;Northern Ireland;European
+572;Bjørnstjerne Bjørnson;Norway;European
+486;Christian Lange;Norway;European
+905;Edvard I. Moser;Norway;European
+786;Finn E. Kydland;Norway;European
+487;Fridtjof Nansen;Norway;European
+98;Ivar Giaever;Norway;European
+1032;Jon Fosse;Norway;European
+589;Knut Hamsun;Norway;European
+236;Lars Onsager;Norway;European
+904;May-Britt Moser;Norway;European
+238;Odd Hassel;Norway;European
+677;Ragnar Frisch;Norway;European
+703;Trygve Haavelmo;Norway;European
+635;Giorgos Seferis;Ottoman Empire;European
+540;Mother Teresa;Ottoman Empire;European
+817;Doris Lessing;Persia;European
+854;Mario Vargas Llosa;Peru;European
+412;Andrew V. Schally;Poland;European
+142;Georges Charpak;Poland;European
+575;Henryk Sienkiewicz;Poland;European
+545;Lech Wałęsa;Poland;European
+979;Olga Tokarczuk;Poland;European
+258;Roald Hoffmann;Poland;European
+558;Shimon Peres;Poland;European
+350;Tadeus Reichstein;Poland;European
+673;Wisława Szymborska;Poland;European
+348;Egas Moniz;Portugal;European
+675;José Saramago;Portugal;European
+164;Adolf von Baeyer;Prussia;European
+11;Albert A. Michelson;Prussia;European
+161;Emil Fischer;Prussia;European
+293;Emil von Behring;Prussia;European
+177;Fritz Haber;Prussia;European
+582;Gerhart Hauptmann;Prussia;European
+136;Hans G. Dehmelt;Prussia;European
+211;Kurt Alder;Prussia;European
+302;Paul Ehrlich;Prussia;European
+580;Paul Heyse;Prussia;European
+178;Walther Nernst;Prussia;European
+1;Wilhelm Conrad Röntgen;Prussia;European
+16;Wilhelm Wien;Prussia;European
+910;Stefan W. Hell;Romania;European
+548;Elie Wiesel;Romania;European
+405;George E. Palade;Romania;European
+844;Herta Müller;Romania;European
+644;Aleksandr Solzhenitsyn;Russia;European
+1018;Ales Bialiatski;Russia;European
+849;Andre Geim;Russia;European
+534;Andrei Sakharov;Russia;European
+629;Boris Pasternak;Russia;European
+71;Igor Y. Tamm;Russia;European
+721;Il´ja M. Frank;Russia;European
+250;Ilya Prigogine;Russia;European
+606;Ivan Bunin;Russia;European
+296;Ivan Pavlov;Russia;European
+850;Konstantin Novoselov;Russia;European
+820;Leonid Hurwicz;Russia;European
+638;Mikhail Sholokhov;Russia;European
+220;Nikolay Semenov;Russia;European
+197;Paul Karrer;Russia;European
+70;Pavel A. Cherenkov;Russia;European
+767;Vitaly L. Ginzburg;Russia;European
+683;Wassily Leontief;Russia;European
+594;Władysław Reymont;Russian Empire;European
+203;Artturi Virtanen;Russian Empire;European
+657;Czesław Miłosz;Russian Empire;European
+613;Frans Eemil Sillanpää;Russian Empire;European
+301;Ilya Mechnikov;Russian Empire;European
+654;Isaac Bashevis Singer;Russian Empire;European
+560;Joseph Rotblat;Russian Empire;European
+686;Leonid Vitaliyevich Kantorovich;Russian Empire;European
+77;Lev Landau;Russian Empire;European
+6;Marie Curie;Russian Empire;European
+539;Menachem Begin;Russian Empire;European
+110;Pyotr Kapitsa;Russian Empire;European
+385;Ragnar Granit;Russian Empire;European
+353;Selman A. Waksman;Russian Empire;European
+680;Simon Kuznets;Russian Empire;European
+168;Wilhelm Ostwald;Russian Empire;European
+23;Max Planck;Schleswig;European
+571;Theodor Mommsen;Schleswig;European
+926;Angus Deaton;Scotland;European
+499;Arthur Henderson;Scotland;European
+34;C.T.R. Wilson;Scotland;European
+715;James A. Mirrlees;Scotland;European
+314;John Macleod;Scotland;European
+510;Lord Boyd Orr;Scotland;European
+221;Lord Todd;Scotland;European
+946;Richard Henderson;Scotland;European
+339;Sir Alexander Fleming;Scotland;European
+437;Sir James W. Black;Scotland;European
+163;Sir William Ramsay;Scotland;European
+417;Allan M. Cormack;South Africa;European
+750;Sydney Brenner;South Africa;European
+556;F.W. de Klerk;South Africa;European
+763;J. M. Coetzee;South Africa;European
+352;Max Theiler;South Africa;European
+890;Michael Levitt;South Africa;European
+668;Nadine Gordimer;South Africa;European
+666;Camilo José Cela;Spain;European
+592;Jacinto Benavente;Spain;European
+574;José Echegaray;Spain;European
+627;Juan Ramón Jiménez;Spain;European
+299;Santiago Ramón y Cajal;Spain;European
+367;Severo Ochoa;Spain;European
+653;Vicente Aleixandre;Spain;European
+305;Allvar Gullstrand;Sweden;European
+543;Alva Myrdal;Sweden;European
+208;Arne Tiselius;Sweden;European
+722;Arvid Carlsson;Sweden;European
+426;Bengt I. Samuelsson;Sweden;European
+689;Bertil Ohlin;Sweden;European
+520;Dag Hammarskjöld;Sweden;European
+604;Erik Axel Karlfeldt;Sweden;European
+649;Eyvind Johnson;Sweden;European
+684;Gunnar Myrdal;Sweden;European
+17;Gustaf Dalén;Sweden;European
+91;Hannes Alfvén;Sweden;European
+650;Harry Martinson;Sweden;European
+485;Hjalmar Branting;Sweden;European
+359;Hugo Theorell;Sweden;European
+120;Kai M. Siegbahn;Sweden;European
+473;Klas Pontus Arnoldson;Sweden;European
+29;Manne Siegbahn;Sweden;European
+495;Nathan Söderblom;Sweden;European
+622;Pär Lagerkvist;Sweden;European
+579;Selma Lagerlöf;Sweden;European
+425;Sune K. Bergström;Sweden;European
+162;Svante Arrhenius;Sweden;European
+1011;Svante Pääbo;Sweden;European
+183;The Svedberg;Sweden;European
+921;Tomas Lindahl;Sweden;European
+868;Tomas Tranströmer;Sweden;European
+424;Torsten N. Wiesel;Sweden;European
+395;Ulf von Euler;Sweden;European
+585;Verner von Heidenstam;Sweden;European
+465;Albert Gobat;Switzerland;European
+588;Carl Spitteler;Switzerland;European
+25;Charles Edouard Guillaume;Switzerland;European
+363;Daniel Bovet;Switzerland;European
+975;Didier Queloz;Switzerland;European
+464;Élie Ducommun;Switzerland;European
+58;Felix Bloch;Switzerland;European
+129;Heinrich Rohrer;Switzerland;European
+462;Henry Dunant;Switzerland;European
+944;Jacques Dubochet;Switzerland;European
+131;K. Alex Müller;Switzerland;European
+758;Kurt Wüthrich;Switzerland;European
+974;Michel Mayor;Switzerland;European
+346;Paul Müller;Switzerland;European
+276;Richard R. Ernst;Switzerland;European
+456;Rolf M. Zinkernagel;Switzerland;European
+303;Theodor Kocher;Switzerland;European
+347;Walter Hess;Switzerland;European
+414;Werner Arber;Switzerland;European
+933;Bernard L. Feringa;the Netherlands;European
+319;Christiaan Eijkman;the Netherlands;European
+60;Frits Zernike;the Netherlands;European
+158;Gerardus 't Hooft;the Netherlands;European
+1009;Guido W. Imbens;the Netherlands;European
+18;Heike Kamerlingh Onnes;the Netherlands;European
+2;Hendrik A. Lorentz;the Netherlands;European
+160;Jacobus H. van 't Hoff;the Netherlands;European
+678;Jan Tinbergen;the Netherlands;European
+15;Johannes Diderik van der Waals;the Netherlands;European
+159;Martinus J.G. Veltman;the Netherlands;European
+118;Nicolaas Bloembergen;the Netherlands;European
+402;Nikolaas Tinbergen;the Netherlands;European
+281;Paul J. Crutzen;the Netherlands;European
+195;Peter Debye;the Netherlands;European
+3;Pieter Zeeman;the Netherlands;European
+125;Simon van der Meer;the Netherlands;European
+687;Tjalling C. Koopmans;the Netherlands;European
+478;Tobias Asser;the Netherlands;European
+576;Giosuè Carducci;Tuscany;European
+924;Svetlana Alexievich;Ukraine;European
+376;Alan Hodgkin;United Kingdom;European
+377;Andrew Huxley;United Kingdom;European
+768;Anthony J. Leggett;United Kingdom;European
+101;Antony Hewish;United Kingdom;European
+214;Archer J.P. Martin;United Kingdom;European
+311;Archibald V. Hill;United Kingdom;European
+186;Arthur Harden;United Kingdom;European
+621;Bertrand Russell;United Kingdom;European
+99;Brian D. Josephson;United Kingdom;European
+55;Cecil Powell;United Kingdom;European
+22;Charles Glover Barkla;United Kingdom;European
+404;Christian de Duve;United Kingdom;European
+772;Clive W.J. Granger;United Kingdom;European
+928;David J. Thouless;United Kingdom;European
+1003;David W.C. MacMillan;United Kingdom;European
+237;Derek Barton;United Kingdom;European
+324;Edgar Adrian;United Kingdom;European
+52;Edward V. Appleton;United Kingdom;European
+929;F. Duncan M. Haldane;United Kingdom;European
+372;Francis Crick;United Kingdom;European
+180;Francis W. Aston;United Kingdom;European
+222;Frederick Sanger;United Kingdom;European
+179;Frederick Soddy;United Kingdom;European
+245;Geoffrey Wilkinson;United Kingdom;European
+45;George Paget Thomson;United Kingdom;European
+235;George Porter;United Kingdom;European
+418;Godfrey N. Hounsfield;United Kingdom;European
+801;Harold Pinter;United Kingdom;European
+252;Herbert C. Brown;United Kingdom;European
+930;J. Michael Kosterlitz;United Kingdom;European
+10;J.J. Thomson;United Kingdom;European
+837;Jack W. Szostak;United Kingdom;European
+41;James Chadwick;United Kingdom;European
+690;James E. Meade;United Kingdom;European
+227;John C. Kendrew;United Kingdom;European
+56;John Cockcroft;United Kingdom;European
+752;John E. Sulston;United Kingdom;European
+288;John E. Walker;United Kingdom;European
+605;John Galsworthy;United Kingdom;European
+291;John Pople;United Kingdom;European
+681;John R. Hicks;United Kingdom;European
+427;John R. Vane;United Kingdom;European
+8;Lord Rayleigh;United Kingdom;European
+977;M. Stanley Whittingham;United Kingdom;European
+100;Martin Ryle;United Kingdom;European
+986;Michael Houghton;United Kingdom;European
+279;Michael Smith;United Kingdom;European
+429;Niels K. Jerne;United Kingdom;European
+196;Norman Haworth;United Kingdom;European
+935;Oliver Hart;United Kingdom;European
+813;Oliver Smithies;United Kingdom;European
+35;Owen Willans Richardson;United Kingdom;European
+53;Patrick M.S. Blackett;United Kingdom;European
+648;Patrick White;United Kingdom;European
+40;Paul A.M. Dirac;United Kingdom;European
+888;Peter Higgs;United Kingdom;European
+251;Peter Mitchell;United Kingdom;European
+518;Philip Noel-Baker;United Kingdom;European
+466;Randal Cremer;United Kingdom;European
+448;Richard J. Roberts;United Kingdom;European
+215;Richard L.M. Synge;United Kingdom;European
+698;Richard Stone;United Kingdom;European
+502;Robert Cecil, Viscount Cecil of Chelwood;United Kingdom;European
+848;Robert G. Edwards;United Kingdom;European
+399;Rodney R. Porter;United Kingdom;European
+988;Roger Penrose;United Kingdom;European
+234;Ronald G.W. Norrish;United Kingdom;European
+707;Ronald H. Coase;United Kingdom;European
+488;Sir Austen Chamberlain;United Kingdom;European
+323;Sir Charles Sherrington;United Kingdom;European
+219;Sir Cyril Hinshelwood;United Kingdom;European
+320;Sir Frederick Hopkins;United Kingdom;European
+965;Sir Gregory P. Winter;United Kingdom;European
+285;Sir Harold Kroto;United Kingdom;European
+330;Sir Henry Dale;United Kingdom;European
+932;Sir J. Fraser Stoddart;United Kingdom;European
+874;Sir John B. Gurdon;United Kingdom;European
+812;Sir Martin J. Evans;United Kingdom;European
+108;Sir Nevill F. Mott;United Kingdom;European
+498;Sir Norman Angell;United Kingdom;European
+737;Sir Paul Nurse;United Kingdom;European
+971;Sir Peter J. Ratcliffe;United Kingdom;European
+765;Sir Peter Mansfield;United Kingdom;European
+207;Sir Robert Robinson;United Kingdom;European
+736;Tim Hunt;United Kingdom;European
+65;William B. Shockley;United Kingdom;European
+20;William Bragg;United Kingdom;European
+660;William Golding;United Kingdom;European
+624;Winston Churchill;United Kingdom;European
+460;Ferid Murad;USA;European
+745;A. Michael Spence;USA;European
+866;Adam G. Riess;USA;European
+819;Al Gore;USA;European
+729;Alan Heeger;USA;European
+392;Alfred D. Hershey;USA;European
+450;Alfred G. Gilman;USA;European
+882;Alvin E. Roth;USA;European
+990;Andrea Ghez;USA;European
+802;Andrew Z. Fire;USA;European
+960;Arthur Ashkin;USA;European
+33;Arthur H. Compton;USA;European
+368;Arthur Kornberg;USA;European
+119;Arthur L. Schawlow;USA;European
+428;Barbara McClintock;USA;European
+942;Barry C. Barish;USA;European
+409;Baruch S. Blumberg;USA;European
+1021;Ben Bernanke;USA;European
+103;Ben R. Mottelson;USA;European
+937;Bob Dylan;USA;European
+879;Brian Kobilka;USA;European
+865;Brian P. Schmidt;USA;European
+861;Bruce A. Beutler;USA;European
+261;Bruce Merrifield;USA;European
+105;Burton Richter;USA;European
+43;Carl D. Anderson;USA;European
+740;Carl Wieman;USA;European
+836;Carol W. Greider;USA;European
+1015;Carolyn Bertozzi;USA;European
+489;Charles G. Dawes;USA;European
+81;Charles H. Townes;USA;European
+987;Charles M. Rice;USA;European
+241;Christian Anfinsen;USA;European
+873;Christopher A. Sims;USA;European
+1034;Claudia Goldin;USA;European
+146;Clifford G. Shull;USA;European
+44;Clinton Davisson;USA;European
+505;Cordell Hull;USA;European
+803;Craig C. Mello;USA;European
+410;D. Carleton Gajdusek;USA;European
+857;Dale T. Mortensen;USA;European
+733;Daniel L. McFadden;USA;European
+415;Daniel Nathans;USA;European
+406;David Baltimore;USA;European
+776;David J. Gross;USA;European
+877;David J. Wineland;USA;European
+997;David Julius;USA;European
+149;David M. Lee;USA;European
+362;Dickinson W. Richards;USA;European
+74;Donald A. Glaser;USA;European
+267;Donald J. Cram;USA;European
+150;Douglas D. Osheroff;USA;European
+1022;Douglas Diamond;USA;European
+710;Douglass C. North;USA;European
+1025;Drew Weissman;USA;European
+264;Dudley R. Herschbach;USA;European
+443;E. Donnall Thomas;USA;European
+59;E. M. Purcell;USA;European
+397;Earl W. Sutherland, Jr.;USA;European
+807;Edmund S. Phelps;USA;European
+336;Edward A. Doisy;USA;European
+452;Edward B. Lewis;USA;European
+349;Edward C. Kendall;USA;European
+787;Edward C. Prescott;USA;European
+365;Edward Tatum;USA;European
+447;Edwin G. Krebs;USA;European
+212;Edwin M. McMillan;USA;European
+275;Elias James Corey;USA;European
+480;Elihu Root;USA;European
+846;Elinor Ostrom;USA;European
+506;Emily Greene Balch;USA;European
+909;Eric Betzig;USA;European
+738;Eric Cornell;USA;European
+454;Eric F. Wieschaus;USA;European
+821;Eric S. Maskin;USA;European
+625;Ernest Hemingway;USA;European
+47;Ernest Lawrence;USA;European
+894;Eugene F. Fama;USA;European
+608;Eugene O'Neill;USA;European
+283;F. Sherwood Rowland;USA;European
+963;Frances H. Arnold;USA;European
+494;Frank B. Kellogg;USA;European
+778;Frank Wilczek;USA;European
+358;Frederick C. Robbins;USA;European
+148;Frederick Reines;USA;European
+708;Gary Becker;USA;European
+744;George A. Akerlof;USA;European
+364;George Beadle;USA;European
+514;George C. Marshall;USA;European
+421;George D. Snell;USA;European
+840;George E. Smith;USA;European
+805;George F. Smoot;USA;European
+439;George H. Hitchings;USA;European
+326;George H. Whipple;USA;European
+696;George J. Stigler;USA;European
+964;George P. Smith;USA;European
+327;George R. Minot;USA;European
+387;George Wald;USA;European
+398;Gerald M. Edelman;USA;European
+438;Gertrude B. Elion;USA;European
+213;Glenn T. Seaborg;USA;European
+972;Gregg L. Semenza;USA;European
+777;H. David Politzer;USA;European
+751;H. Robert Horvitz;USA;European
+416;Hamilton O. Smith;USA;European
+192;Harold C. Urey;USA;European
+441;Harold E. Varmus;USA;European
+704;Harry M. Markowitz;USA;European
+985;Harvey J. Alter;USA;European
+139;Henry W. Kendall;USA;European
+262;Herbert A. Hauptman;USA;European
+338;Herbert S. Gasser;USA;European
+691;Herbert Simon;USA;European
+342;Hermann J. Muller;USA;European
+408;Howard M. Temin;USA;European
+191;Irving Langmuir;USA;European
+781;Irwin Rose;USA;European
+440;J. Michael Bishop;USA;European
+728;Jack Kilby;USA;European
+204;James B. Sumner;USA;European
+116;James Cronin;USA;European
+884;James E. Rothman;USA;European
+732;James J. Heckman;USA;European
+700;James M. Buchanan Jr.;USA;European
+958;James P. Allison;USA;European
+104;James Rainwater;USA;European
+695;James Tobin;USA;European
+373;James Watson;USA;European
+496;Jane Addams;USA;European
+938;Jeffrey C. Hall;USA;European
+992;Jennifer A. Doudna;USA;European
+138;Jerome I. Friedman;USA;European
+263;Jerome Karle;USA;European
+762;Jimmy Carter;USA;European
+565;Jody Williams;USA;European
+756;John B. Fenn;USA;European
+66;John Bardeen;USA;European
+804;John C. Mather;USA;European
+1013;John Clauser;USA;European
+356;John F. Enders;USA;European
+712;John F. Nash Jr.;USA;European
+205;John H. Northrop;USA;European
+109;John H. Van Vleck;USA;European
+792;John L. Hall;USA;European
+903;John O'Keefe;USA;European
+507;John R. Mott;USA;European
+634;John Steinbeck;USA;European
+442;Joseph E. Murray;USA;European
+746;Joseph E. Stiglitz;USA;European
+337;Joseph Erlanger;USA;European
+144;Joseph H. Taylor Jr.;USA;European
+433;Joseph L. Goldstein;USA;European
+1008;Joshua D. Angrist;USA;European
+366;Joshua Lederberg;USA;European
+85;Julian Schwinger;USA;European
+396;Julius Axelrod;USA;European
+743;K. Barry Sharpless;USA;European
+278;Kary B. Mullis;USA;European
+386;Keffer Hartline;USA;European
+121;Kenneth G. Wilson;USA;European
+682;Kenneth J. Arrow;USA;European
+943;Kip S. Thorne;USA;European
+895;Lars Peter Hansen;USA;European
+694;Lawrence R. Klein;USA;European
+735;Leland Hartwell;USA;European
+132;Leon M. Lederman;USA;European
+95;Leon N. Cooper;USA;European
+775;Linda B. Buck;USA;European
+217;Linus Pauling;USA;European
+883;Lloyd S. Shapley;USA;European
+1030;Louis Brus;USA;European
+459;Louis J. Ignarro;USA;European
+993;Louise Glück;USA;European
+89;Luis Alvarez;USA;European
+390;Marshall W. Nirenberg;USA;European
+830;Martin Chalfie;USA;European
+147;Martin L. Perl;USA;European
+451;Martin Rodbell;USA;European
+225;Melvin Calvin;USA;European
+133;Melvin Schwartz;USA;European
+705;Merton H. Miller;USA;European
+984;Michael Kremer;USA;European
+939;Michael Rosbash;USA;European
+432;Michael S. Brown;USA;European
+940;Michael W. Young;USA;European
+688;Milton Friedman;USA;European
+90;Murray Gell-Mann;USA;European
+497;Nicholas Murray Butler;USA;European
+528;Norman Borlaug;USA;European
+135;Norman F. Ramsey;USA;European
+847;Oliver E. Williamson;USA;European
+73;Owen Chamberlain;USA;European
+679;Paul A. Samuelson;USA;European
+254;Paul Berg;USA;European
+764;Paul C. Lauterbur;USA;European
+287;Paul D. Boyer;USA;European
+723;Paul Greengard;USA;European
+246;Paul J. Flory;USA;European
+834;Paul Krugman;USA;European
+969;Paul M. Romer;USA;European
+922;Paul Modrich;USA;European
+995;Paul R. Milgrom;USA;European
+610;Pearl Buck;USA;European
+51;Percy W. Bridgman;USA;European
+856;Peter A. Diamond;USA;European
+769;Peter Agre;USA;European
+383;Peyton Rous;USA;European
+1023;Philip Dybvig;USA;European
+351;Philip S. Hench;USA;European
+107;Philip W. Anderson;USA;European
+449;Phillip A. Sharp;USA;European
+885;Randy W. Schekman;USA;European
+753;Raymond Davis Jr.;USA;European
+774;Richard Axel;USA;European
+286;Richard E. Smalley;USA;European
+851;Richard F. Heck;USA;European
+949;Richard H. Thaler;USA;European
+86;Richard P. Feynman;USA;European
+796;Richard R. Schrock;USA;European
+28;Robert A. Millikan;USA;European
+155;Robert B. Laughlin;USA;European
+996;Robert B. Wilson;USA;European
+231;Robert B. Woodward;USA;European
+717;Robert C. Merton;USA;European
+151;Robert C. Richardson;USA;European
+714;Robert E. Lucas Jr.;USA;European
+284;Robert F. Curl Jr.;USA;European
+771;Robert F. Engle III;USA;European
+458;Robert F. Furchgott;USA;European
+795;Robert H. Grubbs;USA;European
+75;Robert Hofstadter;USA;European
+878;Robert J. Lefkowitz;USA;European
+896;Robert J. Shiller;USA;European
+701;Robert M. Solow;USA;European
+232;Robert S. Mulliken;USA;European
+96;Robert Schrieffer;USA;European
+709;Robert W. Fogel;USA;European
+388;Robert W. Holley;USA;European
+112;Robert Woodrow Wilson;USA;European
+770;Roderick MacKinnon;USA;European
+822;Roger B. Myerson;USA;European
+806;Roger D. Kornberg;USA;European
+422;Roger W. Sperry;USA;European
+413;Rosalyn Yalow;USA;European
+791;Roy J. Glauber;USA;European
+143;Russell A. Hulse;USA;European
+864;Saul Perlmutter;USA;European
+113;Sheldon Glashow;USA;European
+603;Sinclair Lewis;USA;European
+242;Stanford Moore;USA;European
+457;Stanley B. Prusiner;USA;European
+434;Stanley Cohen;USA;European
+115;Steven Weinberg;USA;European
+619;T.S. Eliot;USA;European
+470;Theodore Roosevelt;USA;European
+175;Theodore W. Richards;USA;European
+692;Theodore W. Schultz;USA;European
+842;Thomas A. Steitz;USA;European
+800;Thomas C. Schelling;USA;European
+325;Thomas H. Morgan;USA;European
+357;Thomas H. Weller;USA;European
+872;Thomas J. Sargent;USA;European
+274;Thomas R. Cech;USA;European
+117;Val Fitch;USA;European
+760;Vernon L. Smith;USA;European
+218;Vincent du Vigneaud;USA;European
+255;Walter Gilbert;USA;European
+206;Wendell M. Stanley;USA;European
+224;Willard F. Libby;USA;European
+123;William A. Fowler;USA;European
+968;William D. Nordhaus;USA;European
+154;William D. Phillips;USA;European
+911;William E. Moerner;USA;European
+706;William F. Sharpe;USA;European
+620;William Faulkner;USA;European
+970;William G. Kaelin Jr;USA;European
+243;William H. Stein;USA;European
+741;William Knowles;USA;European
+249;William Lipscomb;USA;European
+328;William P. Murphy;USA;European
+63;Willis E. Lamb;USA;European
+483;Woodrow Wilson;USA;European
+1031;Aleksey Yekimov ;USSR;European
+766;Alexei Abrikosov;USSR;European
+1006;Dmitry Muratov;USSR;European
+664;Joseph Brodsky;USSR;European
+552;Mikhail Gorbachev;USSR;European
+82;Nicolay G. Basov;USSR;European
+726;Zhores Alferov;USSR;European
+128;Gerd Binnig;West Germany;European
+272;Hartmut Michel;West Germany;European
+156;Horst L. Störmer;West Germany;European
+130;J. Georg Bednorz;West Germany;European
+739;Wolfgang Ketterle;West Germany;European
+329;Hans Spemann;Württemberg;European
+509;American Friends Service Committee;;Organisation
+537;Amnesty International;;Organisation
+1020;Center for Civil Liberties;;Organisation
+568;Doctors Without Borders;;Organisation
+881;European Union;;Organisation
+508;Friends Service Council;;Organisation
+810;Grameen Bank;;Organisation
+467;Institute of International Law;;Organisation
+818;Intergovernmental Panel on Climate Change;;Organisation
+797;International Atomic Energy Agency;;Organisation
+948;International Campaign to Abolish Nuclear Weapons;;Organisation
+564;International Campaign to Ban Landmines;;Organisation
+482;International Committee of the Red Cross;;Organisation
+527;International Labour Organization;;Organisation
+547;International Physicians for the Prevention of Nuclear War;;Organisation
+523;League of Red Cross Societies;;Organisation
+1019;Memorial;;Organisation
+503;Nansen International Office for Refugees;;Organisation
+925;National Dialogue Quartet;;Organisation
+515;Office of the United Nations High Commissioner for Refugees;;Organisation
+893;Organisation for the Prohibition of Chemical Weapons;;Organisation
+477;Permanent International Peace Bureau;;Organisation
+561;Pugwash Conferences on Science and World Affairs;;Organisation
+748;United Nations;;Organisation
+525;United Nations Children's Fund;;Organisation
+550;United Nations Peacekeeping Forces;;Organisation
+994;World Food Programme;;Organisation
+501;Carlos Saavedra Lamas;Argentina;South American
+554;Rigoberta Menchú Tum;Guatemala;South American
+544;Alfonso García Robles;Mexico;South American
+370;Peter Medawar;Brazil;Various
+601;Sigrid Undset;Denmark;Various
+578;Rudolf Eucken;East Friesland;Various
+563;José Ramos-Horta;East Timor;Various
+557;Yasser Arafat;Egypt;Various
+1029;Moungi Bawendi;France;Various
+641;Miguel Angel Asturias;Guatemala;Various
+269;Charles J. Pedersen;Korea;Various
+667;Octavio Paz;Mexico;Various
+876;Serge Haroche;Morocco;Various
+669;Derek Walcott;Saint Lucia;Various
+747;V. S. Naipaul;Trinidad and Tobago;Various
+419;Baruj Benacerraf;Venezuela;Various

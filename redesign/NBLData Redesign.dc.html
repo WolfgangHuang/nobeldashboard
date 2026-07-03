@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0,0&display=swap" rel="stylesheet">
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0}
+  .ms{font-family:'Material Symbols Rounded';font-weight:400;font-style:normal;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;font-variation-settings:'FILL' 0,'wght' 400,'opsz' 24}
+</style>
+</helmet>
+
+<!-- ================= TITLE ================= -->
+<div style="position:absolute;left:80px;top:64px;width:1200px">
+  <div style="font:600 13px/1 'IBM Plex Mono';letter-spacing:.18em;text-transform:uppercase;color:#6D3A9C">Redesign-Exploration</div>
+  <div style="font:600 40px/1.05 'Space Grotesk';color:#14181E;margin-top:14px">nbldata.org — Dashboard, aufgefrischt</div>
+  <div style="font:400 16px/1.5 'IBM Plex Sans';color:#5B636E;margin-top:12px;max-width:760px">Modern-frisch, datenstark, eigenständig. Signatur ist das <b style="color:#14181E">Nobel-Spektrum</b>: sechs klar unterscheidbare Farben, eine pro Preis, als wiederkehrendes Gestaltungselement. Pann & zoom dich durch die Bausteine — alles in DMC/Mantine + Plotly umsetzbar.</div>
+</div>
+
+<!-- ================= 01 DIRECTION ================= -->
+<div style="position:absolute;left:80px;top:260px;font:600 13px/1 'IBM Plex Mono';letter-spacing:.14em;text-transform:uppercase;color:#A7AEB8">01 — Richtung</div>
+
+<div style="position:absolute;left:80px;top:300px;width:560px">
+  <div data-drags-parent="1" style="position:absolute;top:-22px;font:500 11px 'IBM Plex Sans';color:#9aa1ab">Begründung</div>
+  <div style="background:#fff;border:1px solid #E4E7EC;border-radius:16px;padding:24px;box-shadow:0 1px 3px rgba(16,24,40,.06)">
+    <div style="font:600 18px 'Space Grotesk';color:#14181E">Was sich ändert — und warum</div>
+    <div style="display:flex;flex-direction:column;gap:14px;margin-top:18px">
+      <div style="display:flex;gap:12px"><span class="ms" style="font-size:20px;color:#B23A48">palette</span><div style="font:400 14px/1.45 'IBM Plex Sans';color:#444b54"><b style="color:#14181E">Spektrum statt Zufallsfarben.</b> 6 feste, klar trennbare Kategorie-Farben — überall konsistent (Charts, Chips, Navigation).</div></div>
+      <div style="display:flex;gap:12px"><span class="ms" style="font-size:20px;color:#2A4D9B">view_quilt</span><div style="font:400 14px/1.45 'IBM Plex Sans';color:#444b54"><b style="color:#14181E">Bento-Layout.</b> Asymmetrisches Raster statt gleichförmiger Kacheln — mehr Rhythmus, klare Hierarchie.</div></div>
+      <div style="display:flex;gap:12px"><span class="ms" style="font-size:20px;color:#C2682A">bolt</span><div style="font:400 14px/1.45 'IBM Plex Sans';color:#444b54"><b style="color:#14181E">Kräftiger Header + KPIs.</b> Große Mono-Zahlen, dunkles Hero-Band, kompaktes Filter-Toolbar.</div></div>
+      <div style="display:flex;gap:12px"><span class="ms" style="font-size:20px;color:#1F7A5A">dark_mode</span><div style="font:400 14px/1.45 'IBM Plex Sans';color:#444b54"><b style="color:#14181E">Hell & Dunkel.</b> Beide Modi mit eigenem Plotly-Theme.</div></div>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:680px;top:300px;width:520px">
+  <div data-drags-parent="1" style="position:absolute;top:-22px;font:500 11px 'IBM Plex Sans';color:#9aa1ab">Signatur · Das Nobel-Spektrum</div>
+  <div style="background:#14181E;border-radius:16px;padding:26px;box-shadow:0 1px 3px rgba(16,24,40,.18)">
+    <div style="font:600 16px 'Space Grotesk';color:#fff">Eine Farbe pro Preis</div>
+    <div style="font:400 13px/1.5 'IBM Plex Sans';color:#9aa1ab;margin-top:8px">Wiederkehrendes Gestaltungselement — als Balken, Akzent und aktiver Navigationszustand.</div>
+    <div style="display:flex;gap:8px;margin-top:22px">
+      <div style="flex:1"><div style="height:54px;border-radius:8px;background:#B23A48"></div><div style="font:600 11px 'IBM Plex Mono';color:#cdd2da;margin-top:8px;text-align:center">Medicine</div></div>
+      <div style="flex:1"><div style="height:54px;border-radius:8px;background:#2A4D9B"></div><div style="font:600 11px 'IBM Plex Mono';color:#cdd2da;margin-top:8px;text-align:center">Physics</div></div>
+      <div style="flex:1"><div style="height:54px;border-radius:8px;background:#C2682A"></div><div style="font:600 11px 'IBM Plex Mono';color:#cdd2da;margin-top:8px;text-align:center">Chemistry</div></div>
+      <div style="flex:1"><div style="height:54px;border-radius:8px;background:#6D3A9C"></div><div style="font:600 11px 'IBM Plex Mono';color:#cdd2da;margin-top:8px;text-align:center">Economics</div></div>
+      <div style="flex:1"><div style="height:54px;border-radius:8px;background:#B08A1E"></div><div style="font:600 11px 'IBM Plex Mono';color:#cdd2da;margin-top:8px;text-align:center">Literature</div></div>
+      <div style="flex:1"><div style="height:54px;border-radius:8px;background:#1F7A5A"></div><div style="font:600 11px 'IBM Plex Mono';color:#cdd2da;margin-top:8px;text-align:center">Peace</div></div>
+    </div>
+    <div style="display:flex;height:6px;border-radius:3px;overflow:hidden;margin-top:22px"><i style="flex:1;background:#B23A48"></i><i style="flex:1;background:#2A4D9B"></i><i style="flex:1;background:#C2682A"></i><i style="flex:1;background:#6D3A9C"></i><i style="flex:1;background:#B08A1E"></i><i style="flex:1;background:#1F7A5A"></i></div>
+  </div>
+</div>
+
+<div style="position:absolute;left:1240px;top:312px;width:250px;background:#FEF3B6;padding:16px 18px;box-shadow:0 6px 16px rgba(16,24,40,.12);transform:rotate(-1.4deg);font:400 13px/1.5 'IBM Plex Sans';color:#5b4a12">
+  <b>Wichtig:</b> bewusst eigenständig. Eigenes Spektrum-System statt Nobel-Gold — soll <u>nicht</u> nach nobelprize.org aussehen.
+</div>
+
+<!-- ================= 02 PALETTES ================= -->
+<div style="position:absolute;left:80px;top:640px;font:600 13px/1 'IBM Plex Mono';letter-spacing:.14em;text-transform:uppercase;color:#A7AEB8">02 — Farbpaletten · je 6 trennbare Farben</div>
+
+<div style="position:absolute;left:80px;top:684px;width:420px">
+  <div data-drags-parent="1" style="position:absolute;top:-22px;font:600 12px 'IBM Plex Sans';color:#14181E">Jewel <span style="font-weight:400;color:#1F7A5A">— Light Mode ✓</span></div>
+  <div style="background:#fff;border:2px solid #1F7A5A;border-radius:16px;padding:20px;box-shadow:0 1px 3px rgba(16,24,40,.06)">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div style="display:flex;align-items:center;gap:9px"><div style="width:30px;height:30px;border-radius:8px;background:#B23A48"></div><div><div style="font:600 12px 'IBM Plex Sans';color:#14181E">Medicine</div><div style="font:500 10px 'IBM Plex Mono';color:#9aa1ab">#B23A48</div></div></div>
+      <div style="display:flex;align-items:center;gap:9px"><div style="width:30px;height:30px;border-radius:8px;background:#2A4D9B"></div><div><div style="font:600 12px 'IBM Plex Sans';color:#14181E">Physics</div><div style="font:500 10px 'IBM Plex Mono';color:#9aa1ab">#2A4D9B</div></div></div>
+      <div style="display:flex;align-items:center;gap:9px"><div style="width:30px;height:30px;border-radius:8px;background:#C2682A"></div><div><div style="font:600 12px 'IBM Plex Sans';color:#14181E">Chemistry</div><div style="font:500 10px 'IBM Plex Mono';color:#9aa1ab">#C2682A</div></div></div>
+      <div style="display:flex;align-items:center;gap:9px"><div style="width:30px;height:30px;border-radius:8px;background:#6D3A9C"></div><div><div style="font:600 12px 'IBM Plex Sans';color:#14181E">Economics</div><div style="font:500 10px 'IBM Plex Mono';color:#9aa1ab">#6D3A9C</div></div></div>
+      <div style="display:flex;align-items:center;gap:9px"><div style="width:30px;height:30px;border-radius:8px;background:#B08A1E"></div><div><div style="font:600 12px 'IBM Plex Sans';color:#14181E">Literature</div><div style="font:500 10px 'IBM Plex Mono';color:#9aa1ab">#B08A1E</div></div></div>
+      <div style="display:flex;align-items:center;gap:9px"><div style="width:30px;height:30px;border-radius:8px;background:#1F7A5A"></div><div><div style="font:600 12px 'IBM Plex Sans';color:#14181E">Peace</div><div style="font:500 10px 'IBM Plex Mono';color:#9aa1ab">#1F7A5A</div></div></div>
+    </div>
+    <div style="display:flex;height:8px;border-radius:4px;overflow:hidden;margin-top:18px"><i style="flex:1;background:#B23A48"></i><i style="flex:1;background:#2A4D9B"></i><i style="flex:1;background:#C2682A"></i><i style="flex:1;background:#6D3A9C"></i><i style="flex:1;background:#B08A1E"></i><i style="flex:1;background:#1F7A5A"></i></div>
+    <div style="margin-top:14px;font:500 11px 'IBM Plex Sans';color:#5B636E">Gedämpfter, „prestigeträchtiger" — gut auf Hellgrau.</div>
+  </div>
+</div>
+
+<div style="position:absolute;left:540px;top:684px;width:420px">
+  <div data-drags-parent="1" style="position:absolute;top:-22px;font:600 12px 'IBM Plex Sans';color:#14181E">Neon <span style="font-weight:400;color:#1F7A5A">— Dark Mode ✓</span></div>
+  <div style="background:#14181E;border:2px solid #4CD389;border-radius:16px;padding:20px;box-shadow:0 1px 3px rgba(16,24,40,.06)">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div style="display:flex;align-items:center;gap:9px"><div style="width:30px;height:30px;border-radius:8px;background:#FF6B6E"></div><div><div style="font:600 12px 'IBM Plex Sans';color:#fff">Medicine</div><div style="font:500 10px 'IBM Plex Mono';color:#7b828c">#FF6B6E</div></div></div>
+      <div style="display:flex;align-items:center;gap:9px"><div style="width:30px;height:30px;border-radius:8px;background:#6E8BFF"></div><div><div style="font:600 12px 'IBM Plex Sans';color:#fff">Physics</div><div style="font:500 10px 'IBM Plex Mono';color:#7b828c">#6E8BFF</div></div></div>
+      <div style="display:flex;align-items:center;gap:9px"><div style="width:30px;height:30px;border-radius:8px;background:#FF8A3D"></div><div><div style="font:600 12px 'IBM Plex Sans';color:#fff">Chemistry</div><div style="font:500 10px 'IBM Plex Mono';color:#7b828c">#FF8A3D</div></div></div>
+      <div style="display:flex;align-items:center;gap:9px"><div style="width:30px;height:30px;border-radius:8px;background:#B97BE6"></div><div><div style="font:600 12px 'IBM Plex Sans';color:#fff">Economics</div><div style="font:500 10px 'IBM Plex Mono';color:#7b828c">#B97BE6</div></div></div>
+      <div style="display:flex;align-items:center;gap:9px"><div style="width:30px;height:30px;border-radius:8px;background:#F2C04B"></div><div><div style="font:600 12px 'IBM Plex Sans';color:#fff">Literature</div><div style="font:500 10px 'IBM Plex Mono';color:#7b828c">#F2C04B</div></div></div>
+      <div style="display:flex;align-items:center;gap:9px"><div style="width:30px;height:30px;border-radius:8px;background:#4CD389"></div><div><div style="font:600 12px 'IBM Plex Sans';color:#fff">Peace</div><div style="font:500 10px 'IBM Plex Mono';color:#7b828c">#4CD389</div></div></div>
+    </div>
+    <div style="display:flex;height:8px;border-radius:4px;overflow:hidden;margin-top:18px"><i style="flex:1;background:#FF6B6E"></i><i style="flex:1;background:#6E8BFF"></i><i style="flex:1;background:#FF8A3D"></i><i style="flex:1;background:#B97BE6"></i><i style="flex:1;background:#F2C04B"></i><i style="flex:1;background:#4CD389"></i></div>
+    <div style="margin-top:14px;font:500 11px 'IBM Plex Sans';color:#9aa1ab">Hellere Variante von A — leuchtet auf dunklem Grund.</div>
+  </div>
+</div>
+
+<!-- ================= 03 TYPOGRAPHY ================= -->
+<div style="position:absolute;left:80px;top:1010px;font:600 13px/1 'IBM Plex Mono';letter-spacing:.14em;text-transform:uppercase;color:#A7AEB8">03 — Typografie</div>
+
+<div style="position:absolute;left:80px;top:1054px;width:420px">
+  <div data-drags-parent="1" style="position:absolute;top:-22px;font:600 12px 'IBM Plex Sans';color:#14181E">Space Grotesk + IBM Plex Mono <span style="font-weight:400;color:#1F7A5A">✓ gewählt</span></div>
+  <div style="background:#fff;border:2px solid #1F7A5A;border-radius:16px;padding:22px;box-shadow:0 1px 3px rgba(16,24,40,.06)">
+    <div style="font:600 28px/1.05 'Space Grotesk';color:#14181E">Nobel Laureate Data</div>
+    <div style="font:400 14px/1.5 'IBM Plex Sans';color:#5B636E;margin-top:10px">Klare, moderne UI-Schrift für Fließtext und Labels. Datenstark und gut lesbar.</div>
+    <div style="display:flex;align-items:baseline;gap:14px;margin-top:16px;border-top:1px solid #EFF1F4;padding-top:16px">
+      <div style="font:600 38px 'Space Grotesk';color:#14181E;font-variant-numeric:tabular-nums">1026</div>
+      <div style="font:500 13px 'IBM Plex Mono';color:#6D3A9C">IBM Plex Mono · Zahlen</div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 04 COMPONENTS ================= -->
+<div style="position:absolute;left:80px;top:1410px;font:600 13px/1 'IBM Plex Mono';letter-spacing:.14em;text-transform:uppercase;color:#A7AEB8">04 — Komponenten</div>
+
+<!-- Sidebar light -->
+<div style="position:absolute;left:80px;top:1454px;width:248px">
+  <div data-drags-parent="1" style="position:absolute;top:-22px;font:500 11px 'IBM Plex Sans';color:#9aa1ab">Sidebar · hell</div>
+  <div style="background:#fff;border:1px solid #E4E7EC;border-radius:16px;padding:14px;box-shadow:0 1px 3px rgba(16,24,40,.06)">
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 8px 14px">
+      <div style="display:flex;gap:2px"><i style="width:5px;height:14px;border-radius:2px;background:#B23A48;display:block"></i><i style="width:5px;height:14px;border-radius:2px;background:#2A4D9B;display:block"></i><i style="width:5px;height:14px;border-radius:2px;background:#C2682A;display:block"></i><i style="width:5px;height:14px;border-radius:2px;background:#6D3A9C;display:block"></i><i style="width:5px;height:14px;border-radius:2px;background:#B08A1E;display:block"></i><i style="width:5px;height:14px;border-radius:2px;background:#1F7A5A;display:block"></i></div>
+      <div style="font:700 16px 'Space Grotesk';color:#14181E;letter-spacing:-.02em">nbldata</div>
+    </div>
+    <div style="font:600 10px 'IBM Plex Mono';letter-spacing:.12em;color:#A7AEB8;padding:6px 10px">ANALYSE</div>
+    <div style="position:relative;display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:10px;background:#F4F0FB;color:#14181E;font:600 14px 'IBM Plex Sans';margin-bottom:2px">
+      <span style="position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:2px;background:#6D3A9C"></span>
+      <span class="ms" style="font-size:20px;color:#6D3A9C;font-variation-settings:'FILL' 1,'wght' 500,'opsz' 24">dashboard</span>Overview
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:10px;color:#5B636E;font:500 14px 'IBM Plex Sans';margin-bottom:2px"><span class="ms" style="font-size:20px">emoji_events</span>2025 Prizes</div>
+    <div style="display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:10px;color:#5B636E;font:500 14px 'IBM Plex Sans';margin-bottom:2px"><span class="ms" style="font-size:20px">public</span>Geography</div>
+    <div style="display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:10px;color:#5B636E;font:500 14px 'IBM Plex Sans';margin-bottom:2px"><span class="ms" style="font-size:20px">groups</span>Demography</div>
+    <div style="display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:10px;color:#5B636E;font:500 14px 'IBM Plex Sans';margin-bottom:2px"><span class="ms" style="font-size:20px">calendar_month</span>Time Analysis</div>
+    <div style="display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:10px;color:#5B636E;font:500 14px 'IBM Plex Sans';margin-bottom:2px"><span class="ms" style="font-size:20px">swap_horiz</span>Migration</div>
+    <div style="font:600 10px 'IBM Plex Mono';letter-spacing:.12em;color:#A7AEB8;padding:12px 10px 6px">WERKZEUGE</div>
+    <div style="display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:10px;color:#5B636E;font:500 14px 'IBM Plex Sans';margin-bottom:2px"><span class="ms" style="font-size:20px">table_chart</span>List Generator</div>
+    <div style="display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:10px;color:#5B636E;font:500 14px 'IBM Plex Sans'"><span class="ms" style="font-size:20px">storage</span>Data &amp; Refs</div>
+  </div>
+</div>
+
+<!-- Sidebar collapsed -->
+<div style="position:absolute;left:352px;top:1454px;width:72px">
+  <div data-drags-parent="1" style="position:absolute;top:-22px;font:500 11px 'IBM Plex Sans';color:#9aa1ab">Kollabiert</div>
+  <div style="background:#fff;border:1px solid #E4E7EC;border-radius:16px;padding:12px 10px;box-shadow:0 1px 3px rgba(16,24,40,.06);display:flex;flex-direction:column;align-items:center;gap:6px">
+    <div style="display:flex;gap:2px;padding:4px 0 12px"><i style="width:4px;height:12px;border-radius:2px;background:#B23A48;display:block"></i><i style="width:4px;height:12px;border-radius:2px;background:#2A4D9B;display:block"></i><i style="width:4px;height:12px;border-radius:2px;background:#C2682A;display:block"></i><i style="width:4px;height:12px;border-radius:2px;background:#6D3A9C;display:block"></i><i style="width:4px;height:12px;border-radius:2px;background:#B08A1E;display:block"></i><i style="width:4px;height:12px;border-radius:2px;background:#1F7A5A;display:block"></i></div>
+    <div style="position:relative;width:44px;height:44px;border-radius:12px;background:#F4F0FB;display:flex;align-items:center;justify-content:center"><span class="ms" style="font-size:22px;color:#6D3A9C;font-variation-settings:'FILL' 1,'wght' 500,'opsz' 24">dashboard</span></div>
+    <div style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;color:#5B636E"><span class="ms" style="font-size:22px">emoji_events</span></div>
+    <div style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;color:#5B636E"><span class="ms" style="font-size:22px">public</span></div>
+    <div style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;color:#5B636E"><span class="ms" style="font-size:22px">groups</span></div>
+    <div style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;color:#5B636E"><span class="ms" style="font-size:22px">calendar_month</span></div>
+    <div style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;color:#5B636E"><span class="ms" style="font-size:22px">swap_horiz</span></div>
+    <div style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;color:#5B636E"><span class="ms" style="font-size:22px">table_chart</span></div>
+  </div>
+</div>
+
+<!-- Sidebar dark -->
+<div style="position:absolute;left:448px;top:1454px;width:248px">
+  <div data-drags-parent="1" style="position:absolute;top:-22px;font:500 11px 'IBM Plex Sans';color:#9aa1ab">Sidebar · dunkel</div>
+  <div style="background:#14181E;border:1px solid #262C35;border-radius:16px;padding:14px;box-shadow:0 1px 3px rgba(16,24,40,.06)">
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 8px 14px">
+      <div style="display:flex;gap:2px"><i style="width:5px;height:14px;border-radius:2px;background:#FF6B6E;display:block"></i><i style="width:5px;height:14px;border-radius:2px;background:#6E8BFF;display:block"></i><i style="width:5px;height:14px;border-radius:2px;background:#FF8A3D;display:block"></i><i style="width:5px;height:14px;border-radius:2px;background:#B97BE6;display:block"></i><i style="width:5px;height:14px;border-radius:2px;background:#F2C04B;display:block"></i><i style="width:5px;height:14px;border-radius:2px;background:#4CD389;display:block"></i></div>
+      <div style="font:700 16px 'Space Grotesk';color:#fff;letter-spacing:-.02em">nbldata</div>
+    </div>
+    <div style="font:600 10px 'IBM Plex Mono';letter-spacing:.12em;color:#5b626c;padding:6px 10px">ANALYSE</div>
+    <div style="position:relative;display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:10px;background:#241A33;color:#fff;font:600 14px 'IBM Plex Sans';margin-bottom:2px">
+      <span style="position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:2px;background:#B97BE6"></span>
+      <span class="ms" style="font-size:20px;color:#B97BE6;font-variation-settings:'FILL' 1,'wght' 500,'opsz' 24">dashboard</span>Overview
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:10px;color:#9BA3AE;font:500 14px 'IBM Plex Sans';margin-bottom:2px"><span class="ms" style="font-size:20px">emoji_events</span>2025 Prizes</div>
+    <div style="display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:10px;color:#9BA3AE;font:500 14px 'IBM Plex Sans';margin-bottom:2px"><span class="ms" style="font-size:20px">public</span>Geography</div>
+    <div style="display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:10px;color:#9BA3AE;font:500 14px 'IBM Plex Sans';margin-bottom:2px"><span class="ms" style="font-size:20px">groups</span>Demography</div>
+    <div style="display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:10px;color:#9BA3AE;font:500 14px 'IBM Plex Sans';margin-bottom:2px"><span class="ms" style="font-size:20px">calendar_month</span>Time Analysis</div>
+    <div style="display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:10px;color:#9BA3AE;font:500 14px 'IBM Plex Sans';margin-bottom:2px"><span class="ms" style="font-size:20px">swap_horiz</span>Migration</div>
+    <div style="font:600 10px 'IBM Plex Mono';letter-spacing:.12em;color:#5b626c;padding:12px 10px 6px">WERKZEUGE</div>
+    <div style="display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:10px;color:#9BA3AE;font:500 14px 'IBM Plex Sans';margin-bottom:2px"><span class="ms" style="font-size:20px">table_chart</span>List Generator</div>
+    <div style="display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:10px;color:#9BA3AE;font:500 14px 'IBM Plex Sans'"><span class="ms" style="font-size:20px">storage</span>Data &amp; Refs</div>
+  </div>
+</div>
+
+<!-- Filter toolbar -->
+<div style="position:absolute;left:760px;top:1454px;width:980px">
+  <div data-drags-parent="1" style="position:absolute;top:-22px;font:500 11px 'IBM Plex Sans';color:#9aa1ab">Filter-Toolbar · kompakt</div>
+  <div style="background:#fff;border:1px solid #E4E7EC;border-radius:16px;padding:16px 18px;box-shadow:0 1px 3px rgba(16,24,40,.06);display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <span style="display:inline-flex;align-items:center;gap:6px;background:#B23A48;color:#fff;font:600 13px 'IBM Plex Sans';padding:6px 13px;border-radius:999px"><span class="ms" style="font-size:15px">check</span>Medicine</span>
+      <span style="display:inline-flex;align-items:center;gap:6px;background:#2A4D9B;color:#fff;font:600 13px 'IBM Plex Sans';padding:6px 13px;border-radius:999px"><span class="ms" style="font-size:15px">check</span>Physics</span>
+      <span style="display:inline-flex;align-items:center;gap:6px;background:#C2682A;color:#fff;font:600 13px 'IBM Plex Sans';padding:6px 13px;border-radius:999px"><span class="ms" style="font-size:15px">check</span>Chemistry</span>
+      <span style="display:inline-flex;align-items:center;gap:6px;background:#6D3A9C;color:#fff;font:600 13px 'IBM Plex Sans';padding:6px 13px;border-radius:999px"><span class="ms" style="font-size:15px">check</span>Economics</span>
+      <span style="display:inline-flex;align-items:center;gap:6px;background:#fff;color:#9aa1ab;border:1.5px solid #E4E7EC;font:600 13px 'IBM Plex Sans';padding:6px 13px;border-radius:999px">Literature</span>
+      <span style="display:inline-flex;align-items:center;gap:6px;background:#1F7A5A;color:#fff;font:600 13px 'IBM Plex Sans';padding:6px 13px;border-radius:999px"><span class="ms" style="font-size:15px">check</span>Peace</span>
+    </div>
+    <div style="width:1px;height:30px;background:#EAECF0"></div>
+    <div style="display:inline-flex;background:#F2F4F7;border-radius:999px;padding:3px">
+      <span style="font:600 13px 'IBM Plex Sans';color:#14181E;background:#fff;padding:5px 14px;border-radius:999px;box-shadow:0 1px 2px rgba(16,24,40,.08)">female</span>
+      <span style="font:600 13px 'IBM Plex Sans';color:#14181E;padding:5px 14px;border-radius:999px">male</span>
+    </div>
+    <div style="width:1px;height:30px;background:#EAECF0"></div>
+    <div style="flex:1;min-width:180px">
+      <div style="display:flex;justify-content:space-between;font:500 11px 'IBM Plex Mono';color:#9aa1ab;margin-bottom:6px"><span>1901</span><span style="color:#6D3A9C">1901 – 2025</span><span>2025</span></div>
+      <div style="position:relative;height:5px;border-radius:3px;background:#EAECF0"><div style="position:absolute;left:0;right:0;height:5px;border-radius:3px;background:linear-gradient(90deg,#B23A48,#2A4D9B,#C2682A,#6D3A9C,#B08A1E,#1F7A5A)"></div><div style="position:absolute;left:-6px;top:-4px;width:13px;height:13px;border-radius:50%;background:#fff;border:2px solid #6D3A9C"></div><div style="position:absolute;right:-6px;top:-4px;width:13px;height:13px;border-radius:50%;background:#fff;border:2px solid #1F7A5A"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- KPI quartet -->
+<div style="position:absolute;left:760px;top:1582px;width:980px">
+  <div data-drags-parent="1" style="position:absolute;top:-22px;font:500 11px 'IBM Plex Sans';color:#9aa1ab">KPI-Cards</div>
+  <div style="display:flex;gap:16px">
+    <div style="flex:1;background:#fff;border:1px solid #E4E7EC;border-radius:14px;padding:18px;position:relative;overflow:hidden;box-shadow:0 1px 3px rgba(16,24,40,.06)">
+      <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:#2A4D9B"></div>
+      <div style="display:flex;align-items:center;gap:8px"><span class="ms" style="font-size:18px;color:#2A4D9B">military_tech</span><div style="font:600 12px 'IBM Plex Sans';letter-spacing:.03em;text-transform:uppercase;color:#5B636E">Prizes</div></div>
+      <div style="font:400 11px 'IBM Plex Sans';color:#9aa1ab;margin-top:4px">excl. declined</div>
+      <div style="font:600 42px/1 'Space Grotesk';color:#14181E;margin-top:14px;font-variant-numeric:tabular-nums">1026</div>
+    </div>
+    <div style="flex:1;background:#fff;border:1px solid #E4E7EC;border-radius:14px;padding:18px;position:relative;overflow:hidden;box-shadow:0 1px 3px rgba(16,24,40,.06)">
+      <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:#1F7A5A"></div>
+      <div style="display:flex;align-items:center;gap:8px"><span class="ms" style="font-size:18px;color:#1F7A5A">groups</span><div style="font:600 12px 'IBM Plex Sans';letter-spacing:.03em;text-transform:uppercase;color:#5B636E">Laureates</div></div>
+      <div style="font:400 11px 'IBM Plex Sans';color:#9aa1ab;margin-top:4px">incl. organisations</div>
+      <div style="font:600 42px/1 'Space Grotesk';color:#14181E;margin-top:14px;font-variant-numeric:tabular-nums">1018</div>
+    </div>
+    <div style="flex:1;background:#fff;border:1px solid #E4E7EC;border-radius:14px;padding:18px;position:relative;overflow:hidden;box-shadow:0 1px 3px rgba(16,24,40,.06)">
+      <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:#B23A48"></div>
+      <div style="display:flex;align-items:center;gap:8px"><span class="ms" style="font-size:18px;color:#B23A48">trending_down</span><div style="font:600 12px 'IBM Plex Sans';letter-spacing:.03em;text-transform:uppercase;color:#5B636E">Youngest</div></div>
+      <div style="font:600 42px/1 'Space Grotesk';color:#14181E;margin-top:24px;font-variant-numeric:tabular-nums">17</div>
+      <div style="font:500 13px 'IBM Plex Sans';color:#5B636E;margin-top:8px">Malala Yousafzai</div>
+    </div>
+    <div style="flex:1;background:#fff;border:1px solid #E4E7EC;border-radius:14px;padding:18px;position:relative;overflow:hidden;box-shadow:0 1px 3px rgba(16,24,40,.06)">
+      <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:#6D3A9C"></div>
+      <div style="display:flex;align-items:center;gap:8px"><span class="ms" style="font-size:18px;color:#6D3A9C">trending_up</span><div style="font:600 12px 'IBM Plex Sans';letter-spacing:.03em;text-transform:uppercase;color:#5B636E">Oldest</div></div>
+      <div style="font:600 42px/1 'Space Grotesk';color:#14181E;margin-top:24px;font-variant-numeric:tabular-nums">97</div>
+      <div style="font:500 13px 'IBM Plex Sans';color:#5B636E;margin-top:8px">John B. Goodenough</div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 05 FULL OVERVIEW LIGHT ================= -->
+<div style="position:absolute;left:80px;top:2010px;font:600 13px/1 'IBM Plex Mono';letter-spacing:.14em;text-transform:uppercase;color:#A7AEB8">05 — Overview-Seite · komplett</div>
+
+<div style="position:absolute;left:80px;top:2054px;width:1480px">
+  <div data-drags-parent="1" style="position:absolute;top:-22px;font:600 12px 'IBM Plex Sans';color:#14181E">Hell</div>
+  <div style="background:#EEF1F4;border:1px solid #E0E3E8;border-radius:18px;overflow:hidden;box-shadow:0 12px 40px rgba(16,24,40,.10)">
+    <!-- hero -->
+    <div style="background:#FFFFFF;padding:20px 28px;display:flex;align-items:center;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:14px">
+        <div style="display:flex;gap:3px"><i style="width:8px;height:26px;border-radius:3px;background:#B23A48;display:block"></i><i style="width:8px;height:26px;border-radius:3px;background:#2A4D9B;display:block"></i><i style="width:8px;height:26px;border-radius:3px;background:#C2682A;display:block"></i><i style="width:8px;height:26px;border-radius:3px;background:#6D3A9C;display:block"></i><i style="width:8px;height:26px;border-radius:3px;background:#B08A1E;display:block"></i><i style="width:8px;height:26px;border-radius:3px;background:#1F7A5A;display:block"></i></div>
+        <div>
+          <div style="font:700 21px/1 'Space Grotesk';color:#14181E;letter-spacing:-.01em">Nobel Laureate Data Dashboard</div>
+          <div style="font:400 12px 'IBM Plex Mono';color:#9aa1ab;margin-top:5px">1901–2025 · 1026 prizes · 1018 laureates</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="display:flex;align-items:center;gap:8px;background:#F2F4F7;border:1px solid #E4E7EC;border-radius:999px;padding:7px 14px;font:400 13px 'IBM Plex Sans';color:#9aa1ab;width:200px"><span class="ms" style="font-size:18px">search</span>Suche Laureate…</div>
+        <div style="width:38px;height:38px;border-radius:10px;background:#F2F4F7;border:1px solid #E4E7EC;display:flex;align-items:center;justify-content:center;color:#5B636E"><span class="ms" style="font-size:20px">dark_mode</span></div>
+        <span style="font:600 12px 'IBM Plex Mono';color:#1F7A5A;background:rgba(46,158,91,.14);padding:6px 11px;border-radius:999px">V2.0</span>
+      </div>
+    </div>
+    <div style="height:1px;background:#E6E9ED"></div>
+    <!-- body -->
+    <div style="display:flex">
+      <!-- sidebar -->
+      <div style="width:212px;background:#fff;border-right:1px solid #E8EAEE;padding:16px 12px;flex-shrink:0">
+        <div style="font:600 10px 'IBM Plex Mono';letter-spacing:.12em;color:#A7AEB8;padding:4px 10px 8px">ANALYSE</div>
+        <div style="position:relative;display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:10px;background:#F4F0FB;color:#14181E;font:600 13px 'IBM Plex Sans';margin-bottom:2px"><span style="position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:2px;background:#6D3A9C"></span><span class="ms" style="font-size:19px;color:#6D3A9C;font-variation-settings:'FILL' 1,'wght' 500,'opsz' 24">dashboard</span>Overview</div>
+        <div style="display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:10px;color:#5B636E;font:500 13px 'IBM Plex Sans';margin-bottom:2px"><span class="ms" style="font-size:19px">emoji_events</span>2025 Prizes</div>
+        <div style="display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:10px;color:#5B636E;font:500 13px 'IBM Plex Sans';margin-bottom:2px"><span class="ms" style="font-size:19px">public</span>Geography</div>
+        <div style="display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:10px;color:#5B636E;font:500 13px 'IBM Plex Sans';margin-bottom:2px"><span class="ms" style="font-size:19px">groups</span>Demography</div>
+        <div style="display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:10px;color:#5B636E;font:500 13px 'IBM Plex Sans';margin-bottom:2px"><span class="ms" style="font-size:19px">calendar_month</span>Time Analysis</div>
+        <div style="display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:10px;color:#5B636E;font:500 13px 'IBM Plex Sans';margin-bottom:2px"><span class="ms" style="font-size:19px">swap_horiz</span>Migration</div>
+        <div style="display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:10px;color:#5B636E;font:500 13px 'IBM Plex Sans';margin-bottom:2px"><span class="ms" style="font-size:19px">campaign</span>Nominations</div>
+        <div style="font:600 10px 'IBM Plex Mono';letter-spacing:.12em;color:#A7AEB8;padding:12px 10px 8px">WERKZEUGE</div>
+        <div style="display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:10px;color:#5B636E;font:500 13px 'IBM Plex Sans';margin-bottom:2px"><span class="ms" style="font-size:19px">table_chart</span>List Generator</div>
+        <div style="display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:10px;color:#5B636E;font:500 13px 'IBM Plex Sans'"><span class="ms" style="font-size:19px">storage</span>Data &amp; Refs</div>
+      </div>
+      <!-- main -->
+      <div style="flex:1;padding:22px 24px;min-width:0">
+        <!-- filter toolbar -->
+        <div style="background:#fff;border:1px solid #E4E7EC;border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;box-shadow:0 1px 2px rgba(16,24,40,.04)">
+          <div style="display:flex;gap:7px;flex-wrap:wrap">
+            <span style="display:inline-flex;align-items:center;gap:5px;background:#B23A48;color:#fff;font:600 12px 'IBM Plex Sans';padding:5px 11px;border-radius:999px"><span class="ms" style="font-size:14px">check</span>Medicine</span>
+            <span style="display:inline-flex;align-items:center;gap:5px;background:#2A4D9B;color:#fff;font:600 12px 'IBM Plex Sans';padding:5px 11px;border-radius:999px"><span class="ms" style="font-size:14px">check</span>Physics</span>
+            <span style="display:inline-flex;align-items:center;gap:5px;background:#C2682A;color:#fff;font:600 12px 'IBM Plex Sans';padding:5px 11px;border-radius:999px"><span class="ms" style="font-size:14px">check</span>Chemistry</span>
+            <span style="display:inline-flex;align-items:center;gap:5px;background:#6D3A9C;color:#fff;font:600 12px 'IBM Plex Sans';padding:5px 11px;border-radius:999px"><span class="ms" style="font-size:14px">check</span>Economics</span>
+            <span style="display:inline-flex;align-items:center;gap:5px;background:#B08A1E;color:#fff;font:600 12px 'IBM Plex Sans';padding:5px 11px;border-radius:999px"><span class="ms" style="font-size:14px">check</span>Literature</span>
+            <span style="display:inline-flex;align-items:center;gap:5px;background:#1F7A5A;color:#fff;font:600 12px 'IBM Plex Sans';padding:5px 11px;border-radius:999px"><span class="ms" style="font-size:14px">check</span>Peace</span>
+          </div>
+          <div style="width:1px;height:26px;background:#EAECF0"></div>
+          <div style="display:inline-flex;background:#F2F4F7;border-radius:999px;padding:3px"><span style="font:600 12px 'IBM Plex Sans';color:#14181E;background:#fff;padding:4px 12px;border-radius:999px;box-shadow:0 1px 2px rgba(16,24,40,.08)">female</span><span style="font:600 12px 'IBM Plex Sans';color:#14181E;padding:4px 12px;border-radius:999px">male</span></div>
+          <div style="flex:1;min-width:170px">
+            <div style="display:flex;justify-content:space-between;font:500 10px 'IBM Plex Mono';color:#9aa1ab;margin-bottom:5px"><span>1901</span><span style="color:#6D3A9C">1901 – 2025</span><span>2025</span></div>
+            <div style="position:relative;height:5px;border-radius:3px;background:#EAECF0"><div style="position:absolute;left:0;right:0;height:5px;border-radius:3px;background:linear-gradient(90deg,#B23A48,#1F7A5A)"></div><div style="position:absolute;left:-5px;top:-4px;width:13px;height:13px;border-radius:50%;background:#fff;border:2px solid #6D3A9C"></div><div style="position:absolute;right:-5px;top:-4px;width:13px;height:13px;border-radius:50%;background:#fff;border:2px solid #1F7A5A"></div></div>
+          </div>
+        </div>
+        <!-- KPI -->
+        <div style="display:flex;gap:14px;margin-top:18px">
+          <div style="flex:1;background:#fff;border:1px solid #E4E7EC;border-radius:14px;padding:16px;position:relative;overflow:hidden;box-shadow:0 1px 2px rgba(16,24,40,.04)"><div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:#2A4D9B"></div><div style="font:600 11px 'IBM Plex Sans';letter-spacing:.03em;text-transform:uppercase;color:#5B636E">Prizes</div><div style="font:600 36px/1 'Space Grotesk';color:#14181E;margin-top:12px;font-variant-numeric:tabular-nums">1026</div></div>
+          <div style="flex:1;background:#fff;border:1px solid #E4E7EC;border-radius:14px;padding:16px;position:relative;overflow:hidden;box-shadow:0 1px 2px rgba(16,24,40,.04)"><div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:#1F7A5A"></div><div style="font:600 11px 'IBM Plex Sans';letter-spacing:.03em;text-transform:uppercase;color:#5B636E">Laureates</div><div style="font:600 36px/1 'Space Grotesk';color:#14181E;margin-top:12px;font-variant-numeric:tabular-nums">1018</div></div>
+          <div style="flex:1;background:#fff;border:1px solid #E4E7EC;border-radius:14px;padding:16px;position:relative;overflow:hidden;box-shadow:0 1px 2px rgba(16,24,40,.04)"><div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:#B23A48"></div><div style="font:600 11px 'IBM Plex Sans';letter-spacing:.03em;text-transform:uppercase;color:#5B636E">Youngest</div><div style="display:flex;align-items:baseline;gap:8px;margin-top:12px"><div style="font:600 36px/1 'Space Grotesk';color:#14181E;font-variant-numeric:tabular-nums">17</div><div style="font:500 12px 'IBM Plex Sans';color:#5B636E">Malala Y.</div></div></div>
+          <div style="flex:1;background:#fff;border:1px solid #E4E7EC;border-radius:14px;padding:16px;position:relative;overflow:hidden;box-shadow:0 1px 2px rgba(16,24,40,.04)"><div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:#6D3A9C"></div><div style="font:600 11px 'IBM Plex Sans';letter-spacing:.03em;text-transform:uppercase;color:#5B636E">Oldest</div><div style="display:flex;align-items:baseline;gap:8px;margin-top:12px"><div style="font:600 36px/1 'Space Grotesk';color:#14181E;font-variant-numeric:tabular-nums">97</div><div style="font:500 12px 'IBM Plex Sans';color:#5B636E">J. Goodenough</div></div></div>
+        </div>
+        <!-- bento -->
+        <div style="display:grid;grid-template-columns:repeat(12,1fr);gap:14px;margin-top:18px">
+          <div style="grid-column:span 7;background:#fff;border:1px solid #E4E7EC;border-radius:14px;padding:18px;box-shadow:0 1px 2px rgba(16,24,40,.04)">
+            <div style="display:flex;align-items:center;justify-content:space-between"><div><div style="font:600 15px 'Space Grotesk';color:#14181E">Discipline · Gender · Country</div><div style="font:400 12px 'IBM Plex Sans';color:#9aa1ab;margin-top:2px">Klick auf ein Segment filtert das Dashboard.</div></div><span style="font:600 11px 'IBM Plex Mono';color:#6D3A9C;background:#F4F0FB;padding:5px 10px;border-radius:999px">2025</span></div>
+            <div id="g-sunburst-l" style="width:100%;height:300px;margin-top:8px"></div>
+          </div>
+          <div style="grid-column:span 5;display:flex;flex-direction:column;gap:14px">
+            <div style="background:#fff;border:1px solid #E4E7EC;border-radius:14px;padding:18px;color:#14181E">
+              <div style="font:600 13px 'Space Grotesk';color:#14181E">Spektrum-Verteilung</div>
+              <div style="display:flex;flex-direction:column;gap:10px;margin-top:14px">
+                <div><div style="display:flex;justify-content:space-between;font:500 12px 'IBM Plex Sans';color:#5B636E;margin-bottom:4px"><span>Medicine</span><span style="font-family:'IBM Plex Mono'">227</span></div><div style="height:6px;border-radius:3px;background:#EFF1F4"><div style="height:6px;border-radius:3px;width:88%;background:#B23A48"></div></div></div>
+                <div><div style="display:flex;justify-content:space-between;font:500 12px 'IBM Plex Sans';color:#5B636E;margin-bottom:4px"><span>Physics</span><span style="font-family:'IBM Plex Mono'">226</span></div><div style="height:6px;border-radius:3px;background:#EFF1F4"><div style="height:6px;border-radius:3px;width:87%;background:#2A4D9B"></div></div></div>
+                <div><div style="display:flex;justify-content:space-between;font:500 12px 'IBM Plex Sans';color:#5B636E;margin-bottom:4px"><span>Chemistry</span><span style="font-family:'IBM Plex Mono'">195</span></div><div style="height:6px;border-radius:3px;background:#EFF1F4"><div style="height:6px;border-radius:3px;width:75%;background:#C2682A"></div></div></div>
+                <div><div style="display:flex;justify-content:space-between;font:500 12px 'IBM Plex Sans';color:#5B636E;margin-bottom:4px"><span>Peace</span><span style="font-family:'IBM Plex Mono'">142</span></div><div style="height:6px;border-radius:3px;background:#EFF1F4"><div style="height:6px;border-radius:3px;width:55%;background:#1F7A5A"></div></div></div>
+                <div><div style="display:flex;justify-content:space-between;font:500 12px 'IBM Plex Sans';color:#5B636E;margin-bottom:4px"><span>Literature</span><span style="font-family:'IBM Plex Mono'">120</span></div><div style="height:6px;border-radius:3px;background:#EFF1F4"><div style="height:6px;border-radius:3px;width:46%;background:#B08A1E"></div></div></div>
+                <div><div style="display:flex;justify-content:space-between;font:500 12px 'IBM Plex Sans';color:#5B636E;margin-bottom:4px"><span>Economics</span><span style="font-family:'IBM Plex Mono'">96</span></div><div style="height:6px;border-radius:3px;background:#EFF1F4"><div style="height:6px;border-radius:3px;width:38%;background:#6D3A9C"></div></div></div>
+              </div>
+            </div>
+            <div style="background:#fff;border:1px solid #E4E7EC;border-radius:14px;padding:16px;box-shadow:0 1px 2px rgba(16,24,40,.04);flex:1">
+              <div style="font:600 13px 'Space Grotesk';color:#14181E">Gender</div>
+              <div id="g-gender-l" style="width:100%;height:150px;margin-top:4px"></div>
+            </div>
+          </div>
+          <div style="grid-column:span 6;background:#fff;border:1px solid #E4E7EC;border-radius:14px;padding:18px;box-shadow:0 1px 2px rgba(16,24,40,.04)"><div style="font:600 14px 'Space Grotesk';color:#14181E">Ethnicity</div><div style="font:400 11px 'IBM Plex Sans';color:#9aa1ab">Laut offizieller Nobel-API.</div><div id="g-eth-l" style="width:100%;height:240px;margin-top:6px"></div></div>
+          <div style="grid-column:span 6;background:#fff;border:1px solid #E4E7EC;border-radius:14px;padding:18px;box-shadow:0 1px 2px rgba(16,24,40,.04)"><div style="font:600 14px 'Space Grotesk';color:#14181E">Religion</div><div style="font:400 11px 'IBM Plex Sans';color:#9aa1ab">Siehe Tab „Data" für Details.</div><div id="g-rel-l" style="width:100%;height:240px;margin-top:6px"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= OVERVIEW DARK ================= -->
+<div style="position:absolute;left:1620px;top:2054px;width:1480px">
+  <div data-drags-parent="1" style="position:absolute;top:-22px;font:600 12px 'IBM Plex Sans';color:#14181E">Dunkel</div>
+  <div style="background:#0C0F14;border:1px solid #20262F;border-radius:18px;overflow:hidden;box-shadow:0 12px 40px rgba(16,24,40,.18)">
+    <div style="background:#111722;padding:20px 28px;display:flex;align-items:center;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:14px">
+        <div style="display:flex;gap:3px"><i style="width:8px;height:26px;border-radius:3px;background:#FF6B6E;display:block"></i><i style="width:8px;height:26px;border-radius:3px;background:#6E8BFF;display:block"></i><i style="width:8px;height:26px;border-radius:3px;background:#FF8A3D;display:block"></i><i style="width:8px;height:26px;border-radius:3px;background:#B97BE6;display:block"></i><i style="width:8px;height:26px;border-radius:3px;background:#F2C04B;display:block"></i><i style="width:8px;height:26px;border-radius:3px;background:#4CD389;display:block"></i></div>
+        <div>
+          <div style="font:700 21px/1 'Space Grotesk';color:#fff;letter-spacing:-.01em">Nobel Laureate Data Dashboard</div>
+          <div style="font:400 12px 'IBM Plex Mono';color:#6b7280;margin-top:5px">1901–2025 · 1026 prizes · 1018 laureates</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="display:flex;align-items:center;gap:8px;background:#0C0F14;border:1px solid #262C35;border-radius:999px;padding:7px 14px;font:400 13px 'IBM Plex Sans';color:#6b7280;width:200px"><span class="ms" style="font-size:18px">search</span>Suche Laureate…</div>
+        <div style="width:38px;height:38px;border-radius:10px;background:#0C0F14;border:1px solid #262C35;display:flex;align-items:center;justify-content:center;color:#F2C04B"><span class="ms" style="font-size:20px">light_mode</span></div>
+        <span style="font:600 12px 'IBM Plex Mono';color:#4CD389;background:rgba(76,211,137,.16);padding:6px 11px;border-radius:999px">V2.0</span>
+      </div>
+    </div>
+    <div style="height:1px;background:#20262F"></div>
+    <div style="display:flex">
+      <div style="width:212px;background:#111722;border-right:1px solid #20262F;padding:16px 12px;flex-shrink:0">
+        <div style="font:600 10px 'IBM Plex Mono';letter-spacing:.12em;color:#5b626c;padding:4px 10px 8px">ANALYSE</div>
+        <div style="position:relative;display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:10px;background:#241A33;color:#fff;font:600 13px 'IBM Plex Sans';margin-bottom:2px"><span style="position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:2px;background:#B97BE6"></span><span class="ms" style="font-size:19px;color:#B97BE6;font-variation-settings:'FILL' 1,'wght' 500,'opsz' 24">dashboard</span>Overview</div>
+        <div style="display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:10px;color:#9BA3AE;font:500 13px 'IBM Plex Sans';margin-bottom:2px"><span class="ms" style="font-size:19px">emoji_events</span>2025 Prizes</div>
+        <div style="display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:10px;color:#9BA3AE;font:500 13px 'IBM Plex Sans';margin-bottom:2px"><span class="ms" style="font-size:19px">public</span>Geography</div>
+        <div style="display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:10px;color:#9BA3AE;font:500 13px 'IBM Plex Sans';margin-bottom:2px"><span class="ms" style="font-size:19px">groups</span>Demography</div>
+        <div style="display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:10px;color:#9BA3AE;font:500 13px 'IBM Plex Sans';margin-bottom:2px"><span class="ms" style="font-size:19px">calendar_month</span>Time Analysis</div>
+        <div style="display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:10px;color:#9BA3AE;font:500 13px 'IBM Plex Sans';margin-bottom:2px"><span class="ms" style="font-size:19px">swap_horiz</span>Migration</div>
+        <div style="display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:10px;color:#9BA3AE;font:500 13px 'IBM Plex Sans';margin-bottom:2px"><span class="ms" style="font-size:19px">campaign</span>Nominations</div>
+        <div style="font:600 10px 'IBM Plex Mono';letter-spacing:.12em;color:#5b626c;padding:12px 10px 8px">WERKZEUGE</div>
+        <div style="display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:10px;color:#9BA3AE;font:500 13px 'IBM Plex Sans';margin-bottom:2px"><span class="ms" style="font-size:19px">table_chart</span>List Generator</div>
+        <div style="display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:10px;color:#9BA3AE;font:500 13px 'IBM Plex Sans'"><span class="ms" style="font-size:19px">storage</span>Data &amp; Refs</div>
+      </div>
+      <div style="flex:1;padding:22px 24px;min-width:0">
+        <div style="background:#111722;border:1px solid #20262F;border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+          <div style="display:flex;gap:7px;flex-wrap:wrap">
+            <span style="display:inline-flex;align-items:center;gap:5px;background:#FF6B6E;color:#1a1207;font:600 12px 'IBM Plex Sans';padding:5px 11px;border-radius:999px"><span class="ms" style="font-size:14px">check</span>Medicine</span>
+            <span style="display:inline-flex;align-items:center;gap:5px;background:#6E8BFF;color:#0a1020;font:600 12px 'IBM Plex Sans';padding:5px 11px;border-radius:999px"><span class="ms" style="font-size:14px">check</span>Physics</span>
+            <span style="display:inline-flex;align-items:center;gap:5px;background:#FF8A3D;color:#1a1207;font:600 12px 'IBM Plex Sans';padding:5px 11px;border-radius:999px"><span class="ms" style="font-size:14px">check</span>Chemistry</span>
+            <span style="display:inline-flex;align-items:center;gap:5px;background:#B97BE6;color:#14091f;font:600 12px 'IBM Plex Sans';padding:5px 11px;border-radius:999px"><span class="ms" style="font-size:14px">check</span>Economics</span>
+            <span style="display:inline-flex;align-items:center;gap:5px;background:#F2C04B;color:#1a1402;font:600 12px 'IBM Plex Sans';padding:5px 11px;border-radius:999px"><span class="ms" style="font-size:14px">check</span>Literature</span>
+            <span style="display:inline-flex;align-items:center;gap:5px;background:#4CD389;color:#06160d;font:600 12px 'IBM Plex Sans';padding:5px 11px;border-radius:999px"><span class="ms" style="font-size:14px">check</span>Peace</span>
+          </div>
+          <div style="width:1px;height:26px;background:#262C35"></div>
+          <div style="display:inline-flex;background:#0C0F14;border-radius:999px;padding:3px"><span style="font:600 12px 'IBM Plex Sans';color:#fff;background:#262C35;padding:4px 12px;border-radius:999px">female</span><span style="font:600 12px 'IBM Plex Sans';color:#9BA3AE;padding:4px 12px;border-radius:999px">male</span></div>
+          <div style="flex:1;min-width:170px">
+            <div style="display:flex;justify-content:space-between;font:500 10px 'IBM Plex Mono';color:#6b7280;margin-bottom:5px"><span>1901</span><span style="color:#B97BE6">1901 – 2025</span><span>2025</span></div>
+            <div style="position:relative;height:5px;border-radius:3px;background:#262C35"><div style="position:absolute;left:0;right:0;height:5px;border-radius:3px;background:linear-gradient(90deg,#FF6B6E,#4CD389)"></div><div style="position:absolute;left:-5px;top:-4px;width:13px;height:13px;border-radius:50%;background:#0C0F14;border:2px solid #B97BE6"></div><div style="position:absolute;right:-5px;top:-4px;width:13px;height:13px;border-radius:50%;background:#0C0F14;border:2px solid #4CD389"></div></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:14px;margin-top:18px">
+          <div style="flex:1;background:#111722;border:1px solid #20262F;border-radius:14px;padding:16px;position:relative;overflow:hidden"><div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:#6E8BFF"></div><div style="font:600 11px 'IBM Plex Sans';letter-spacing:.03em;text-transform:uppercase;color:#9BA3AE">Prizes</div><div style="font:600 36px/1 'Space Grotesk';color:#fff;margin-top:12px;font-variant-numeric:tabular-nums">1026</div></div>
+          <div style="flex:1;background:#111722;border:1px solid #20262F;border-radius:14px;padding:16px;position:relative;overflow:hidden"><div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:#4CD389"></div><div style="font:600 11px 'IBM Plex Sans';letter-spacing:.03em;text-transform:uppercase;color:#9BA3AE">Laureates</div><div style="font:600 36px/1 'Space Grotesk';color:#fff;margin-top:12px;font-variant-numeric:tabular-nums">1018</div></div>
+          <div style="flex:1;background:#111722;border:1px solid #20262F;border-radius:14px;padding:16px;position:relative;overflow:hidden"><div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:#FF6B6E"></div><div style="font:600 11px 'IBM Plex Sans';letter-spacing:.03em;text-transform:uppercase;color:#9BA3AE">Youngest</div><div style="display:flex;align-items:baseline;gap:8px;margin-top:12px"><div style="font:600 36px/1 'Space Grotesk';color:#fff;font-variant-numeric:tabular-nums">17</div><div style="font:500 12px 'IBM Plex Sans';color:#9BA3AE">Malala Y.</div></div></div>
+          <div style="flex:1;background:#111722;border:1px solid #20262F;border-radius:14px;padding:16px;position:relative;overflow:hidden"><div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:#B97BE6"></div><div style="font:600 11px 'IBM Plex Sans';letter-spacing:.03em;text-transform:uppercase;color:#9BA3AE">Oldest</div><div style="display:flex;align-items:baseline;gap:8px;margin-top:12px"><div style="font:600 36px/1 'Space Grotesk';color:#fff;font-variant-numeric:tabular-nums">97</div><div style="font:500 12px 'IBM Plex Sans';color:#9BA3AE">J. Goodenough</div></div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(12,1fr);gap:14px;margin-top:18px">
+          <div style="grid-column:span 7;background:#111722;border:1px solid #20262F;border-radius:14px;padding:18px">
+            <div style="display:flex;align-items:center;justify-content:space-between"><div><div style="font:600 15px 'Space Grotesk';color:#fff">Discipline · Gender · Country</div><div style="font:400 12px 'IBM Plex Sans';color:#6b7280;margin-top:2px">Klick auf ein Segment filtert das Dashboard.</div></div><span style="font:600 11px 'IBM Plex Mono';color:#B97BE6;background:#241A33;padding:5px 10px;border-radius:999px">2025</span></div>
+            <div id="g-sunburst-d" style="width:100%;height:300px;margin-top:8px"></div>
+          </div>
+          <div style="grid-column:span 5;display:flex;flex-direction:column;gap:14px">
+            <div style="background:#0C0F14;border:1px solid #20262F;border-radius:14px;padding:18px;color:#fff">
+              <div style="font:600 13px 'Space Grotesk';color:#fff">Spektrum-Verteilung</div>
+              <div style="display:flex;flex-direction:column;gap:10px;margin-top:14px">
+                <div><div style="display:flex;justify-content:space-between;font:500 12px 'IBM Plex Sans';color:#9BA3AE;margin-bottom:4px"><span>Medicine</span><span style="font-family:'IBM Plex Mono'">227</span></div><div style="height:6px;border-radius:3px;background:#1B2027"><div style="height:6px;border-radius:3px;width:88%;background:#FF6B6E"></div></div></div>
+                <div><div style="display:flex;justify-content:space-between;font:500 12px 'IBM Plex Sans';color:#9BA3AE;margin-bottom:4px"><span>Physics</span><span style="font-family:'IBM Plex Mono'">226</span></div><div style="height:6px;border-radius:3px;background:#1B2027"><div style="height:6px;border-radius:3px;width:87%;background:#6E8BFF"></div></div></div>
+                <div><div style="display:flex;justify-content:space-between;font:500 12px 'IBM Plex Sans';color:#9BA3AE;margin-bottom:4px"><span>Chemistry</span><span style="font-family:'IBM Plex Mono'">195</span></div><div style="height:6px;border-radius:3px;background:#1B2027"><div style="height:6px;border-radius:3px;width:75%;background:#FF8A3D"></div></div></div>
+                <div><div style="display:flex;justify-content:space-between;font:500 12px 'IBM Plex Sans';color:#9BA3AE;margin-bottom:4px"><span>Peace</span><span style="font-family:'IBM Plex Mono'">142</span></div><div style="height:6px;border-radius:3px;background:#1B2027"><div style="height:6px;border-radius:3px;width:55%;background:#4CD389"></div></div></div>
+                <div><div style="display:flex;justify-content:space-between;font:500 12px 'IBM Plex Sans';color:#9BA3AE;margin-bottom:4px"><span>Literature</span><span style="font-family:'IBM Plex Mono'">120</span></div><div style="height:6px;border-radius:3px;background:#1B2027"><div style="height:6px;border-radius:3px;width:46%;background:#F2C04B"></div></div></div>
+                <div><div style="display:flex;justify-content:space-between;font:500 12px 'IBM Plex Sans';color:#9BA3AE;margin-bottom:4px"><span>Economics</span><span style="font-family:'IBM Plex Mono'">96</span></div><div style="height:6px;border-radius:3px;background:#1B2027"><div style="height:6px;border-radius:3px;width:38%;background:#B97BE6"></div></div></div>
+              </div>
+            </div>
+            <div style="background:#111722;border:1px solid #20262F;border-radius:14px;padding:16px;flex:1">
+              <div style="font:600 13px 'Space Grotesk';color:#fff">Gender</div>
+              <div id="g-gender-d" style="width:100%;height:150px;margin-top:4px"></div>
+            </div>
+          </div>
+          <div style="grid-column:span 6;background:#111722;border:1px solid #20262F;border-radius:14px;padding:18px"><div style="font:600 14px 'Space Grotesk';color:#fff">Ethnicity</div><div style="font:400 11px 'IBM Plex Sans';color:#6b7280">Laut offizieller Nobel-API.</div><div id="g-eth-d" style="width:100%;height:240px;margin-top:6px"></div></div>
+          <div style="grid-column:span 6;background:#111722;border:1px solid #20262F;border-radius:14px;padding:18px"><div style="font:600 14px 'Space Grotesk';color:#fff">Religion</div><div style="font:400 11px 'IBM Plex Sans';color:#6b7280">Siehe Tab „Data" für Details.</div><div id="g-rel-d" style="width:100%;height:240px;margin-top:6px"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 06 2025 PRIZES ================= -->
+<div style="position:absolute;left:80px;top:3350px;font:600 13px/1 'IBM Plex Mono';letter-spacing:.14em;text-transform:uppercase;color:#A7AEB8">06 — 2025 Prizes · komplett</div>
+
+<div style="position:absolute;left:80px;top:3394px;width:1480px">
+  <div data-drags-parent="1" style="position:absolute;top:-22px;font:600 12px 'IBM Plex Sans';color:#14181E">Kategorie-Karten mit Spektrum-Akzent</div>
+  <div style="background:#EEF1F4;border:1px solid #E0E3E8;border-radius:18px;overflow:hidden;box-shadow:0 12px 40px rgba(16,24,40,.10);padding:26px">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px">
+      <div><div style="font:700 24px/1 'Space Grotesk';color:#14181E">Preisträger 2025</div><div style="font:400 13px 'IBM Plex Sans';color:#5B636E;margin-top:6px">Die diesjährigen Laureaten, nach Disziplin.</div></div>
+      <span style="font:600 12px 'IBM Plex Mono';color:#fff;background:#14181E;padding:8px 14px;border-radius:999px">15 Laureaten</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+      <div style="background:#fff;border:1px solid #E4E7EC;border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(16,24,40,.04)"><div style="height:5px;background:#B23A48"></div><div style="padding:18px"><div style="display:flex;align-items:center;gap:8px"><span class="ms" style="font-size:18px;color:#B23A48">vaccines</span><div style="font:600 13px 'IBM Plex Sans';letter-spacing:.02em;text-transform:uppercase;color:#B23A48">Medicine</div></div><div style="font:500 18px/1.3 'Space Grotesk';color:#14181E;margin-top:14px">Mary E. Brunkow<br>Fred Ramsdell<br>Shimon Sakaguchi</div><div style="font:400 13px/1.5 'IBM Plex Sans';color:#5B636E;margin-top:12px;border-top:1px solid #F0F2F5;padding-top:12px">for their discoveries concerning peripheral immune tolerance</div></div></div>
+      <div style="background:#fff;border:1px solid #E4E7EC;border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(16,24,40,.04)"><div style="height:5px;background:#2A4D9B"></div><div style="padding:18px"><div style="display:flex;align-items:center;gap:8px"><span class="ms" style="font-size:18px;color:#2A4D9B">bolt</span><div style="font:600 13px 'IBM Plex Sans';letter-spacing:.02em;text-transform:uppercase;color:#2A4D9B">Physics</div></div><div style="font:500 18px/1.3 'Space Grotesk';color:#14181E;margin-top:14px">John Clarke<br>Michel H. Devoret<br>John M. Martinis</div><div style="font:400 13px/1.5 'IBM Plex Sans';color:#5B636E;margin-top:12px;border-top:1px solid #F0F2F5;padding-top:12px">for the discovery of macroscopic quantum mechanical tunnelling in an electric circuit</div></div></div>
+      <div style="background:#fff;border:1px solid #E4E7EC;border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(16,24,40,.04)"><div style="height:5px;background:#C2682A"></div><div style="padding:18px"><div style="display:flex;align-items:center;gap:8px"><span class="ms" style="font-size:18px;color:#C2682A">science</span><div style="font:600 13px 'IBM Plex Sans';letter-spacing:.02em;text-transform:uppercase;color:#C2682A">Chemistry</div></div><div style="font:500 18px/1.3 'Space Grotesk';color:#14181E;margin-top:14px">Susumu Kitagawa<br>Richard Robson<br>Omar M. Yaghi</div><div style="font:400 13px/1.5 'IBM Plex Sans';color:#5B636E;margin-top:12px;border-top:1px solid #F0F2F5;padding-top:12px">for the development of metal–organic frameworks</div></div></div>
+      <div style="background:#fff;border:1px solid #E4E7EC;border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(16,24,40,.04)"><div style="height:5px;background:#B08A1E"></div><div style="padding:18px"><div style="display:flex;align-items:center;gap:8px"><span class="ms" style="font-size:18px;color:#B08A1E">menu_book</span><div style="font:600 13px 'IBM Plex Sans';letter-spacing:.02em;text-transform:uppercase;color:#B08A1E">Literature</div></div><div style="font:500 18px/1.3 'Space Grotesk';color:#14181E;margin-top:14px">László Krasznahorkai</div><div style="font:400 13px/1.5 'IBM Plex Sans';color:#5B636E;margin-top:12px;border-top:1px solid #F0F2F5;padding-top:12px">for his compelling and visionary oeuvre that reaffirms the power of art</div></div></div>
+      <div style="background:#fff;border:1px solid #E4E7EC;border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(16,24,40,.04)"><div style="height:5px;background:#1F7A5A"></div><div style="padding:18px"><div style="display:flex;align-items:center;gap:8px"><span class="ms" style="font-size:18px;color:#1F7A5A">handshake</span><div style="font:600 13px 'IBM Plex Sans';letter-spacing:.02em;text-transform:uppercase;color:#1F7A5A">Peace</div></div><div style="font:500 18px/1.3 'Space Grotesk';color:#14181E;margin-top:14px">María Corina Machado</div><div style="font:400 13px/1.5 'IBM Plex Sans';color:#5B636E;margin-top:12px;border-top:1px solid #F0F2F5;padding-top:12px">for her tireless work promoting democratic rights for the people of Venezuela</div></div></div>
+      <div style="background:#fff;border:1px solid #E4E7EC;border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(16,24,40,.04)"><div style="height:5px;background:#6D3A9C"></div><div style="padding:18px"><div style="display:flex;align-items:center;gap:8px"><span class="ms" style="font-size:18px;color:#6D3A9C">trending_up</span><div style="font:600 13px 'IBM Plex Sans';letter-spacing:.02em;text-transform:uppercase;color:#6D3A9C">Economic Sciences</div></div><div style="font:500 18px/1.3 'Space Grotesk';color:#14181E;margin-top:14px">Joel Mokyr · Philippe Aghion · Peter Howitt</div><div style="font:400 13px/1.5 'IBM Plex Sans';color:#5B636E;margin-top:12px;border-top:1px solid #F0F2F5;padding-top:12px">for the theory of sustained growth through creative destruction</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 07 PLOTLY THEME ================= -->
+<div style="position:absolute;left:80px;top:4330px;font:600 13px/1 'IBM Plex Mono';letter-spacing:.14em;text-transform:uppercase;color:#A7AEB8">07 — Plotly-Theme · einheitlich</div>
+
+<div style="position:absolute;left:80px;top:4374px;width:560px">
+  <div data-drags-parent="1" style="position:absolute;top:-22px;font:500 11px 'IBM Plex Sans';color:#9aa1ab">Sunburst · Spektrum-Farben, IBM-Plex-Labels</div>
+  <div style="background:#fff;border:1px solid #E4E7EC;border-radius:16px;padding:20px;box-shadow:0 1px 3px rgba(16,24,40,.06)">
+    <div style="font:600 15px 'Space Grotesk';color:#14181E">Discipline · Country</div>
+    <div id="g-2025-wrap" style="display:flex;gap:18px;margin-top:10px;align-items:center">
+      <div id="g-2025" style="width:200px;height:200px;flex-shrink:0"></div>
+      <div style="font:400 13px/1.6 'IBM Plex Sans';color:#5B636E">Einheitliches Template: transparenter Hintergrund, keine Gridlines, IBM&nbsp;Plex als Schrift, Space&nbsp;Grotesk in Zentren/Headlines, weiße 3px-Trennlinien zwischen Segmenten. Gilt für Donut, Sunburst, Bar, Choropleth.</div>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:680px;top:4374px;width:880px">
+  <div data-drags-parent="1" style="position:absolute;top:-22px;font:500 11px 'IBM Plex Sans';color:#9aa1ab">Stacked Bar · Prizes per Year (Beispiel-Daten)</div>
+  <div style="background:#fff;border:1px solid #E4E7EC;border-radius:16px;padding:20px;box-shadow:0 1px 3px rgba(16,24,40,.06)">
+    <div style="font:600 15px 'Space Grotesk';color:#14181E">Nobel Prizes by Country per Year</div>
+    <div style="font:400 12px 'IBM Plex Sans';color:#9aa1ab;margin-top:2px">Klare Achsen in IBM Plex Mono, dezentes Grid nur auf der Y-Achse.</div>
+    <div id="g-bars" style="width:100%;height:300px;margin-top:8px"></div>
+  </div>
+</div>
+
+<template id="__bundler_thumbnail">
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="#14181E"/><g><rect x="20" y="30" width="8" height="40" rx="3" fill="#B23A48"/><rect x="32" y="30" width="8" height="40" rx="3" fill="#2A4D9B"/><rect x="44" y="30" width="8" height="40" rx="3" fill="#C2682A"/><rect x="56" y="30" width="8" height="40" rx="3" fill="#6D3A9C"/><rect x="68" y="30" width="8" height="40" rx="3" fill="#1F7A5A"/></g></svg>
+</template>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  componentDidMount() {
+    this._t = setInterval(() => {
+      if (window.Plotly) { clearInterval(this._t); this.plotAll(); }
+    }, 120);
+  }
+  componentWillUnmount() { if (this._t) clearInterval(this._t); }
+  plotAll() {
+    const donut = (id, labels, values, colors, center, dark) => {
+      const el = document.getElementById(id); if (!el) return;
+      Plotly.newPlot(el, [{
+        type: 'pie', hole: 0.64, labels, values, sort: false, direction: 'clockwise',
+        marker: { colors, line: { color: dark ? '#1B2027' : '#ffffff', width: 3 } },
+        textposition: 'outside', textinfo: 'label+percent',
+        outsidetextfont: { family: 'IBM Plex Sans', size: 11, color: dark ? '#9BA3AE' : '#6B7280' },
+        hoverlabel: { font: { family: 'IBM Plex Sans', size: 12 } }
+      }], {
+        paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
+        margin: { t: 14, b: 14, l: 14, r: 14 }, showlegend: false,
+        annotations: [{ text: center, x: 0.5, y: 0.5, showarrow: false, font: { family: 'Space Grotesk', size: 13, color: dark ? '#EDEFF2' : '#161A20' } }]
+      }, { displayModeBar: false, responsive: true });
+    };
+    donut('g-gender-l', ['male', 'female'], [862, 156], ['#2A4D9B', '#B23A48'], 'Gender', false);
+    donut('g-eth-l', ['European', 'Asian', 'Jewish', 'African', 'Org.', 'Various'], [560, 150, 180, 40, 60, 28], ['#2A4D9B', '#1F7A5A', '#B08A1E', '#C2682A', '#6D3A9C', '#B23A48'], 'Ethnicity', false);
+    donut('g-rel-l', ['Christian', 'Jewish', 'None / Unknown', 'Other'], [470, 210, 300, 38], ['#1F7A5A', '#B08A1E', '#2A4D9B', '#6D3A9C'], 'Religion', false);
+    donut('g-gender-d', ['male', 'female'], [862, 156], ['#6E8BFF', '#FF6B6E'], 'Gender', true);
+    donut('g-eth-d', ['European', 'Asian', 'Jewish', 'African', 'Org.', 'Various'], [560, 150, 180, 40, 60, 28], ['#6E8BFF', '#4CD389', '#F2C04B', '#FF8A3D', '#B97BE6', '#FF6B6E'], 'Ethnicity', true);
+    donut('g-rel-d', ['Christian', 'Jewish', 'None / Unknown', 'Other'], [470, 210, 300, 38], ['#4CD389', '#F2C04B', '#6E8BFF', '#B97BE6'], 'Religion', true);
+    donut('g-2025', ['Medicine', 'Physics', 'Chemistry', 'Economics', 'Literature', 'Peace'], [3, 3, 3, 2, 1, 1], ['#B23A48', '#2A4D9B', '#C2682A', '#6D3A9C', '#B08A1E', '#1F7A5A'], '2025', false);
+
+    const sbData = (dark) => {
+      const ids = [], labels = [], parents = [], values = [], colors = [];
+      const cats = dark
+        ? [['Medicine', '#FF6B6E'], ['Physics', '#6E8BFF'], ['Chemistry', '#FF8A3D'], ['Economics', '#B97BE6'], ['Literature', '#F2C04B'], ['Peace', '#4CD389']]
+        : [['Medicine', '#B23A48'], ['Physics', '#2A4D9B'], ['Chemistry', '#C2682A'], ['Economics', '#6D3A9C'], ['Literature', '#B08A1E'], ['Peace', '#1F7A5A']];
+      const ctry = {
+        Medicine: [['USA', 60], ['UK', 20], ['Germany', 18]], Physics: [['USA', 55], ['Germany', 24], ['Japan', 16]],
+        Chemistry: [['USA', 58], ['UK', 22], ['Japan', 14]], Economics: [['USA', 70], ['UK', 16]],
+        Literature: [['France', 16], ['USA', 13], ['UK', 12]], Peace: [['USA', 24], ['Norway', 8], ['France', 6]]
+      };
+      cats.forEach(([c, col]) => {
+        ids.push(c); labels.push(c); parents.push(''); values.push(0); colors.push(col);
+        ctry[c].forEach(([k, v]) => { ids.push(c + '-' + k); labels.push(k); parents.push(c); values.push(v); colors.push(col); });
+      });
+      return { ids, labels, parents, values, colors };
+    };
+    const plotSun = (id, dark) => {
+      const el = document.getElementById(id); if (!el) return; const d = sbData(dark);
+      Plotly.newPlot(el, [{
+        type: 'sunburst', ids: d.ids, labels: d.labels, parents: d.parents, values: d.values, branchvalues: 'total',
+        marker: { colors: d.colors, line: { color: dark ? '#15191F' : '#ffffff', width: 2 } },
+        textfont: { family: 'IBM Plex Sans', size: 11, color: '#ffffff' }, insidetextorientation: 'radial',
+        hoverlabel: { font: { family: 'IBM Plex Sans' } }
+      }], { margin: { t: 6, b: 6, l: 6, r: 6 }, paper_bgcolor: 'rgba(0,0,0,0)', font: { family: 'IBM Plex Sans' } }, { displayModeBar: false, responsive: true });
+    };
+    plotSun('g-sunburst-l', false); plotSun('g-sunburst-d', true);
+
+    const bar = document.getElementById('g-bars');
+    if (bar) {
+      const years = []; for (let y = 1901; y <= 2024; y++) years.push(y);
+      const ser = [['USA', '#2A4D9B', 0.02, 0.9], ['United Kingdom', '#B23A48', 0.05, 0.4], ['Germany', '#C2682A', 0.08, 0.35], ['France', '#6D3A9C', 0.06, 0.3], ['Japan', '#1F7A5A', 0.0, 0.45]];
+      const traces = ser.map(([name, col, base, amp]) => ({
+        type: 'bar', name, x: years,
+        y: years.map((y) => { const t = (y - 1901) / 123; return Math.max(0, Math.round((base + amp * t) * (0.6 + Math.random()) * (y > 1945 ? 1.3 : 0.7))); }),
+        marker: { color: col, line: { width: 0 } }
+      }));
+      Plotly.newPlot(bar, traces, {
+        barmode: 'stack', paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
+        font: { family: 'IBM Plex Sans', size: 12, color: '#5B636E' }, margin: { t: 10, b: 36, l: 36, r: 10 }, bargap: 0.15,
+        legend: { orientation: 'h', y: 1.14, font: { size: 11 } },
+        xaxis: { showgrid: false, zeroline: false, tickfont: { family: 'IBM Plex Mono', size: 10 }, color: '#9aa1ab' },
+        yaxis: { showgrid: true, gridcolor: '#EDEFF2', zeroline: false, tickfont: { family: 'IBM Plex Mono', size: 10 } }
+      }, { displayModeBar: false, responsive: true });
+    }
+  }
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

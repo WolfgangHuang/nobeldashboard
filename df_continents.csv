@@ -1,0 +1,960 @@
+﻿NameFirst;NameLast;CountryOfBirth;ContinentOfBirth;CountryOfOrganisation;ContinentOfOrganisation;CountryOfDeath;ContinentOfDeath;Color
+Mario;Vargas Llosa;Peru;South America;None;None;None;None;1
+Adolfo;Pérez Esquivel;Argentina;South America;None;None;None;None;1
+Juan Manuel;Santos;Colombia;South America;None;None;None;None;1
+Carlos Filipe Ximenes;Belo;East Timor;Oceania;None;None;None;None;2
+J. Robin;Warren;Australia;Oceania;None;None;None;None;2
+José;Ramos-Horta;East Timor;Oceania;None;None;None;None;2
+Kip S.;Thorne;USA;North America;None;None;None;None;4
+Jody;Williams;USA;North America;None;None;None;None;4
+Oscar;Arias Sánchez;Costa Rica;North America;None;None;None;None;4
+Alice;Munro;Canada;North America;None;None;None;None;4
+Barack;Obama;USA;North America;None;None;None;None;4
+Jimmy;Carter;USA;North America;None;None;None;None;4
+Rigoberta;Menchú Tum;Guatemala;North America;None;None;None;None;4
+Barry C.;Barish;USA;North America;None;None;None;None;4
+Bob;Dylan;USA;North America;None;None;None;None;4
+Al;Gore;USA;North America;None;None;None;None;4
+Louise;Glück;USA;North America;None;None;None;None;4
+Elfriede;Jelinek;Austria;Europe;None;None;None;None;3
+Jean-Marie Gustave;Le Clézio;France;Europe;None;None;None;None;3
+Patrick;Modiano;France;Europe;None;None;None;None;3
+Rainer;Weiss;Germany;Europe;None;None;None;None;3
+Herta;Müller;Romania;Europe;None;None;None;None;3
+Lech;Walesa;Poland;Europe;None;None;None;None;3
+Svetlana;Alexievich;Ukraine;Europe;None;None;None;None;3
+Peter;Handke;Austria;Europe;None;None;None;None;3
+Henry;Kissinger;Germany;Europe;None;None;None;None;3
+Olga;Tokarczuk;Poland;Europe;None;None;None;None;3
+Martti;Ahtisaari;Finland;Europe;None;None;None;None;3
+Orhan;Pamuk;Turkey;Europe;None;None;None;None;3
+Annie;Ernaux;France;Europe;None;None;None;None;3
+Mairead;Corrigan;Northern Ireland;Europe;None;None;None;None;3
+Tawakkol;Karman;Yemen;Asia;None;None;None;None;6
+Maria;Ressa;Philippines;Asia;None;None;None;None;6
+Dmitry;Muratov;USSR (now Russia);Asia;None;None;None;None;6
+Ales;Bialiatski;Russia;Asia;None;None;None;None;6
+Aung San Suu Kyi;;Burma (now Myanmar);Asia;None;None;None;None;6
+Malala;Yousafzai;Pakistan;Asia;None;None;None;None;6
+Kim;Dae-jung;Korea (now South Korea);Asia;None;None;None;None;6
+Nadia;Murad;Iraq;Asia;None;None;None;None;6
+Mo;Yan;China;Asia;None;None;None;None;6
+Lhamo;Thondup;Tibet (now China);Asia;None;None;None;None;6
+Kazuo;Ishiguro;Japan;Asia;None;None;None;None;6
+Kailash;Satyarthi;India;Asia;None;None;None;None;6
+Xingjian;Gao;China;Asia;None;None;None;None;6
+Shirin;Ebadi;Iran;Asia;None;None;None;None;6
+Muhammad;Yunus;British India (now Bangladesh);Asia;None;None;None;None;6
+Ellen;Johnson Sirleaf;Liberia;Africa;None;None;None;None;5
+Abiy;Ahmed Ali;Ethiopia;Africa;None;None;None;None;5
+Leymah;Gbowee;Liberia;Africa;None;None;None;None;5
+J. M.;Coetzee;South Africa;Africa;None;None;None;None;5
+Denis;Mukwege;Belgian Congo (now Democratic Republic of the Congo);Africa;None;None;None;None;5
+Wole;Soyinka;Nigeria;Africa;None;None;None;None;5
+Mohamed;ElBaradei;Egypt;Africa;None;None;None;None;5
+Barry J.;Marshall;Australia;Oceania;Australia;Oceania;None;None;2
+Brian P.;Schmidt;USA;North America;Australia;Oceania;None;None;4
+Peter C.;Doherty;Australia;Oceania;USA;North America;None;None;2
+Elizabeth H.;Blackburn;Australia;Oceania;USA;North America;None;None;2
+Daniel L.;McFadden;USA;North America;USA;North America;None;None;4
+Stanley B.;Prusiner;USA;North America;USA;North America;None;None;4
+Andrew Z.;Fire;USA;North America;USA;North America;None;None;4
+Craig C.;Mello;USA;North America;USA;North America;None;None;4
+Eric S.;Maskin;USA;North America;USA;North America;None;None;4
+Phillip A.;Sharp;USA;North America;USA;North America;None;None;4
+David M.;Lee;USA;North America;USA;North America;None;None;4
+James;Watson;USA;North America;USA;North America;None;None;4
+George A.;Akerlof;USA;North America;USA;North America;None;None;4
+Douglas;Diamond;USA;North America;USA;North America;None;None;4
+Robert J.;Shiller;USA;North America;USA;North America;None;None;4
+Myron;Scholes;Canada;North America;USA;North America;None;None;4
+Arthur B.;McDonald;Canada;North America;Canada;North America;None;None;4
+Jerome I.;Friedman;USA;North America;USA;North America;None;None;4
+Robert C.;Merton;USA;North America;USA;North America;None;None;4
+David J.;Gross;USA;North America;USA;North America;None;None;4
+Ben;Bernanke;USA;North America;USA;North America;None;None;4
+Thomas R.;Cech;USA;North America;USA;North America;None;None;4
+Russell A.;Hulse;USA;North America;USA;North America;None;None;4
+David J.;Wineland;USA;North America;USA;North America;None;None;4
+Carol W.;Greider;USA;North America;USA;North America;None;None;4
+James P.;Allison;USA;North America;USA;North America;None;None;4
+Frances H.;Arnold;USA;North America;USA;North America;None;None;4
+Barry;Sharpless;USA;North America;USA;North America;None;None;4
+Joseph L.;Goldstein;USA;North America;USA;North America;None;None;4
+Linda B.;Buck;USA;North America;USA;North America;None;None;4
+Rudolph A.;Marcus;Canada;North America;USA;North America;None;None;4
+Sheldon;Glashow;USA;North America;USA;North America;None;None;4
+Steven;Chu;USA;North America;USA;North America;None;None;4
+Michael;Rosbash;USA;North America;USA;North America;None;None;4
+George F.;Smoot;USA;North America;USA;North America;None;None;4
+Adam G.;Riess;USA;North America;USA;North America;None;None;4
+Robert B.;Laughlin;USA;North America;USA;North America;None;None;4
+Donna;Strickland;Canada;North America;Canada;North America;None;None;4
+Martin;Chalfie;USA;North America;USA;North America;None;None;4
+Carolyn;Bertozzi;USA;North America;USA;North America;None;None;4
+John L.;Hall;USA;North America;USA;North America;None;None;4
+Jennifer A.;Doudna;USA;North America;USA;North America;None;None;4
+Roger B.;Myerson;USA;North America;USA;North America;None;None;4
+Alvin E.;Roth;USA;North America;USA;North America;None;None;4
+J. Michael;Bishop;USA;North America;USA;North America;None;None;4
+Edmund S.;Phelps;USA;North America;USA;North America;None;None;4
+William D.;Phillips;USA;North America;USA;North America;None;None;4
+George E.;Smith;USA;North America;USA;North America;None;None;4
+Robert F.;Engle III;USA;North America;USA;North America;None;None;4
+;;USA;North America;USA;North America;None;None;4
+Andrea;Ghez;USA;North America;USA;North America;None;None;4
+Roger D.;Kornberg;USA;North America;USA;North America;None;None;4
+Michael;Kremer;USA;North America;USA;North America;None;None;4
+David;Card;Canada;North America;USA;North America;None;None;4
+Robert J.;Lefkowitz;USA;North America;USA;North America;None;None;4
+David;Julius;USA;North America;USA;North America;None;None;4
+Frank;Wilczek;USA;North America;USA;North America;None;None;4
+Richard R.;Schrock;USA;North America;USA;North America;None;None;4
+Alan;Heeger;USA;North America;USA;North America;None;None;4
+Paul;Krugman;USA;North America;USA;North America;None;None;4
+Eugene F.;Fama;USA;North America;USA;North America;None;None;4
+Paul;Modrich;USA;North America;USA;North America;None;None;4
+Paul;Milgrom;USA;North America;USA;North America;None;None;4
+Richard;Axel;USA;North America;USA;North America;None;None;4
+Michael S.;Brown;USA;North America;USA;North America;None;None;4
+Walter;Gilbert;USA;North America;USA;North America;None;None;4
+Robert;Wilson;USA;North America;USA;North America;None;None;4
+Joseph E.;Stiglitz;USA;North America;USA;North America;None;None;4
+George P.;Smith;USA;North America;USA;North America;None;None;4
+Louis J.;Ignarro;USA;North America;USA;North America;None;None;4
+Robert Woodrow;Wilson;USA;North America;USA;North America;None;None;4
+Dudley R.;Herschbach;USA;North America;USA;North America;None;None;4
+Harvey;Alter;USA;North America;USA;North America;None;None;4
+Carl;Wieman;USA;North America;USA;North America;None;None;4
+Christopher A.;Sims;USA;North America;USA;North America;None;None;4
+Robert M.;Solow;USA;North America;USA;North America;None;None;4
+William F.;Sharpe;USA;North America;USA;North America;None;None;4
+Oliver E.;Williamson;USA;North America;USA;North America;None;None;4
+Michael W.;Young;USA;North America;USA;North America;None;None;4
+Harold E.;Varmus;USA;North America;USA;North America;None;None;4
+Eric F.;Wieschaus;USA;North America;USA;North America;None;None;4
+Richard H.;Thaler;USA;North America;USA;North America;None;None;4
+William;Kaelin;USA;North America;USA;North America;None;None;4
+Brian;Kobilka;USA;North America;USA;North America;None;None;4
+Leon N.;Cooper;USA;North America;USA;North America;None;None;4
+Bruce A.;Beutler;USA;North America;USA;North America;None;None;4
+Randy W.;Schekman;USA;North America;USA;North America;None;None;4
+Elias James;Corey;USA;North America;USA;North America;None;None;4
+William D.;Nordhaus;USA;North America;USA;North America;None;None;4
+Vernon L.;Smith;USA;North America;USA;North America;None;None;4
+Hamilton O.;Smith;USA;North America;USA;North America;None;None;4
+Thomas J.;Sargent;USA;North America;USA;North America;None;None;4
+William E.;Moerner;USA;North America;USA;North America;None;None;4
+Paul M.;Romer;USA;North America;USA;North America;None;None;4
+Joshua;Angrist;USA;North America;USA;North America;None;None;4
+Saul;Perlmutter;USA;North America;USA;North America;None;None;4
+Gregg;Semenza;USA;North America;USA;North America;None;None;4
+Joseph H.;Taylor Jr.;USA;North America;USA;North America;None;None;4
+A. Michael;Spence;USA;North America;USA;North America;None;None;4
+John C.;Mather;USA;North America;USA;North America;None;None;4
+Douglas D.;Osheroff;USA;North America;USA;North America;None;None;4
+David;Baltimore;USA;North America;USA;North America;None;None;4
+Peter A.;Diamond;USA;North America;USA;North America;None;None;4
+Lars Peter;Hansen;USA;North America;USA;North America;None;None;4
+Barry;Sharpless;USA;North America;USA;North America;None;None;4
+Ferid;Murad;USA;North America;USA;North America;None;None;4
+James J.;Heckman;USA;North America;USA;North America;None;None;4
+H. Robert;Horvitz;USA;North America;USA;North America;None;None;4
+Peter;Agre;USA;North America;USA;North America;None;None;4
+Roderick;MacKinnon;USA;North America;USA;North America;None;None;4
+Philip;Dybvig;USA;North America;USA;North America;None;None;4
+Charles;Rice;USA;North America;USA;North America;None;None;4
+Eric;Cornell;USA;North America;USA;North America;None;None;4
+H. David;Politzer;USA;North America;USA;North America;None;None;4
+Leland;Hartwell;USA;North America;USA;North America;None;None;4
+Samuel C.C.;Ting;USA;North America;USA;North America;None;None;4
+James E.;Rothman;USA;North America;USA;North America;None;None;4
+Eric;Betzig;USA;North America;USA;North America;None;None;4
+Jeffrey C.;Hall;USA;North America;USA;North America;None;None;4
+James;Peebles;Canada;North America;USA;North America;None;None;4
+Michael;Houghton;United Kingdom;Europe;Canada;North America;None;None;3
+F. Duncan M.;Haldane;United Kingdom;Europe;USA;North America;None;None;3
+Aziz;Sancar;Turkey;Europe;USA;North America;None;None;3
+Herbert;Kroemer;Germany;Europe;USA;North America;None;None;3
+Horst L.;Störmer;West Germany (now Germany);Europe;USA;North America;None;None;3
+Johann;Deisenhofer;Germany;Europe;USA;North America;None;None;3
+Bengt;Holmström;Finland;Europe;USA;North America;None;None;3
+Sir J. Fraser;Stoddart;United Kingdom;Europe;USA;North America;None;None;3
+John C.;Polanyi;Germany;Europe;Canada;North America;None;None;3
+Andrew V.;Schally;Poland (now Lithuania);Europe;USA;North America;None;None;3
+Ivar;Giaever;Norway;Europe;USA;North America;None;None;3
+Jack W.;Szostak;United Kingdom;Europe;USA;North America;None;None;3
+Thomas C.;Südhof;Germany;Europe;USA;North America;None;None;3
+Anthony J.;Leggett;United Kingdom;Europe;USA;North America;None;None;3
+Oliver;Hart;United Kingdom;Europe;USA;North America;None;None;3
+Joachim;Frank;Germany;Europe;USA;North America;None;None;3
+Roald;Hoffmann;Poland (now Ukraine);Europe;USA;North America;None;None;3
+Eric;Kandel;Austria;Europe;USA;North America;None;None;3
+David;MacMillan;United Kingdom;Europe;USA;North America;None;None;3
+Wolfgang;Ketterle;West Germany (now Germany);Europe;USA;North America;None;None;3
+M. Stanley;Whittingham;United Kingdom;Europe;USA;North America;None;None;3
+Angus;Deaton;Scotland;Europe;USA;North America;None;None;3
+Mario R.;Capecchi;Italy;Europe;USA;North America;None;None;3
+Esther;Duflo;France;Europe;USA;North America;None;None;3
+Torsten N.;Wiesel;Sweden;Europe;USA;North America;None;None;3
+J. Michael;Kosterlitz;United Kingdom;Europe;USA;North America;None;None;3
+Arno;Penzias;Germany;Europe;USA;North America;None;None;3
+William C.;Campbell;Ireland;Europe;USA;North America;None;None;3
+Finn E.;Kydland;Norway;Europe;USA;North America;None;None;3
+Guido;Imbens;the Netherlands;Europe;USA;North America;None;None;3
+Richard J.;Roberts;United Kingdom;Europe;USA;North America;None;None;3
+Roger;Guillemin;France;Europe;USA;North America;None;None;3
+Arieh;Warshel;British Mandate of Palestine (now Israel);Asia;USA;North America;None;None;6
+Shuji;Nakamura;Japan;Asia;USA;North America;None;None;6
+Abhijit;Banerjee;India;Asia;USA;North America;None;None;6
+Tsung-Dao;Lee;China;Asia;USA;North America;None;None;6
+Chen Ning;Yang;China;Asia;USA;North America;None;None;6
+Susumu;Tonegawa;Japan;Asia;USA;North America;None;None;6
+Ardem;Patapoutian;Lebanon;Asia;USA;North America;None;None;6
+Syukuro;Manabe;Japan;Asia;USA;North America;None;None;6
+Daniel;Kahneman;British Mandate of Palestine (now Israel);Asia;USA;North America;None;None;6
+Leo;Esaki;Japan;Asia;USA;North America;None;None;6
+Yuan T.;Lee;Taiwan;Asia;USA;North America;None;None;6
+Daniel C.;Tsui;China;Asia;USA;North America;None;None;6
+Alexei;Abrikosov;USSR (now Russia);Asia;USA;North America;None;None;6
+Michael;Levitt;South Africa;Africa;USA;North America;None;None;5
+John;Cornforth;Australia;Oceania;United Kingdom;Europe;None;None;2
+John;O'Keefe;USA;North America;United Kingdom;Europe;None;None;4
+Ben R.;Mottelson;USA;North America;Denmark;Europe;None;None;4
+Gerd;Binnig;West Germany (now Germany);Europe;Switzerland;Europe;None;None;3
+Didier;Queloz;Switzerland;Europe;Switzerland;Europe;None;None;3
+Tomas;Lindahl;Sweden;Europe;United Kingdom;Europe;None;None;3
+François;Englert;Belgium;Europe;Belgium;Europe;None;None;3
+Tim;Hunt;United Kingdom;Europe;United Kingdom;Europe;None;None;3
+Martin;Karplus;Austria;Europe;France;Europe;None;None;3
+Klaus;Hasselmann;Germany;Europe;Germany;Europe;None;None;3
+Sir Gregory P.;Winter;United Kingdom;Europe;United Kingdom;Europe;None;None;3
+Brian D.;Josephson;United Kingdom;Europe;United Kingdom;Europe;None;None;3
+Jean-Pierre;Sauvage;France;Europe;France;Europe;None;None;3
+Morten;Meldal;Denmark;Europe;Denmark;Europe;None;None;3
+Robert;Huber;Germany;Europe;Germany;Europe;None;None;3
+Gerardus;'t Hooft;the Netherlands;Europe;the Netherlands;Europe;None;None;3
+Peter;Ratcliffe;United Kingdom;Europe;United Kingdom;Europe;None;None;3
+Roger;Penrose;United Kingdom;Europe;United Kingdom;Europe;None;None;3
+Alain;Aspect;France;Europe;France;Europe;None;None;3
+Rolf M.;Zinkernagel;Switzerland;Europe;Switzerland;Europe;None;None;3
+Klaus;von Klitzing;German-occupied Poland (now Poland);Europe;Germany;Europe;None;None;3
+Bernard L.;Feringa;the Netherlands;Europe;the Netherlands;Europe;None;None;3
+May-Britt;Moser;Norway;Europe;Norway;Europe;None;None;3
+Edvard I.;Moser;Norway;Europe;Norway;Europe;None;None;3
+Jean-Marie;Lehn;France;Europe;France;Europe;None;None;3
+John E.;Walker;United Kingdom;Europe;United Kingdom;Europe;None;None;3
+Reinhard;Genzel;Germany;Europe;Germany;Europe;None;None;3
+Bert;Sakmann;Germany;Europe;Germany;Europe;None;None;3
+Sir Peter;Mansfield;United Kingdom;Europe;United Kingdom;Europe;None;None;3
+Erwin;Neher;Germany;Europe;Germany;Europe;None;None;3
+Christiane;Nüsslein-Volhard;Germany;Europe;Germany;Europe;None;None;3
+Theodor W.;Hänsch;Germany;Europe;Germany;Europe;None;None;3
+Michel;Mayor;Switzerland;Europe;Switzerland;Europe;None;None;3
+Anton;Zeilinger;Austria;Europe;Austria;Europe;None;None;3
+Jules A.;Hoffmann;Luxembourg;Europe;France;Europe;None;None;3
+Peter;Higgs;United Kingdom;Europe;United Kingdom;Europe;None;None;3
+Giorgio;Parisi;Italy;Europe;Italy;Europe;None;None;3
+Benjamin;List;Germany;Europe;Germany;Europe;None;None;3
+Rudolf;Mössbauer;Germany;Europe;Germany;Europe;None;None;3
+Antony;Hewish;United Kingdom;Europe;United Kingdom;Europe;None;None;3
+Stefan W.;Hell;Romania;Europe;Germany;Europe;None;None;3
+J. Georg;Bednorz;West Germany (now Germany);Europe;Switzerland;Europe;None;None;3
+Sir James W.;Black;Scotland;Europe;United Kingdom;Europe;None;None;3
+Carlo;Rubbia;Italy;Europe;Switzerland;Europe;None;None;3
+Jacques;Dubochet;Switzerland;Europe;Switzerland;Europe;None;None;3
+Kurt;Wüthrich;Switzerland;Europe;Switzerland;Europe;None;None;3
+Richard;Henderson;Scotland;Europe;United Kingdom;Europe;None;None;3
+Aaron;Klug;Lithuania;Europe;United Kingdom;Europe;None;None;3
+Sir John B.;Gurdon;United Kingdom;Europe;United Kingdom;Europe;None;None;3
+Bengt I.;Samuelsson;Sweden;Europe;Sweden;Europe;None;None;3
+Sir Martin J.;Evans;United Kingdom;Europe;United Kingdom;Europe;None;None;3
+Albert;Fert;France;Europe;France;Europe;None;None;3
+Emmanuelle;Charpentier;France;Europe;Germany;Europe;None;None;3
+Svante;Pääbo;Sweden;Europe;Germany;Europe;None;None;3
+Françoise;Barré-Sinoussi;France;Europe;France;Europe;None;None;3
+Sir Paul;Nurse;United Kingdom;Europe;United Kingdom;Europe;None;None;3
+Hartmut;Michel;West Germany (now Germany);Europe;Germany;Europe;None;None;3
+Gerhard;Ertl;Germany;Europe;Germany;Europe;None;None;3
+Gabriel;Lippmann;Luxembourg;Europe;France;Europe;None;None;3
+Jean;Tirole;France;Europe;France;Europe;None;None;3
+Gérard;Mourou;France;Europe;France;Europe;None;None;3
+Werner;Arber;Switzerland;Europe;Switzerland;Europe;None;None;3
+Charles K.;Kao;China;Asia;United Kingdom;Europe;None;None;6
+Amartya;Sen;India;Asia;United Kingdom;Europe;None;None;6
+Konstantin;Novoselov;Russia;Asia;United Kingdom;Europe;None;None;6
+Venkatraman;Ramakrishnan;India;Asia;United Kingdom;Europe;None;None;6
+Andre;Geim;Russia;Asia;United Kingdom;Europe;None;None;6
+Christopher A.;Pissarides;Cyprus;Asia;United Kingdom;Europe;None;None;6
+Claude;Cohen-Tannoudji;French Algeria (now Algeria);Africa;France;Europe;None;None;5
+Serge;Haroche;Morocco;Africa;France;Europe;None;None;5
+Avram;Hershko;Hungary;Europe;Israel;Asia;None;None;3
+Robert J.;Aumann;Germany;Europe;Israel;Asia;None;None;3
+Tasuku;Honjo;Japan;Asia;Japan;Asia;None;None;6
+Akira;Yoshino;Japan;Asia;Japan;Asia;None;None;6
+Aaron;Ciechanover;British Protectorate of Palestine (now Israel);Asia;Israel;Asia;None;None;6
+Ada E.;Yonath;British Mandate of Palestine (now Israel);Asia;Israel;Asia;None;None;6
+Hiroshi;Amano;Japan;Asia;Japan;Asia;None;None;6
+Youyou;Tu;China;Asia;China;Asia;None;None;6
+Vitaly L.;Ginzburg;Russia;Asia;Russia;Asia;None;None;6
+Shinya;Yamanaka;Japan;Asia;Japan;Asia;None;None;6
+Ryoji;Noyori;Japan;Asia;Japan;Asia;None;None;6
+Koichi;Tanaka;Japan;Asia;Japan;Asia;None;None;6
+Akira;Suzuki;Japan;Asia;Japan;Asia;None;None;6
+Satoshi;Ōmura;Japan;Asia;Japan;Asia;None;None;6
+Takaaki;Kajita;Japan;Asia;Japan;Asia;None;None;6
+Makoto;Kobayashi;Japan;Asia;Japan;Asia;None;None;6
+Hideki;Shirakawa;Japan;Asia;Japan;Asia;None;None;6
+Yoshinori;Ohsumi;Japan;Asia;Japan;Asia;None;None;6
+Dan;Shechtman;British Mandate of Palestine (now Israel);Asia;Israel;Asia;None;None;6
+Carlos;Saavedra Lamas;Argentina;South America;None;None;Argentina;South America;1
+Pablo;Neruda;Chile;South America;None;None;Chile;South America;1
+Bernardo;Houssay;Argentina;South America;Argentina;South America;Argentina;South America;1
+Luis;Leloir;France;Europe;Argentina;South America;Argentina;South America;3
+Friedrich;Bergius;Germany (now Poland);Europe;Germany;Europe;Argentina;South America;3
+Patrick;White;United Kingdom;Europe;None;None;Australia;Oceania;3
+Sir Frank Macfarlane;Burnet;Australia;Oceania;Australia;Oceania;Australia;Oceania;2
+Gabriel;García Márquez;Colombia;South America;None;None;Mexico;North America;1
+Gabriela;Mistral;Chile;South America;None;None;USA;North America;1
+Ernest;Hemingway;USA;North America;None;None;USA;North America;4
+John;Steinbeck;USA;North America;None;None;USA;North America;4
+Theodore;Roosevelt;USA;North America;None;None;USA;North America;4
+Emily Greene;Balch;USA;North America;None;None;USA;North America;4
+William;Faulkner;USA;North America;None;None;USA;North America;4
+Pearl;Buck;USA;North America;None;None;USA;North America;4
+Elihu;Root;USA;North America;None;None;USA;North America;4
+Woodrow;Wilson;USA;North America;None;None;USA;North America;4
+Eugene;O'Neill;USA;North America;None;None;USA;North America;4
+Jane;Addams;USA;North America;None;None;USA;North America;4
+Norman;Borlaug;USA;North America;None;None;USA;North America;4
+Derek;Walcott;Saint Lucia;North America;None;None;Saint Lucia;North America;4
+George C.;Marshall;USA;North America;None;None;USA;North America;4
+John R.;Mott;USA;North America;None;None;USA;North America;4
+Lester Bowles;Pearson;Canada;North America;None;None;Canada;North America;4
+Saul;Bellow;Canada;North America;None;None;USA;North America;4
+Charles G.;Dawes;USA;North America;None;None;USA;North America;4
+Alfonso;García Robles;Mexico;North America;None;None;Mexico;North America;4
+William;Knowles;USA;North America;None;None;USA;North America;4
+Octavio;Paz;Mexico;North America;None;None;Mexico;North America;4
+Toni;Morrison;USA;North America;None;None;USA;North America;4
+Kary B.;Mullis;USA;North America;None;None;USA;North America;4
+Cordell;Hull;USA;North America;None;None;USA;North America;4
+Frank B.;Kellogg;USA;North America;None;None;USA;North America;4
+Martin Luther;King Jr.;USA;North America;None;None;USA;North America;4
+Elie;Wiesel;Romania;Europe;None;None;USA;North America;3
+Juan Ramón;Jiménez;Spain;Europe;None;None;Puerto Rico;North America;3
+Isaac Bashevis;Singer;Russian Empire (now Poland);Europe;None;None;USA;North America;3
+Joseph;Brodsky;USSR (now Russia);Asia;None;None;USA;North America;6
+Baruj;Benacerraf;Venezuela;South America;USA;North America;USA;North America;1
+Alan;MacDiarmid;New Zealand;Oceania;USA;North America;USA;North America;2
+Robert A.;Millikan;USA;North America;USA;North America;USA;North America;4
+Murray;Gell-Mann;USA;North America;USA;North America;USA;North America;4
+Baruch S.;Blumberg;USA;North America;USA;North America;USA;North America;4
+William;Lipscomb;USA;North America;USA;North America;USA;North America;4
+Herbert A.;Hauptman;USA;North America;USA;North America;USA;North America;4
+Joshua;Lederberg;USA;North America;USA;North America;USA;North America;4
+John F.;Nash Jr.;USA;North America;USA;North America;USA;North America;4
+John;Bardeen;USA;North America;USA;North America;USA;North America;4
+Edwin G.;Krebs;USA;North America;USA;North America;USA;North America;4
+Steven;Weinberg;USA;North America;USA;North America;USA;North America;4
+Christian;Anfinsen;USA;North America;USA;North America;USA;North America;4
+Stanford;Moore;USA;North America;USA;North America;USA;North America;4
+Henry;Taube;Canada;North America;USA;North America;USA;North America;4
+Philip S.;Hench;USA;North America;USA;North America;Jamaica;North America;4
+Willard S.;Boyle;Canada;North America;USA;North America;Canada;North America;4
+Vincent;du Vigneaud;USA;North America;USA;North America;USA;North America;4
+Peyton;Rous;USA;North America;USA;North America;USA;North America;4
+Robert W.;Holley;USA;North America;USA;North America;USA;North America;4
+Nicholas Murray;Butler;USA;North America;USA;North America;USA;North America;4
+Alfred D.;Hershey;USA;North America;USA;North America;USA;North America;4
+Gertrude B.;Elion;USA;North America;USA;North America;USA;North America;4
+Joseph E.;Murray;USA;North America;USA;North America;USA;North America;4
+John;Bardeen;USA;North America;USA;North America;USA;North America;4
+Dale T.;Mortensen;USA;North America;USA;North America;USA;North America;4
+Leon M.;Lederman;USA;North America;USA;North America;USA;North America;4
+George D.;Snell;USA;North America;USA;North America;USA;North America;4
+Robert F.;Furchgott;USA;North America;USA;North America;USA;North America;4
+Paul C.;Lauterbur;USA;North America;USA;North America;USA;North America;4
+James M.;Buchanan Jr.;USA;North America;USA;North America;USA;North America;4
+Melvin;Schwartz;USA;North America;USA;North America;USA;North America;4
+Carl D.;Anderson;USA;North America;USA;North America;USA;North America;4
+Paul;Berg;USA;North America;USA;North America;USA;North America;4
+George;Wald;USA;North America;USA;North America;USA;North America;4
+Theodore W.;Schultz;USA;North America;USA;North America;USA;North America;4
+Merton H.;Miller;USA;North America;USA;North America;USA;North America;4
+Jack;Kilby;USA;North America;USA;North America;USA;North America;4
+Melvin;Calvin;USA;North America;USA;North America;USA;North America;4
+William H.;Stein;USA;North America;USA;North America;USA;North America;4
+Mario J.;Molina;Mexico;North America;USA;North America;Mexico;North America;4
+Milton;Friedman;USA;North America;USA;North America;USA;North America;4
+Douglass C.;North;USA;North America;USA;North America;USA;North America;4
+Jerome;Karle;USA;North America;USA;North America;USA;North America;4
+Robert;Hofstadter;USA;North America;USA;North America;USA;North America;4
+James;Rainwater;USA;North America;USA;North America;USA;North America;4
+Willard F.;Libby;USA;North America;USA;North America;USA;North America;4
+John H.;Northrop;USA;North America;USA;North America;USA;North America;4
+Ralph;Bunche;USA;North America;USA;North America;USA;North America;4
+Daniel;Nathans;USA;North America;USA;North America;USA;North America;4
+Raymond;Davis Jr.;USA;North America;USA;North America;USA;North America;4
+Joseph;Erlanger;USA;North America;USA;North America;USA;North America;4
+Arthur H.;Compton;USA;North America;USA;North America;USA;North America;4
+Willis E.;Lamb;USA;North America;USA;North America;USA;North America;4
+Robert;Schrieffer;USA;North America;USA;North America;USA;North America;4
+Burton;Richter;USA;North America;USA;North America;USA;North America;4
+Roger Y.;Tsien;USA;North America;USA;North America;USA;North America;4
+George H.;Hitchings;USA;North America;USA;North America;USA;North America;4
+Clifford G.;Shull;USA;North America;USA;North America;USA;North America;4
+Charles B.;Huggins;Canada;North America;USA;North America;USA;North America;4
+William;Vickrey;Canada;North America;USA;North America;USA;North America;4
+Glenn T.;Seaborg;USA;North America;USA;North America;USA;North America;4
+Robert S.;Mulliken;USA;North America;USA;North America;USA;North America;4
+Julian;Schwinger;USA;North America;USA;North America;USA;North America;4
+John H.;Van Vleck;USA;North America;USA;North America;USA;North America;4
+Gerald M.;Edelman;USA;North America;USA;North America;USA;North America;4
+Lloyd S.;Shapley;USA;North America;USA;North America;USA;North America;4
+Thomas H.;Morgan;USA;North America;USA;North America;USA;North America;4
+Thomas H.;Weller;USA;North America;USA;North America;USA;North America;4
+Howard M.;Temin;USA;North America;USA;North America;USA;North America;4
+Edwin M.;McMillan;USA;North America;USA;North America;USA;North America;4
+Dickinson W.;Richards;USA;North America;USA;North America;USA;North America;4
+Robert C.;Richardson;USA;North America;USA;North America;USA;North America;4
+James B.;Sumner;USA;North America;USA;North America;USA;North America;4
+James;Cronin;USA;North America;USA;North America;USA;North America;4
+William F.;Giauque;Canada;North America;USA;North America;USA;North America;4
+Julius;Axelrod;USA;North America;USA;North America;USA;North America;4
+Earl W.;Sutherland Jr.;USA;North America;USA;North America;USA;North America;4
+John F.;Enders;USA;North America;USA;North America;USA;North America;4
+Edward;Tatum;USA;North America;USA;North America;USA;North America;4
+Elinor;Ostrom;USA;North America;USA;North America;USA;North America;4
+Alfred G.;Gilman;USA;North America;USA;North America;USA;North America;4
+Richard P.;Feynman;USA;North America;USA;North America;USA;North America;4
+Kenneth J.;Arrow;USA;North America;USA;North America;USA;North America;4
+Herbert;Simon;USA;North America;USA;North America;USA;North America;4
+George J.;Stigler;USA;North America;USA;North America;USA;North America;4
+Arthur L.;Schawlow;USA;North America;USA;North America;USA;North America;4
+Donald A.;Glaser;USA;North America;USA;North America;USA;North America;4
+Sir Arthur;Lewis;British West Indies (now Saint Lucia);North America;USA;North America;Barbados;North America;4
+Gary;Becker;USA;North America;USA;North America;USA;North America;4
+Edward B.;Lewis;USA;North America;USA;North America;USA;North America;4
+Linus;Pauling;USA;North America;USA;North America;USA;North America;4
+F. Sherwood;Rowland;USA;North America;USA;North America;USA;North America;4
+Richard E.;Smalley;USA;North America;USA;North America;USA;North America;4
+Irwin;Rose;USA;North America;USA;North America;USA;North America;4
+Edward C.;Prescott;USA;North America;USA;North America;USA;North America;4
+Frederick;Reines;USA;North America;USA;North America;USA;North America;4
+Robert F.;Curl Jr.;USA;North America;USA;North America;USA;North America;4
+William P.;Murphy;USA;North America;USA;North America;USA;North America;4
+Keffer;Hartline;USA;North America;USA;North America;USA;North America;4
+George H.;Whipple;USA;North America;USA;North America;USA;North America;4
+James;Tobin;USA;North America;USA;North America;USA;North America;4
+Bertram N.;Brockhouse;Canada;North America;Canada;North America;Canada;North America;4
+Linus;Pauling;USA;North America;USA;North America;USA;North America;4
+Donald J.;Cram;USA;North America;USA;North America;USA;North America;4
+E. M.;Purcell;USA;North America;USA;North America;USA;North America;4
+Charles H.;Townes;USA;North America;USA;North America;USA;North America;4
+Rosalyn;Yalow;USA;North America;USA;North America;USA;North America;4
+Luis;Alvarez;USA;North America;USA;North America;USA;North America;4
+Martin L.;Perl;USA;North America;USA;North America;USA;North America;4
+Ernest;Lawrence;USA;North America;USA;North America;USA;North America;4
+Percy W.;Bridgman;USA;North America;USA;North America;USA;North America;4
+Owen;Chamberlain;USA;North America;USA;North America;USA;North America;4
+Lawrence R.;Klein;USA;North America;USA;North America;USA;North America;4
+Harry M.;Markowitz;USA;North America;USA;North America;USA;North America;4
+Paul;Greengard;USA;North America;USA;North America;USA;North America;4
+Ralph M.;Steinman;Canada;North America;USA;North America;USA;North America;4
+Henry W.;Kendall;USA;North America;USA;North America;USA;North America;4
+Sidney;Altman;Canada;North America;USA;North America;USA;North America;4
+Frederick G.;Banting;Canada;North America;Canada;North America;Canada;North America;4
+Marshall W.;Nirenberg;USA;North America;USA;North America;USA;North America;4
+Val;Fitch;USA;North America;USA;North America;USA;North America;4
+Kenneth G.;Wilson;USA;North America;USA;North America;USA;North America;4
+Norman F.;Ramsey;USA;North America;USA;North America;USA;North America;4
+Paul D.;Boyer;USA;North America;USA;North America;USA;North America;4
+Hermann J.;Muller;USA;North America;USA;North America;USA;North America;4
+Theodore W.;Richards;USA;North America;USA;North America;USA;North America;4
+Harold C.;Urey;USA;North America;USA;North America;USA;North America;4
+Robert H.;Grubbs;USA;North America;USA;North America;USA;North America;4
+Thomas C.;Schelling;USA;North America;USA;North America;USA;North America;4
+Robert W.;Fogel;USA;North America;USA;North America;USA;North America;4
+Edward A.;Doisy;USA;North America;USA;North America;USA;North America;4
+Herbert S.;Gasser;USA;North America;USA;North America;USA;North America;4
+Philip W.;Anderson;USA;North America;USA;North America;USA;North America;4
+Richard E.;Taylor;Canada;North America;USA;North America;USA;North America;4
+David H.;Hubel;Canada;North America;USA;North America;USA;North America;4
+Arthur;Ashkin;USA;North America;USA;North America;USA;North America;4
+George;Beadle;USA;North America;USA;North America;USA;North America;4
+Clinton;Davisson;USA;North America;USA;North America;USA;North America;4
+Roger W.;Sperry;USA;North America;USA;North America;USA;North America;4
+Barbara;McClintock;USA;North America;USA;North America;USA;North America;4
+Stanley;Cohen;USA;North America;USA;North America;USA;North America;4
+E. Donnall;Thomas;USA;North America;USA;North America;USA;North America;4
+Martin;Rodbell;USA;North America;USA;North America;USA;North America;4
+Paul J.;Flory;USA;North America;USA;North America;USA;North America;4
+Bruce;Merrifield;USA;North America;USA;North America;USA;North America;4
+George R.;Minot;USA;North America;USA;North America;USA;North America;4
+Edward C.;Kendall;USA;North America;USA;North America;USA;North America;4
+Arthur;Kornberg;USA;North America;USA;North America;USA;North America;4
+William A.;Fowler;USA;North America;USA;North America;USA;North America;4
+Irving;Langmuir;USA;North America;USA;North America;USA;North America;4
+Robert B.;Woodward;USA;North America;USA;North America;USA;North America;4
+Frederick C.;Robbins;USA;North America;USA;North America;USA;North America;4
+Paul A.;Samuelson;USA;North America;USA;North America;USA;North America;4
+Robert E.;Lucas Jr.;USA;North America;USA;North America;USA;North America;4
+Thomas A.;Steitz;USA;North America;USA;North America;USA;North America;4
+John B.;Fenn;USA;North America;USA;North America;USA;North America;4
+Roy J.;Glauber;USA;North America;USA;North America;USA;North America;4
+George A.;Olah;Hungary;Europe;USA;North America;USA;North America;3
+Gerhard;Herzberg;Germany;Europe;Canada;North America;Canada;North America;3
+André F.;Cournand;France;Europe;USA;North America;USA;North America;3
+John C.;Harsanyi;Hungary;Europe;USA;North America;USA;North America;3
+Hans G.;Dehmelt;Prussia (now Germany);Europe;USA;North America;USA;North America;3
+Max;Delbrück;Germany;Europe;USA;North America;USA;North America;3
+Simon;Kuznets;Russian Empire (now Belarus);Europe;USA;North America;USA;North America;3
+Polykarp;Kusch;Germany;Europe;USA;North America;USA;North America;3
+Herbert C.;Brown;United Kingdom;Europe;USA;North America;USA;North America;3
+Karl;Landsteiner;Austrian Empire (now Austria);Europe;USA;North America;USA;North America;3
+Eugene;Wigner;Austria-Hungary (now Hungary);Europe;USA;North America;USA;North America;3
+Gerty;Cori;Austria-Hungary (now Czech Republic);Europe;USA;North America;USA;North America;3
+William B.;Shockley;United Kingdom;Europe;USA;North America;USA;North America;3
+Maria;Goeppert Mayer;Germany (now Poland);Europe;USA;North America;USA;North America;3
+John;Pople;United Kingdom;Europe;USA;North America;USA;North America;3
+Michael;Smith;United Kingdom;Europe;Canada;North America;Canada;North America;3
+Walter;Kohn;Austria;Europe;USA;North America;USA;North America;3
+Albert A.;Michelson;Prussia (now Poland);Europe;USA;North America;USA;North America;3
+Günter;Blobel;Germany (now Poland);Europe;USA;North America;USA;North America;3
+Oliver;Smithies;United Kingdom;Europe;USA;North America;USA;North America;3
+Fritz;Lipmann;Germany (now Russia);Europe;USA;North America;USA;North America;3
+Franco;Modigliani;Italy;Europe;USA;North America;USA;North America;3
+Hans;Bethe;Germany (now France);Europe;USA;North America;USA;North America;3
+George E.;Palade;Romania;Europe;USA;North America;USA;North America;3
+John;Goodenough;Germany;Europe;USA;North America;USA;North America;3
+Ronald H.;Coase;United Kingdom;Europe;USA;North America;USA;North America;3
+Georg;von Békésy;Hungary;Europe;USA;North America;USA;North America;3
+Konrad;Bloch;Germany (now Poland);Europe;USA;North America;USA;North America;3
+Emilio;Segrè;Italy;Europe;USA;North America;USA;North America;3
+Selman A.;Waksman;Russian Empire (now Ukraine);Europe;USA;North America;USA;North America;3
+Lars;Onsager;Norway;Europe;USA;North America;USA;North America;3
+Tjalling C.;Koopmans;the Netherlands;Europe;USA;North America;USA;North America;3
+Nicolaas;Bloembergen;the Netherlands;Europe;USA;North America;USA;North America;3
+Clive W.J.;Granger;United Kingdom;Europe;USA;North America;USA;North America;3
+Carl;Cori;Austria-Hungary (now Czech Republic);Europe;USA;North America;USA;North America;3
+Otto;Stern;Germany (now Poland);Europe;USA;North America;USA;North America;3
+Salvador E.;Luria;Italy;Europe;USA;North America;USA;North America;3
+Isidor Isaac;Rabi;Austria-Hungary (now Poland);Europe;USA;North America;USA;North America;3
+Riccardo;Giacconi;Italy;Europe;USA;North America;USA;North America;3
+Leonid;Hurwicz;Russia;Asia;USA;North America;USA;North America;6
+Charles J.;Pedersen;Korea (now South Korea);Asia;USA;North America;USA;North America;6
+Walter H.;Brattain;China;Asia;USA;North America;USA;North America;6
+Subramanyan;Chandrasekhar;India (now Pakistan);Asia;USA;North America;USA;North America;6
+Edmond H.;Fischer;China;Asia;USA;North America;USA;North America;6
+Wassily;Leontief;Russia;Asia;USA;North America;USA;North America;6
+H. Gobind;Khorana;India;Asia;USA;North America;USA;North America;6
+Ei-ichi;Negishi;China;Asia;USA;North America;USA;North America;6
+Allan M.;Cormack;South Africa;Africa;USA;North America;USA;North America;5
+Max;Theiler;South Africa;Africa;USA;North America;USA;North America;5
+Ahmed;Zewail;Egypt;Africa;USA;North America;USA;North America;5
+Renato;Dulbecco;Italy;Europe;United Kingdom;Europe;USA;North America;3
+Otto;Meyerhof;Germany;Europe;Germany;Europe;USA;North America;3
+Albert;Einstein;Germany;Europe;Germany;Europe;USA;North America;3
+Paul A.M.;Dirac;United Kingdom;Europe;United Kingdom;Europe;USA;North America;3
+Peter;Debye;the Netherlands;Europe;Germany;Europe;USA;North America;3
+Ferdinand;Braun;Hesse-Kassel (now Germany);Europe;Germany (now France);Europe;USA;North America;3
+Jean Baptiste;Perrin;France;Europe;France;Europe;USA;North America;3
+Derek;Barton;United Kingdom;Europe;United Kingdom;Europe;USA;North America;3
+Albert;Szent-Györgyi;Austria-Hungary (now Hungary);Europe;Hungary;Europe;USA;North America;3
+Francis;Crick;United Kingdom;Europe;United Kingdom;Europe;USA;North America;3
+Enrico;Fermi;Italy;Europe;Italy;Europe;USA;North America;3
+Otto;Loewi;Germany;Europe;Austria;Europe;USA;North America;3
+Victor F.;Hess;Austria;Europe;Austria;Europe;USA;North America;3
+Abdulrazak;Gurnah;Tanzania;Africa;UK;Europe;None;None;5
+Miguel Angel;Asturias;Guatemala;North America;None;None;Spain;Europe;4
+T.S.;Eliot;USA;North America;None;None;United Kingdom;Europe;4
+V. S.;Naipaul;Trinidad and Tobago;North America;None;None;United Kingdom;Europe;4
+Sinclair;Lewis;USA;North America;None;None;Italy;Europe;4
+Saint-John;Perse;Guadeloupe Island;North America;None;None;France;Europe;4
+Sully;Prudhomme;France;Europe;None;None;France;Europe;3
+Bjørnstjerne;Bjørnson;Norway;Europe;None;None;France;Europe;3
+Verner;von Heidenstam;Sweden;Europe;None;None;Sweden;Europe;3
+Halldór;Laxness;Iceland;Europe;None;None;Iceland;Europe;3
+Camilo José;Cela;Spain;Europe;None;None;Spain;Europe;3
+Wislawa;Szymborska;Poland;Europe;None;None;Poland;Europe;3
+Christian;Lange;Norway;Europe;None;None;Norway;Europe;3
+Aristide;Briand;France;Europe;None;None;France;Europe;3
+Harold;Pinter;United Kingdom;Europe;None;None;United Kingdom;Europe;3
+Willy;Brandt;Germany;Europe;None;None;Germany;Europe;3
+José;Echegaray;Spain;Europe;None;None;Spain;Europe;3
+Wladyslaw;Reymont;Russian Empire (now Poland);Europe;None;None;Poland;Europe;3
+Harry;Martinson;Sweden;Europe;None;None;Sweden;Europe;3
+Jaroslav;Seifert;Austria-Hungary (now Czech Republic);Europe;None;None;Czechoslovakia (now Czech Republic);Europe;3
+Carl;von Ossietzky;Germany;Europe;None;None;Germany;Europe;3
+René;Cassin;France;Europe;None;None;France;Europe;3
+Georges;Pire;Belgium;Europe;None;None;Belgium;Europe;3
+Sigrid;Undset;Denmark;Europe;None;None;Norway;Europe;3
+Ernesto Teodoro;Moneta;Austrian Empire (now Italy);Europe;None;None;Italy;Europe;3
+Frédéric;Mistral;France;Europe;None;None;France;Europe;3
+Maurice;Maeterlinck;Belgium;Europe;None;None;France;Europe;3
+Romain;Rolland;France;Europe;None;None;France;Europe;3
+André;Gide;France;Europe;None;None;France;Europe;3
+Gunnar;Myrdal;Sweden;Europe;None;None;Sweden;Europe;3
+Alfred;Fried;Austria;Europe;None;None;Austria;Europe;3
+Fridtjof;Nansen;Norway;Europe;None;None;Norway;Europe;3
+Paul;Heyse;Prussia (now Germany);Europe;None;None;Germany;Europe;3
+Henrik;Pontoppidan;Denmark;Europe;None;None;Denmark;Europe;3
+Knut;Hamsun;Norway;Europe;None;None;Norway;Europe;3
+Elias;Canetti;Bulgaria;Europe;None;None;Switzerland;Europe;3
+John;Boyd Orr;Scotland;Europe;None;None;Scotland;Europe;3
+Luigi;Pirandello;Italy;Europe;None;None;Italy;Europe;3
+Roger;Martin du Gard;France;Europe;None;None;France;Europe;3
+Pär;Lagerkvist;Sweden;Europe;None;None;Sweden;Europe;3
+Odysseus;Elytis;Crete (now Greece);Europe;None;None;Greece;Europe;3
+Martinus J.G.;Veltman;the Netherlands;Europe;None;None;the Netherlands;Europe;3
+Henri;La Fontaine;Belgium;Europe;None;None;Belgium;Europe;3
+Sir Austen;Chamberlain;United Kingdom;Europe;None;None;United Kingdom;Europe;3
+Arthur;Henderson;Scotland;Europe;None;None;United Kingdom;Europe;3
+Betty;Williams;Northern Ireland;Europe;None;None;Northern Ireland;Europe;3
+Klas Pontus;Arnoldson;Sweden;Europe;None;None;Sweden;Europe;3
+Bertrand;Russell;United Kingdom;Europe;None;None;United Kingdom;Europe;3
+Alva;Myrdal;Sweden;Europe;None;None;Sweden;Europe;3
+Joseph;Rotblat;Russian Empire (now Poland);Europe;None;None;United Kingdom;Europe;3
+Salvatore;Quasimodo;Italy;Europe;None;None;Italy;Europe;3
+Vicente;Aleixandre;Spain;Europe;None;None;Spain;Europe;3
+Friedrich;von Hayek;Austria;Europe;None;None;Germany;Europe;3
+Randal;Cremer;United Kingdom;Europe;None;None;United Kingdom;Europe;3
+Karl;Gjellerup;Denmark;Europe;None;None;Germany;Europe;3
+John;Galsworthy;United Kingdom;Europe;None;None;United Kingdom;Europe;3
+Heinrich;Böll;Germany;Europe;None;None;West Germany (now Germany);Europe;3
+Frédéric;Passy;France;Europe;None;None;France;Europe;3
+Paul Henri;d'Estournelles de Constant;France;Europe;None;None;France;Europe;3
+Gerhart;Hauptmann;Prussia (now Poland);Europe;None;None;Germany (now Poland);Europe;3
+Ferdinand;Buisson;France;Europe;None;None;France;Europe;3
+Robert;Cecil;United Kingdom;Europe;None;None;United Kingdom;Europe;3
+Nelly;Sachs;Germany;Europe;None;None;Sweden;Europe;3
+Tomas;Tranströmer;Sweden;Europe;None;None;Sweden;Europe;3
+Bertha;von Suttner;Austrian Empire (now Czech Republic);Europe;None;None;Austria;Europe;3
+Marie;Curie;Russian Empire (now Poland);Europe;None;None;France;Europe;3
+Henri;Bergson;France;Europe;None;None;France;Europe;3
+Hermann;Hesse;Germany;Europe;None;None;Switzerland;Europe;3
+Élie;Ducommun;Switzerland;Europe;None;None;Switzerland;Europe;3
+Albert;Gobat;Switzerland;Europe;None;None;Switzerland;Europe;3
+Auguste;Beernaert;Belgium;Europe;None;None;Switzerland;Europe;3
+Léon;Bourgeois;France;Europe;None;None;France;Europe;3
+Hjalmar;Branting;Sweden;Europe;None;None;Sweden;Europe;3
+John;Hume;Northern Ireland;Europe;None;None;Northern Ireland;Europe;3
+Henryk;Sienkiewicz;Poland;Europe;None;None;Switzerland;Europe;3
+François;Mauriac;France;Europe;None;None;France;Europe;3
+Samuel;Beckett;Ireland;Europe;None;None;France;Europe;3
+Eugenio;Montale;Italy;Europe;None;None;Italy;Europe;3
+William;Golding;United Kingdom;Europe;None;None;United Kingdom;Europe;3
+José;Saramago;Portugal;Europe;None;None;Spain;Europe;3
+Nathan;Söderblom;Sweden;Europe;None;None;Sweden;Europe;3
+Theodor;Mommsen;Schleswig (now Germany);Europe;None;None;Germany;Europe;3
+Carl;Spitteler;Switzerland;Europe;None;None;Switzerland;Europe;3
+Eyvind;Johnson;Sweden;Europe;None;None;Sweden;Europe;3
+Selma;Lagerlöf;Sweden;Europe;None;None;Sweden;Europe;3
+Frans Eemil;Sillanpää;Russian Empire (now Finland);Europe;None;None;Finland;Europe;3
+Henry;Dunant;Switzerland;Europe;None;None;Switzerland;Europe;3
+Ludwig;Quidde;Germany;Europe;None;None;Switzerland;Europe;3
+Léon;Jouhaux;France;Europe;None;None;France;Europe;3
+Giosuè;Carducci;Tuscany (now Italy);Europe;None;None;Italy;Europe;3
+Czeslaw;Milosz;Russian Empire (now Lithuania);Europe;None;None;Poland;Europe;3
+David;Trimble;Northern Ireland;Europe;None;None;Northern Ireland;Europe;3
+George Bernard;Shaw;Ireland;Europe;None;None;United Kingdom;Europe;3
+Erik Axel;Karlfeldt;Sweden;Europe;None;None;Sweden;Europe;3
+Gustav;Stresemann;Germany;Europe;None;None;Germany;Europe;3
+Rudolf;Eucken;East Friesland (now Germany);Europe;None;None;Germany;Europe;3
+Grazia;Deledda;Italy;Europe;None;None;Italy;Europe;3
+Seamus;Heaney;Northern Ireland;Europe;None;None;Ireland;Europe;3
+Ivo;Andric;Bosnia (now Bosnia and Herzegovina);Europe;None;None;Yugoslavia (now Serbia);Europe;3
+Sir Norman;Angell;United Kingdom;Europe;None;None;United Kingdom;Europe;3
+Philip;Noel-Baker;United Kingdom;Europe;None;None;United Kingdom;Europe;3
+Thomas;Mann;Germany;Europe;None;None;Switzerland;Europe;3
+Seán;MacBride;France;Europe;None;None;Ireland;Europe;3
+Anatole;France;France;Europe;None;None;France;Europe;3
+William Butler;Yeats;Ireland;Europe;None;None;France;Europe;3
+Johannes V.;Jensen;Denmark;Europe;None;None;Denmark;Europe;3
+Dario;Fo;Italy;Europe;None;None;Italy;Europe;3
+Imre;Kertész;Hungary;Europe;None;None;Hungary;Europe;3
+Fredrik;Bajer;Denmark;Europe;None;None;Denmark;Europe;3
+Tobias;Asser;the Netherlands;Europe;None;None;the Netherlands;Europe;3
+Jacinto;Benavente;Spain;Europe;None;None;Spain;Europe;3
+Winston;Churchill;United Kingdom;Europe;None;None;United Kingdom;Europe;3
+Jean-Paul;Sartre;France;Europe;None;None;France;Europe;3
+Günter;Grass;Free City of Danzig (now Poland);Europe;None;None;Germany;Europe;3
+Rudyard;Kipling;British India (now India);Asia;None;None;United Kingdom;Europe;6
+Giorgos;Seferis;Ottoman Empire (now Turkey);Asia;None;None;Greece;Europe;6
+Ivan;Bunin;Russia;Asia;None;None;France;Europe;6
+Doris;Lessing;Persia (now Iran);Asia;None;None;United Kingdom;Europe;6
+Yasser;Arafat;Egypt;Africa;None;None;France;Europe;5
+Kofi;Annan;Gold Coast (now Ghana);Africa;None;None;Switzerland;Europe;5
+Claude;Simon;Madagascar;Africa;None;None;France;Europe;5
+Albert;Camus;French Algeria (now Algeria);Africa;None;None;France;Europe;5
+Sir John;Eccles;Australia;Oceania;Australia;Oceania;Switzerland;Europe;2
+D. Carleton;Gajdusek;USA;North America;USA;North America;Norway;Europe;4
+Wendell M.;Stanley;USA;North America;USA;North America;Spain;Europe;4
+Robert;Mundell;Canada;North America;USA;North America;Italy;Europe;4
+David J.;Thouless;United Kingdom;Europe;USA;North America;United Kingdom;Europe;3
+Felix;Bloch;Switzerland;Europe;USA;North America;Switzerland;Europe;3
+Christian;de Duve;United Kingdom;Europe;USA;North America;Belgium;Europe;3
+Alexis;Carrel;France;Europe;USA;North America;France;Europe;3
+John;Macleod;Scotland;Europe;Canada;North America;Scotland;Europe;3
+Gerard;Debreu;France;Europe;USA;North America;France;Europe;3
+Severo;Ochoa;Spain;Europe;USA;North America;Spain;Europe;3
+Wolfgang;Pauli;Austria;Europe;USA;North America;Switzerland;Europe;3
+César;Milstein;Argentina;South America;United Kingdom;Europe;United Kingdom;Europe;1
+Peter;Medawar;Brazil;South America;United Kingdom;Europe;United Kingdom;Europe;1
+Sir Howard;Florey;Australia;Oceania;United Kingdom;Europe;United Kingdom;Europe;2
+Lawrence;Bragg;Australia;Oceania;United Kingdom;Europe;United Kingdom;Europe;2
+Ernest;Rutherford;New Zealand;Oceania;United Kingdom;Europe;United Kingdom;Europe;2
+Maurice;Wilkins;New Zealand;Oceania;United Kingdom;Europe;United Kingdom;Europe;2
+Richard;Stone;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Nikolaas;Tinbergen;the Netherlands;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Otto;Wallach;Germany (now Russia);Europe;Germany;Europe;Germany;Europe;3
+Artturi;Virtanen;Russian Empire (now Finland);Europe;Finland;Europe;Finland;Europe;3
+Manfred;Eigen;Germany;Europe;Germany;Europe;Germany;Europe;3
+Albrecht;Kossel;Mecklenburg (now Germany);Europe;Germany;Europe;Germany;Europe;3
+Frederick;Soddy;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Richard;Kuhn;Austria-Hungary (now Austria);Europe;Germany;Europe;West Germany (now Germany);Europe;3
+Theodor;Kocher;Switzerland;Europe;Switzerland;Europe;Switzerland;Europe;3
+Sir Alexander;Fleming;Scotland;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+François;Jacob;France;Europe;France;Europe;France;Europe;3
+Richard R.;Ernst;Switzerland;Europe;Switzerland;Europe;Switzerland;Europe;3
+Jens C.;Skou;Denmark;Europe;Denmark;Europe;Denmark;Europe;3
+Patrick M.S.;Blackett;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Aage N.;Bohr;Denmark;Europe;Denmark;Europe;Denmark;Europe;3
+Paul;Sabatier;France;Europe;France;Europe;France;Europe;3
+Walther;Nernst;Prussia (now Poland);Europe;Germany;Europe;Germany;Europe;3
+Arne;Tiselius;Sweden;Europe;Sweden;Europe;Sweden;Europe;3
+Jaroslav;Heyrovsky;Austria-Hungary (now Czech Republic);Europe;Czechoslovakia (now Czech Republic);Europe;Czechoslovakia (now Czech Republic);Europe;3
+Paul;Ehrlich;Prussia (now Poland);Europe;Germany;Europe;Germany;Europe;3
+August;Krogh;Denmark;Europe;Denmark;Europe;Denmark;Europe;3
+Francis W.;Aston;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Louis;de Broglie;France;Europe;France;Europe;France;Europe;3
+Lord;Todd;Scotland;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Julius;Wagner-Jauregg;Austria;Europe;Austria;Europe;Austria;Europe;3
+Gerhard;Domagk;Germany (now Poland);Europe;Germany;Europe;West Germany (now Germany);Europe;3
+André;Lwoff;France;Europe;France;Europe;France;Europe;3
+Sune K.;Bergström;Sweden;Europe;Sweden;Europe;Sweden;Europe;3
+Johannes;Fibiger;Denmark;Europe;Denmark;Europe;Denmark;Europe;3
+K. Alex;Müller;Switzerland;Europe;Switzerland;Europe;Switzerland;Europe;3
+Wilhelm;Ostwald;Russian Empire (now Latvia);Europe;Germany;Europe;Germany;Europe;3
+Henri;Becquerel;France;Europe;France;Europe;France;Europe;3
+Wilhelm;Wien;Prussia (now Russia);Europe;Germany;Europe;Germany;Europe;3
+Max;Born;Germany (now Poland);Europe;United Kingdom;Europe;West Germany (now Germany);Europe;3
+Sir Nevill F.;Mott;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Pierre-Gilles;de Gennes;France;Europe;France;Europe;France;Europe;3
+Archer J.P.;Martin;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Sir Harold;Kroto;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Edgar;Adrian;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Henrik;Dam;Denmark;Europe;Denmark;Europe;Denmark;Europe;3
+Daniel;Bovet;Switzerland;Europe;Italy;Europe;Italy;Europe;3
+John E.;Sulston;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Richard L.M.;Synge;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Vladimir;Prelog;Austria-Hungary (now Bosnia and Herzegovina);Europe;Switzerland;Europe;Switzerland;Europe;3
+Peter;Mitchell;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Jack;Steinberger;Germany;Europe;Switzerland;Europe;Switzerland;Europe;3
+Sir William;Ramsay;Scotland;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Kurt;Alder;Prussia (now Poland);Europe;Germany;Europe;West Germany (now Germany);Europe;3
+Niels;Bohr;Denmark;Europe;Denmark;Europe;Denmark;Europe;3
+Erwin;Schrödinger;Austria;Europe;Germany;Europe;Austria;Europe;3
+Karl;Ziegler;Germany;Europe;Germany;Europe;West Germany (now Germany);Europe;3
+Ernst;Ruska;Germany;Europe;Germany;Europe;Germany;Europe;3
+Heinrich;Rohrer;Switzerland;Europe;Switzerland;Europe;Switzerland;Europe;3
+John R.;Hicks;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Arthur;Harden;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Adolf;Butenandt;Germany;Europe;Germany;Europe;Germany;Europe;3
+Otto;Hahn;Germany;Europe;Germany;Europe;West Germany (now Germany);Europe;3
+James E.;Meade;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Hermann;Staudinger;Germany;Europe;Germany;Europe;West Germany (now Germany);Europe;3
+Frederick;Sanger;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Robert;Koch;Germany;Europe;Germany;Europe;Germany;Europe;3
+Sir Henry;Dale;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Werner;Forssmann;Germany;Europe;Germany;Europe;West Germany (now Germany);Europe;3
+Max;von Laue;Germany;Europe;Germany;Europe;West Germany (now Germany);Europe;3
+John;Cockcroft;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+William;Bragg;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Louis;Néel;France;Europe;France;Europe;France;Europe;3
+Harald;zur Hausen;Germany;Europe;Germany;Europe;Germany;Europe;3
+Jean;Dausset;France;Europe;France;Europe;Spain;Europe;3
+Emil;Fischer;Prussia (now Germany);Europe;Germany;Europe;Germany;Europe;3
+Fritz;Pregl;Austria-Hungary (now Slovenia);Europe;Austria;Europe;Austria;Europe;3
+Ronald G.W.;Norrish;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Ernst Otto;Fischer;Germany;Europe;Germany;Europe;Germany;Europe;3
+Robert;Bárány;Austria;Europe;Austria;Europe;Sweden;Europe;3
+Otto;Warburg;Germany;Europe;Germany;Europe;West Germany (now Germany);Europe;3
+Alfred;Kastler;Germany (now France);Europe;France;Europe;France;Europe;3
+Adolf;von Baeyer;Prussia (now Germany);Europe;Germany;Europe;Germany;Europe;3
+Bertil;Ohlin;Sweden;Europe;Sweden;Europe;Sweden;Europe;3
+Maurice;Allais;France;Europe;France;Europe;France;Europe;3
+Karl;von Frisch;Austria;Europe;Germany;Europe;West Germany (now Germany);Europe;3
+Camillo;Golgi;Italy;Europe;Italy;Europe;Italy;Europe;3
+Jules;Bordet;Belgium;Europe;Belgium;Europe;Belgium;Europe;3
+Ernst B.;Chain;Germany;Europe;United Kingdom;Europe;Ireland;Europe;3
+Ulf;von Euler;Sweden;Europe;Sweden;Europe;Sweden;Europe;3
+Albert;Claude;Belgium;Europe;Belgium;Europe;Belgium;Europe;3
+John R.;Vane;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Wilhelm Conrad;Röntgen;Prussia (now Germany);Europe;Germany;Europe;Germany;Europe;3
+Dennis;Gabor;Hungary;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Luc;Montagnier;France;Europe;France;Europe;France;Europe;3
+Johannes Diderik;van der Waals;the Netherlands;Europe;the Netherlands;Europe;the Netherlands;Europe;3
+Charles Edouard;Guillaume;Switzerland;Europe;France;Europe;France;Europe;3
+C.T.R.;Wilson;Scotland;Europe;United Kingdom;Europe;Scotland;Europe;3
+Ernest T.S.;Walton;Ireland;Europe;Ireland;Europe;Northern Ireland;Europe;3
+Frederick;Sanger;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Odd;Hassel;Norway;Europe;Norway;Europe;Norway;Europe;3
+Georg;Wittig;Germany;Europe;Germany;Europe;West Germany (now Germany);Europe;3
+Allvar;Gullstrand;Sweden;Europe;Sweden;Europe;Sweden;Europe;3
+James A.;Mirrlees;Scotland;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Wolfgang;Paul;Germany;Europe;Germany;Europe;Germany;Europe;3
+Richard;Zsigmondy;Austrian Empire (now Austria);Europe;Germany;Europe;Germany;Europe;3
+Hannes;Alfvén;Sweden;Europe;Sweden;Europe;Sweden;Europe;3
+Sir Bernard;Katz;Germany;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Konrad;Lorenz;Austria;Europe;Austria;Europe;Austria;Europe;3
+Niels Ryberg;Finsen;Faroe Islands (Denmark);Europe;Denmark;Europe;Denmark;Europe;3
+Alphonse;Laveran;France;Europe;France;Europe;France;Europe;3
+Trygve;Haavelmo;Norway;Europe;Norway;Europe;Norway;Europe;3
+Hugo;Theorell;Sweden;Europe;Sweden;Europe;Sweden;Europe;3
+Eduard;Buchner;Bavaria (now Germany);Europe;Germany;Europe;Romania;Europe;3
+Niels K.;Jerne;United Kingdom;Europe;Switzerland;Europe;France;Europe;3
+Georges J.F.;Köhler;Germany;Europe;Switzerland;Europe;Germany;Europe;3
+Giulio;Natta;Italy;Europe;Italy;Europe;Italy;Europe;3
+Sir Charles;Sherrington;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Jacobus H.;van 't Hoff;the Netherlands;Europe;Germany;Europe;Germany;Europe;3
+Fritz;Haber;Prussia (now Poland);Europe;Germany;Europe;Switzerland;Europe;3
+Sir Robert;Robinson;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Philipp;Lenard;Hungary (now Slovakia);Europe;Germany;Europe;Germany;Europe;3
+James;Franck;Germany;Europe;Germany;Europe;West Germany (now Germany);Europe;3
+Frits;Zernike;the Netherlands;Europe;the Netherlands;Europe;the Netherlands;Europe;3
+Louis;Renault;France;Europe;France;Europe;France;Europe;3
+Max;Planck;Schleswig (now Germany);Europe;Germany;Europe;West Germany (now Germany);Europe;3
+Johannes;Stark;Germany;Europe;Germany;Europe;West Germany (now Germany);Europe;3
+Rita;Levi-Montalcini;Italy;Europe;Italy;Europe;Italy;Europe;3
+Adolf;Windaus;Germany;Europe;Germany;Europe;West Germany (now Germany);Europe;3
+Irène;Joliot-Curie;France;Europe;France;Europe;France;Europe;3
+Geoffrey;Wilkinson;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Jan;Tinbergen;the Netherlands;Europe;the Netherlands;Europe;the Netherlands;Europe;3
+Pieter;Zeeman;the Netherlands;Europe;the Netherlands;Europe;the Netherlands;Europe;3
+Charles Glover;Barkla;United Kingdom;Europe;United Kingdom;Europe;Scotland;Europe;3
+Corneille;Heymans;Belgium;Europe;Belgium;Europe;Belgium;Europe;3
+Egas;Moniz;Portugal;Europe;Portugal;Europe;Portugal;Europe;3
+Sir Cyril;Hinshelwood;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Max F.;Perutz;Austria;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Archibald V.;Hill;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Victor;Grignard;France;Europe;France;Europe;France;Europe;3
+George;de Hevesy;Austria-Hungary (now Hungary);Europe;Sweden;Europe;West Germany (now Germany);Europe;3
+Pierre;Curie;France;Europe;France;Europe;France;Europe;3
+Manne;Siegbahn;Sweden;Europe;Sweden;Europe;Sweden;Europe;3
+Gustav;Hertz;Germany;Europe;Germany;Europe;East Germany (now Germany);Europe;3
+Alfred;Werner;France;Europe;Switzerland;Europe;Switzerland;Europe;3
+Richard;Willstätter;Germany;Europe;Germany;Europe;Switzerland;Europe;3
+Frédéric;Joliot;France;Europe;France;Europe;France;Europe;3
+Leopold;Ruzicka;Austria-Hungary (now Croatia);Europe;Switzerland;Europe;Switzerland;Europe;3
+Santiago;Ramón y Cajal;Spain;Europe;Spain;Europe;Spain;Europe;3
+Christiaan;Eijkman;the Netherlands;Europe;the Netherlands;Europe;the Netherlands;Europe;3
+Jacques;Monod;France;Europe;France;Europe;France;Europe;3
+Arvid;Carlsson;Sweden;Europe;Sweden;Europe;Sweden;Europe;3
+Hendrik A.;Lorentz;the Netherlands;Europe;the Netherlands;Europe;the Netherlands;Europe;3
+Lord;Rayleigh;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Guglielmo;Marconi;Italy;Europe;United Kingdom;Europe;Italy;Europe;3
+Gustaf;Dalén;Sweden;Europe;Sweden;Europe;Sweden;Europe;3
+James;Chadwick;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Heike;Kamerlingh Onnes;the Netherlands;Europe;the Netherlands;Europe;the Netherlands;Europe;3
+Georges;Charpak;Poland;Europe;France;Europe;France;Europe;3
+Ilya;Mechnikov;Russian Empire (now Ukraine);Europe;France;Europe;France;Europe;3
+Paul;Müller;Switzerland;Europe;Switzerland;Europe;Switzerland;Europe;3
+Edward V.;Appleton;United Kingdom;Europe;United Kingdom;Europe;Scotland;Europe;3
+Robert G.;Edwards;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Kai M.;Siegbahn;Sweden;Europe;Sweden;Europe;Sweden;Europe;3
+Henri;Moissan;France;Europe;France;Europe;France;Europe;3
+Peter;Grünberg;Czechoslovakia (now Czech Republic);Europe;Germany;Europe;Germany;Europe;3
+Paul J.;Crutzen;the Netherlands;Europe;Germany;Europe;Germany;Europe;3
+Ragnar;Granit;Russian Empire (now Finland);Europe;Sweden;Europe;Sweden;Europe;3
+Heinrich;Wieland;Germany;Europe;Germany;Europe;West Germany (now Germany);Europe;3
+Ragnar;Frisch;Norway;Europe;Norway;Europe;Norway;Europe;3
+Reinhard;Selten;Germany (now Poland);Europe;Germany;Europe;Poland;Europe;3
+Emil;von Behring;Prussia (now Poland);Europe;Germany;Europe;Germany;Europe;3
+Sir Frederick;Hopkins;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Walter;Hess;Switzerland;Europe;Switzerland;Europe;Switzerland;Europe;3
+Feodor;Lynen;Germany;Europe;Germany;Europe;Germany;Europe;3
+George Paget;Thomson;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Cecil;Powell;United Kingdom;Europe;United Kingdom;Europe;Italy;Europe;3
+Walther;Bothe;Germany;Europe;Germany;Europe;West Germany (now Germany);Europe;3
+Martin;Ryle;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Svante;Arrhenius;Sweden;Europe;Sweden;Europe;Sweden;Europe;3
+Hans;Fischer;Germany;Europe;Germany;Europe;Germany;Europe;3
+Carl;Bosch;Germany;Europe;Germany;Europe;Germany;Europe;3
+John C.;Kendrew;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Godfrey N.;Hounsfield;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Tadeus;Reichstein;Poland;Europe;Switzerland;Europe;Switzerland;Europe;3
+Marie;Curie;Russian Empire (now Poland);Europe;France;Europe;France;Europe;3
+J.J.;Thomson;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Owen Willans;Richardson;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+J. Hans D.;Jensen;Germany;Europe;Germany;Europe;West Germany (now Germany);Europe;3
+Charles;Richet;France;Europe;France;Europe;France;Europe;3
+Hans;Spemann;Württemberg (now Germany);Europe;Germany;Europe;Germany;Europe;3
+Andrew;Huxley;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+The;Svedberg;Sweden;Europe;Sweden;Europe;Sweden;Europe;3
+Hans;von Euler-Chelpin;Germany;Europe;Sweden;Europe;Sweden;Europe;3
+Norman;Haworth;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Simon;van der Meer;the Netherlands;Europe;Switzerland;Europe;Switzerland;Europe;3
+Otto;Diels;Germany;Europe;Germany;Europe;West Germany (now Germany);Europe;3
+Werner;Heisenberg;Germany;Europe;Germany;Europe;West Germany (now Germany);Europe;3
+George;Porter;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Hans;Krebs;Germany;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Alan;Hodgkin;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Rodney R.;Porter;United Kingdom;Europe;United Kingdom;Europe;United Kingdom;Europe;3
+Yves;Chauvin;Belgium;Europe;France;Europe;France;Europe;3
+Willem;Einthoven;Java Dutch East Indies (now Indonesia);Asia;the Netherlands;Europe;the Netherlands;Europe;6
+Ilya;Prigogine;Russia;Asia;Belgium;Europe;Belgium;Europe;6
+Paul;Karrer;Russia;Asia;Switzerland;Europe;Switzerland;Europe;6
+Ronald;Ross;India;Asia;United Kingdom;Europe;United Kingdom;Europe;6
+Abdus;Salam;India (now Pakistan);Asia;Italy;Europe;United Kingdom;Europe;6
+Dorothy Crowfoot;Hodgkin;Egypt;Africa;United Kingdom;Europe;United Kingdom;Europe;5
+Anjezë Gonxhe;Bojaxhiu;Ottoman Empire (now North Macedonia);Europe;None;None;India;Asia;3
+Shimon;Peres;Poland (now Belarus);Europe;None;None;Israel;Asia;3
+Shmuel;Agnon;Austria-Hungary (now Ukraine);Europe;None;None;Israel;Asia;3
+Menachem;Begin;Russian Empire (now Belarus);Europe;None;None;Israel;Asia;3
+Andrei;Sakharov;Russia;Asia;None;None;USSR (now Russia);Asia;6
+Xiaobo;Liu;China;Asia;None;None;China;Asia;6
+Le Duc Tho;;Vietnam;Asia;None;None;Vietnam;Asia;6
+Rabindranath;Tagore;India;Asia;None;None;India;Asia;6
+Mikhail;Sholokhov;Russia;Asia;None;None;USSR (now Russia);Asia;6
+Yitzhak;Rabin;British Mandate of Palestine (now Israel);Asia;None;None;Israel;Asia;6
+Kenzaburo;Oe;Japan;Asia;None;None;Japan;Asia;6
+Boris;Pasternak;Russia;Asia;None;None;Russia;Asia;6
+Mikhail;Gorbachev;USSR (now Russia);Asia;None;None;Russia;Asia;6
+Alexandr;Solzhenitsyn;Russia;Asia;None;None;Russia;Asia;6
+Eisaku;Sato;Japan;Asia;None;None;Japan;Asia;6
+Yasunari;Kawabata;Japan;Asia;None;None;Japan;Asia;6
+Richard F.;Heck;USA;North America;USA;North America;Philippines;Asia;4
+Osamu;Shimomura;Japan;Asia;USA;North America;Japan;Asia;6
+Yoichiro;Nambu;Japan;Asia;USA;North America;Japan;Asia;6
+Hideki;Yukawa;Japan;Asia;USA;North America;Japan;Asia;6
+Sydney;Brenner;South Africa;Africa;USA;North America;Singapore;Asia;5
+Aleksandr M.;Prokhorov;Australia;Oceania;USSR (now Russia);Asia;Russia;Asia;2
+Zhores;Alferov;USSR (now Belarus);Europe;Russia;Asia;Russia;Asia;3
+Pyotr;Kapitsa;Russian Empire (now Russia);Asia;USSR (now Russia);Asia;USSR (now Russia);Asia;6
+Igor Y.;Tamm;Russia;Asia;USSR (now Russia);Asia;USSR (now Russia);Asia;6
+Nicolay G.;Basov;USSR (now Russia);Asia;USSR (now Russia);Asia;Russia;Asia;6
+Isamu;Akasaki;Japan;Asia;Japan;Asia;Japan;Asia;6
+Il´ja M.;Frank;Russia;Asia;USSR (now Russia);Asia;USSR (now Russia);Asia;6
+Pavel A.;Cherenkov;Russia;Asia;USSR (now Russia);Asia;USSR (now Russia);Asia;6
+Kenichi;Fukui;Japan;Asia;Japan;Asia;Japan;Asia;6
+Lev;Landau;Russian Empire (now Azerbaijan);Asia;USSR (now Russia);Asia;USSR (now Russia);Asia;6
+Sir Chandrasekhara Venkata;Raman;India;Asia;India;Asia;India;Asia;6
+Ivan;Pavlov;Russia;Asia;Russia;Asia;Russia;Asia;6
+Masatoshi;Koshiba;Japan;Asia;Japan;Asia;Japan;Asia;6
+Sin-Itiro;Tomonaga;Japan;Asia;Japan;Asia;Japan;Asia;6
+Toshihide;Maskawa;Japan;Asia;Japan;Asia;Japan;Asia;6
+Leonid Vitaliyevich;Kantorovich;Russian Empire (now Russia);Asia;USSR (now Russia);Asia;USSR (now Russia);Asia;6
+Nikolay;Semenov;Russia;Asia;USSR (now Russia);Asia;USSR (now Russia);Asia;6
+Albert;Schweitzer;Germany (now France);Europe;None;None;Gabon;Africa;3
+Dag;Hammarskjöld;Sweden;Europe;None;None;Northern Rhodesia (now Zambia);Africa;3
+Desmond;Tutu;South Africa;Africa;None;None;South Africa;Africa;5
+F.W.;de Klerk;South Africa;Africa;None;None;South Africa;Africa;5
+Albert;Lutuli;Southern Rhodesia (now Zimbabwe);Africa;None;None;South Africa;Africa;5
+Naguib;Mahfouz;Egypt;Africa;None;None;Egypt;Africa;5
+Anwar;al-Sadat;Egypt;Africa;None;None;Egypt;Africa;5
+Nelson;Mandela;South Africa;Africa;None;None;South Africa;Africa;5
+Wangari;Maathai;Kenya;Africa;None;None;Kenya;Africa;5
+Nadine;Gordimer;South Africa;Africa;None;None;South Africa;Africa;5
+Charles;Nicolle;France;Europe;Tunisia;Africa;Tunisia;Africa;3

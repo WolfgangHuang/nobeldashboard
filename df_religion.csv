@@ -1,0 +1,993 @@
+﻿ID_Laureate;AwardeeDisplayName;Religion;ReligionSubgroup
+981;Abiy Ahmed Ali;Christian;Evangelical Pentecostal
+541;Adolfo Pérez Esquivel;Christian;Roman Catholic
+819;Al Gore;Christian;Protestant (Baptist)
+465;Albert Gobat;Christian;Protestant
+519;Albert Lutuli;Christian;Protestant (Methodist)
+513;Albert Schweitzer;Christian;Christian
+644;Aleksandr Solzhenitsyn;Christian;Eastern Orthodox
+1018;Ales Bialiatski;Christian;Roman Catholic
+306;Alexis Carrel;Christian;Roman Catholic
+544;Alfonso García Robles;Christian;Roman Catholic
+509;American Friends Service Committee;Christian;Religious Society of Friends (Quaker)
+618;André Gide;Christian;Protestant
+101;Antony Hewish;Christian;Christian
+33;Arthur H. Compton;Christian;Presbyterian
+499;Arthur Henderson;Christian;Protestant (Methodist)
+475;Auguste Beernaert;Christian;Roman Catholic
+845;Barack H. Obama;Christian;Protestant
+468;Bertha von Suttner;Christian;Roman Catholic
+535;Betty Williams;Christian;Roman Catholic
+572;Bjørnstjerne Bjørnson;Christian;Protestant
+879;Brian Kobilka;Christian;Catholic
+666;Camilo José Cela;Christian;Roman Catholic
+500;Carl von Ossietzky;Christian;Protestant (Lutheran)
+562;Carlos Filipe Ximenes Belo;Christian;Roman Catholic
+489;Charles G. Dawes;Christian;Protestant (Congregationalist)
+22;Charles Glover Barkla;Christian;Methodist
+81;Charles H. Townes;Christian;Protestant (United Church of Christ)
+486;Christian Lange;Christian;Lutheran (Church of Norway)
+858;Christopher A. Pissarides;Christian;Eastern Orthodox
+505;Cordell Hull;Christian;Protestant (Episcopalian)
+657;Czesław Miłosz;Christian;Roman Catholic
+520;Dag Hammarskjöld;Christian;Protestant (Lutheran)
+567;David Trimble;Christian;Protestant (Presbyterian)
+966;Denis Mukwege;Christian;Pentecostal
+669;Derek Walcott;Christian;Protestant (Methodist)
+546;Desmond Tutu;Christian;Protestant (Anglican)
+464;Élie Ducommun;Christian;Protestant
+480;Elihu Root;Christian;Protestant (Presbyterian)
+846;Elinor Ostrom;Christian;Protestant
+869;Ellen Johnson Sirleaf;Christian;Protestant (Methodist)
+506;Emily Greene Balch;Christian;Quaker
+625;Ernest Hemingway;Christian;Converted to Roman Catholicism
+57;Ernest T.S. Walton;Christian;Methodist
+471;Ernesto Teodoro Moneta;Christian;Roman Catholic
+894;Eugene F. Fama;Christian;Roman Catholic
+556;F.W. de Klerk;Christian;Protestant (Reformed)
+492;Ferdinand Buisson;Christian;Protestant
+460;Ferid Murad;Christian;Christian
+623;François Mauriac;Christian;Roman Catholic
+573;Frédéric Mistral;Christian;Roman Catholic
+508;Friends Service Council;Christian;Quaker
+177;Fritz Haber;Christian;Converted to Protestantism from Judaism
+659;Gabriel García Márquez;Christian;Roman Catholic
+615;Gabriela Mistral;Christian;Roman Catholic
+514;George C. Marshall;Christian;Protestant (Episcopalian)
+696;George J. Stigler;Christian;Christian
+517;Georges Pire;Christian;Roman Catholic
+816;Gerhard Ertl;Christian;Christian
+344;Gerty Cori;Christian;converted to Roman Catholicism from Judaism in 1920
+635;Giorgos Seferis;Christian;Greek Orthodox
+597;Grazia Deledda;Christian;Roman Catholic
+13;Guglielmo Marconi;Christian;Roman Catholic
+676;Günter Grass;Christian;Roman Catholic
+491;Gustav Stresemann;Christian;Protestant
+626;Halldór Laxness;Christian;Converted to Roman Catholicism
+647;Heinrich Böll;Christian;Roman Catholic
+575;Henryk Sienkiewicz;Christian;Roman Catholic
+617;Hermann Hesse;Christian;Christian
+844;Herta Müller;Christian;Roman Catholic
+485;Hjalmar Branting;Christian;Lutheran (Church of Sweden)
+606;Ivan Bunin;Christian;Eastern Orthodox
+633;Ivo Andrić;Christian;Roman Catholic
+10;J.J. Thomson;Christian;Anglican
+496;Jane Addams;Christian;Protestant (Presbyterian)
+762;Jimmy Carter;Christian;Protestant (Baptist)
+976;John B. Goodenough;Christian;Christian
+566;John Hume;Christian;Roman Catholic
+507;John R. Mott;Christian;Protestant (Methodist)
+634;John Steinbeck;Christian;Episcopalian
+1032;Jon Fosse;Christian;Converted to Roman Catholicism
+574;José Echegaray;Christian;Roman Catholic
+563;José Ramos-Horta;Christian;Roman Catholic
+934;Juan Manuel Santos;Christian;Roman Catholic
+627;Juan Ramón Jiménez;Christian;Roman Catholic
+725;Kim Dae-jung;Christian;Roman Catholic
+749;Kofi Annan;Christian;Protestant
+545;Lech Wałęsa;Christian;Roman Catholic
+516;Lester Bowles Pearson;Christian;Protestant (United Church of Canada)
+870;Leymah Gbowee;Christian;Protestant (Lutheran)
+510;Lord Boyd Orr;Christian;Protestant (Free Church of Scotland)
+8;Lord Rayleigh;Christian;Anglican
+472;Louis Renault;Christian;Roman Catholic
+536;Mairead Corrigan;Christian;Roman Catholic
+524;Martin Luther King Jr.;Christian;
+833;Martti Ahtisaari;Christian;Protestant (Lutheran)
+702;Maurice Allais;Christian;Roman Catholic
+641;Miguel Angel Asturias;Christian;Roman Catholic
+540;Mother Teresa;Christian;Roman Catholic
+495;Nathan Söderblom;Christian;Lutheran (Church of Sweden)
+555;Nelson Mandela;Christian;Protestant (Methodist)
+497;Nicholas Murray Butler;Christian;Protestant (Episcopalian)
+528;Norman Borlaug;Christian;Protestant
+667;Octavio Paz;Christian;Roman Catholic
+655;Odysseus Elytis;Christian;Greek Orthodox
+549;Oscar Arias Sánchez;Christian;Roman Catholic
+476;Paul Henri d'Estournelles de Constant;Christian;Protestant (Calvinist)
+610;Pearl Buck;Christian;Protestant (Southern Presbyterian)
+815;Peter Grünberg;Christian;Roman Catholic
+980;Peter Handke;Christian;Serbian Orthodox Church
+518;Philip Noel-Baker;Christian;Quaker
+511;Ralph Bunche;Christian;Protestant (Baptist)
+466;Randal Cremer;Christian;Methodist
+286;Richard E. Smalley;Christian;Christian
+28;Robert A. Millikan;Christian;Christian
+896;Robert J. Shiller;Christian;Protestant (Methodist)
+299;Santiago Ramón y Cajal;Christian;Roman Catholic
+672;Seamus Heaney;Christian;Roman Catholic
+532;Seán MacBride;Christian;Roman Catholic
+579;Selma Lagerlöf;Christian;Christian
+601;Sigrid Undset;Christian;Roman Catholic
+693;Sir Arthur Lewis;Christian;Roman Catholic
+488;Sir Austen Chamberlain;Christian;Unitarian
+874;Sir John B. Gurdon;Christian;Protestant (Anglican)
+375;Sir John Eccles;Christian;Roman Catholic
+108;Sir Nevill F. Mott;Christian;Anglican
+619;T.S. Eliot;Christian;Anglican
+303;Theodor Kocher;Christian;Protestant (Moravian Church)
+571;Theodor Mommsen;Christian;Protestant
+470;Theodore Roosevelt;Christian;Protestant (Dutch Reformed Church)
+692;Theodore W. Schultz;Christian;Protestant
+602;Thomas Mann;Christian;Protestant (Lutheran)
+687;Tjalling C. Koopmans;Christian;Protestant
+868;Tomas Tranströmer;Christian;Christian
+670;Toni Morrison;Christian;Roman Catholic
+703;Trygve Haavelmo;Christian;Protestant
+585;Verner von Heidenstam;Christian;Christian
+42;Victor F. Hess;Christian;Roman Catholic
+783;Wangari Maathai;Christian;Roman Catholic
+414;Werner Arber;Christian;Protestant
+38;Werner Heisenberg;Christian;Lutheran
+593;William Butler Yeats;Christian;Anglican
+916;William C. Campbell;Christian;Roman Catholic
+154;William D. Phillips;Christian;Protestant (United Methodist Church)
+620;William Faulkner;Christian;Protestant (Episcopalian)
+716;William Vickrey;Christian;Quaker
+529;Willy Brandt;Christian;Protestant (Lutheran)
+624;Winston Churchill;Christian;Anglican
+594;Władysław Reymont;Christian;Roman Catholic
+483;Woodrow Wilson;Christian;Protestant (Presbyterian)
+102;Aage N. Bohr;Jewish;
+779;Aaron Ciechanover;Jewish;
+259;Aaron Klug;Jewish;
+843;Ada E. Yonath;Jewish;
+866;Adam G. Riess;Jewish;
+729;Alan Heeger;Jewish;
+11;Albert A. Michelson;Jewish;
+26;Albert Einstein;Jewish;
+766;Alexei Abrikosov;Jewish;
+479;Alfred Fried;Jewish;
+450;Alfred G. Gilman;Jewish;
+381;André Lwoff;Jewish;
+990;Andrea Ghez;Jewish;
+802;Andrew Z. Fire;Jewish;
+891;Arieh Warshel;Jewish;
+111;Arno Penzias;Jewish;
+960;Arthur Ashkin;Jewish;
+368;Arthur Kornberg;Jewish;
+119;Arthur L. Schawlow;Jewish;
+780;Avram Hershko;Jewish;
+942;Barry C. Barish;Jewish;
+409;Baruch S. Blumberg;Jewish;
+419;Baruj Benacerraf;Jewish;
+103;Ben R. Mottelson;Jewish;
+937;Bob Dylan;Jewish;
+629;Boris Pasternak;Jewish;
+99;Brian D. Josephson;Jewish;
+861;Bruce A. Beutler;Jewish;
+105;Burton Richter;Jewish;
+431;César Milstein;Jewish;
+241;Christian Anfinsen;Jewish;
+153;Claude Cohen-Tannoudji;Jewish;
+867;Dan Shechtman;Jewish;
+415;Daniel Nathans;Jewish;
+406;David Baltimore;Jewish;
+776;David J. Gross;Jewish;
+997;David Julius;Jewish;
+149;David M. Lee;Jewish;
+93;Dennis Gabor;Jewish;
+74;Donald A. Glaser;Jewish;
+150;Douglas D. Osheroff;Jewish;
+1025;Drew Weissman;Jewish;
+446;Edmond H. Fischer;Jewish;
+782;Elfriede Jelinek;Jewish;
+658;Elias Canetti;Jewish;
+548;Elie Wiesel;Jewish;
+72;Emilio Segrè;Jewish;
+724;Eric Kandel;Jewish;
+340;Ernst B. Chain;Jewish;
+78;Eugene Wigner;Jewish;
+58;Felix Bloch;Jewish;
+887;François Englert;Jewish;
+380;François Jacob;Jewish;
+148;Frederick Reines;Jewish;
+355;Fritz Lipmann;Jewish;
+12;Gabriel Lippmann;Jewish;
+280;George A. Olah;Jewish;
+201;George de Hevesy;Jewish;
+387;George Wald;Jewish;
+142;Georges Charpak;Jewish;
+398;Gerald M. Edelman;Jewish;
+438;Gertrude B. Elion;Jewish;
+31;Gustav Hertz;Jewish;
+777;H. David Politzer;Jewish;
+751;H. Robert Horvitz;Jewish;
+88;Hans Bethe;Jewish;
+354;Hans Krebs;Jewish;
+441;Harold E. Varmus;Jewish;
+801;Harold Pinter;Jewish;
+985;Harvey J. Alter;Jewish;
+600;Henri Bergson;Jewish;
+165;Henri Moissan;Jewish;
+530;Henry Kissinger;Jewish;
+262;Herbert A. Hauptman;Jewish;
+252;Herbert C. Brown;Jewish;
+342;Hermann J. Muller;Jewish;
+408;Howard M. Temin;Jewish;
+71;Igor Y. Tamm;Jewish;
+721;Il´ja M. Frank;Jewish;
+301;Ilya Mechnikov;Jewish;
+250;Ilya Prigogine;Jewish;
+761;Imre Kertész;Jewish;
+781;Irwin Rose;Jewish;
+654;Isaac Bashevis Singer;Jewish;
+49;Isidor Isaac Rabi;Jewish;
+930;J. Michael Kosterlitz;Jewish;
+134;Jack Steinberger;Jewish;
+884;James E. Rothman;Jewish;
+30;James Franck;Jewish;
+138;Jerome I. Friedman;Jewish;
+263;Jerome Karle;Jewish;
+266;John C. Polanyi;Jewish;
+427;John R. Vane;Jewish;
+664;Joseph Brodsky;Jewish;
+337;Joseph Erlanger;Jewish;
+433;Joseph L. Goldstein;Jewish;
+560;Joseph Rotblat;Jewish;
+366;Joshua Lederberg;Jewish;
+85;Julian Schwinger;Jewish;
+396;Julius Axelrod;Jewish;
+131;K. Alex Müller;Jewish;
+321;Karl Landsteiner;Jewish;
+378;Konrad Bloch;Jewish;
+132;Leon M. Lederman;Jewish;
+77;Lev Landau;Jewish;
+993;Louise Glück;Jewish;
+390;Marshall W. Nirenberg;Jewish;
+830;Martin Chalfie;Jewish;
+889;Martin Karplus;Jewish;
+147;Martin L. Perl;Jewish;
+451;Martin Rodbell;Jewish;
+61;Max Born;Jewish;
+226;Max F. Perutz;Jewish;
+225;Melvin Calvin;Jewish;
+133;Melvin Schwartz;Jewish;
+539;Menachem Begin;Jewish;
+890;Michael Levitt;Jewish;
+939;Michael Rosbash;Jewish;
+432;Michael S. Brown;Jewish;
+90;Murray Gell-Mann;Jewish;
+668;Nadine Gordimer;Jewish;
+640;Nelly Sachs;Jewish;
+27;Niels Bohr;Jewish;
+331;Otto Loewi;Jewish;
+312;Otto Meyerhof;Jewish;
+48;Otto Stern;Jewish;
+169;Otto Wallach;Jewish;
+322;Otto Warburg;Jewish;
+912;Patrick Modiano;Jewish;
+254;Paul Berg;Jewish;
+302;Paul Ehrlich;Jewish;
+723;Paul Greengard;Jewish;
+580;Paul Heyse;Jewish;
+941;Rainer Weiss;Jewish;
+863;Ralph M. Steinman;Jewish;
+885;Randy W. Schekman;Jewish;
+526;René Cassin;Jewish;
+774;Richard Axel;Jewish;
+86;Richard P. Feynman;Jewish;
+176;Richard Willstätter;Jewish;
+435;Rita Levi-Montalcini;Jewish;
+258;Roald Hoffmann;Jewish;
+308;Robert Bárány;Jewish;
+458;Robert F. Furchgott;Jewish;
+75;Robert Hofstadter;Jewish;
+878;Robert J. Lefkowitz;Jewish;
+806;Roger D. Kornberg;Jewish;
+988;Roger Penrose;Jewish;
+413;Rosalyn Yalow;Jewish;
+791;Roy J. Glauber;Jewish;
+277;Rudolph A. Marcus;Jewish;
+393;Salvador E. Luria;Jewish;
+652;Saul Bellow;Jewish;
+864;Saul Perlmutter;Jewish;
+353;Selman A. Waksman;Jewish;
+876;Serge Haroche;Jewish;
+113;Sheldon Glashow;Jewish;
+558;Shimon Peres;Jewish;
+639;Shmuel Agnon;Jewish;
+273;Sidney Altman;Jewish;
+394;Sir Bernard Katz;Jewish;
+285;Sir Harold Kroto;Jewish;
+457;Stanley B. Prusiner;Jewish;
+434;Stanley Cohen;Jewish;
+115;Steven Weinberg;Jewish;
+750;Sydney Brenner;Jewish;
+350;Tadeus Reichstein;Jewish;
+478;Tobias Asser;Jewish;
+767;Vitaly L. Ginzburg;Jewish;
+255;Walter Gilbert;Jewish;
+290;Walter Kohn;Jewish;
+243;William H. Stein;Jewish;
+50;Wolfgang Pauli;Jewish;
+559;Yitzhak Rabin;Jewish;
+726;Zhores Alferov;Jewish;
+1004;Abdulrazak Gurnah;Muslim;
+114;Abdus Salam;Muslim;
+292;Ahmed Zewail;Muslim;
+538;Anwar al-Sadat;Muslim;
+923;Aziz Sancar;Muslim;
+914;Malala Yousafzai;Muslim;
+798;Mohamed ElBaradei;Muslim;
+1029;Moungi Bawendi;Muslim;
+809;Muhammad Yunus;Muslim;
+665;Naguib Mahfouz;Muslim;
+1033;Narges Mohammadi;Muslim;
+808;Orhan Pamuk;Muslim;
+773;Shirin Ebadi;Muslim;
+871;Tawakkol Karman;Muslim;
+557;Yasser Arafat;Muslim;
+745;A. Michael Spence;Unknown;
+982;Abhijit Banerjee;Unknown;
+199;Adolf Butenandt;Unknown;
+164;Adolf von Baeyer;Unknown;
+185;Adolf Windaus;Unknown;
+853;Akira Suzuki;Unknown;
+978;Akira Yoshino;Unknown;
+1012;Alain Aspect;Unknown;
+376;Alan Hodgkin;Unknown;
+730;Alan MacDiarmid;Unknown;
+628;Albert Camus;Unknown;
+403;Albert Claude;Unknown;
+814;Albert Fert;Unknown;
+332;Albert Szent-Györgyi;Unknown;
+304;Albrecht Kossel;Unknown;
+83;Aleksandr M. Prokhorov;Unknown;
+1031;Aleksey Yekimov ;Unknown;
+392;Alfred D. Hershey;Unknown;
+87;Alfred Kastler;Unknown;
+174;Alfred Werner;Unknown;
+892;Alice Munro;Unknown;
+417;Allan M. Cormack;Unknown;
+305;Allvar Gullstrand;Unknown;
+300;Alphonse Laveran;Unknown;
+543;Alva Myrdal;Unknown;
+882;Alvin E. Roth;Unknown;
+719;Amartya Sen;Unknown;
+537;Amnesty International;Unknown;
+590;Anatole France;Unknown;
+360;André F. Cournand;Unknown;
+849;Andre Geim;Unknown;
+534;Andrei Sakharov;Unknown;
+377;Andrew Huxley;Unknown;
+412;Andrew V. Schally;Unknown;
+926;Angus Deaton;Unknown;
+1028;Anne L’Huillier;Unknown;
+1017;Annie Ernaux;Unknown;
+768;Anthony J. Leggett;Unknown;
+1014;Anton Zeilinger;Unknown;
+214;Archer J.P. Martin;Unknown;
+311;Archibald V. Hill;Unknown;
+998;Ardem Patapoutian;Unknown;
+490;Aristide Briand;Unknown;
+208;Arne Tiselius;Unknown;
+920;Arthur B. McDonald;Unknown;
+186;Arthur Harden;Unknown;
+203;Artturi Virtanen;Unknown;
+722;Arvid Carlsson;Unknown;
+310;August Krogh;Unknown;
+553;Aung San Suu Kyi;Unknown;
+428;Barbara McClintock;Unknown;
+789;Barry J. Marshall;Unknown;
+1021;Ben Bernanke;Unknown;
+936;Bengt Holmström;Unknown;
+426;Bengt I. Samuelsson;Unknown;
+1002;Benjamin List;Unknown;
+933;Bernard L. Feringa;Unknown;
+345;Bernardo Houssay;Unknown;
+445;Bert Sakmann;Unknown;
+689;Bertil Ohlin;Unknown;
+145;Bertram N. Brockhouse;Unknown;
+621;Bertrand Russell;Unknown;
+865;Brian P. Schmidt;Unknown;
+261;Bruce Merrifield;Unknown;
+34;C.T.R. Wilson;Unknown;
+298;Camillo Golgi;Unknown;
+189;Carl Bosch;Unknown;
+343;Carl Cori;Unknown;
+43;Carl D. Anderson;Unknown;
+588;Carl Spitteler;Unknown;
+740;Carl Wieman;Unknown;
+124;Carlo Rubbia;Unknown;
+501;Carlos Saavedra Lamas;Unknown;
+836;Carol W. Greider;Unknown;
+1015;Carolyn Bertozzi;Unknown;
+55;Cecil Powell;Unknown;
+1020;Center for Civil Liberties;Unknown;
+384;Charles B. Huggins;Unknown;
+25;Charles Edouard Guillaume;Unknown;
+269;Charles J. Pedersen;Unknown;
+838;Charles K. Kao;Unknown;
+987;Charles M. Rice;Unknown;
+318;Charles Nicolle;Unknown;
+307;Charles Richet;Unknown;
+68;Chen Ning Yang;Unknown;
+319;Christiaan Eijkman;Unknown;
+404;Christian de Duve;Unknown;
+453;Christiane Nüsslein-Volhard;Unknown;
+873;Christopher A. Sims;Unknown;
+662;Claude Simon;Unknown;
+1034;Claudia Goldin;Unknown;
+146;Clifford G. Shull;Unknown;
+44;Clinton Davisson;Unknown;
+772;Clive W.J. Granger;Unknown;
+333;Corneille Heymans;Unknown;
+803;Craig C. Mello;Unknown;
+410;D. Carleton Gajdusek;Unknown;
+857;Dale T. Mortensen;Unknown;
+363;Daniel Bovet;Unknown;
+157;Daniel C. Tsui;Unknown;
+759;Daniel Kahneman;Unknown;
+733;Daniel L. McFadden;Unknown;
+674;Dario Fo;Unknown;
+1007;David Card;Unknown;
+423;David H. Hubel;Unknown;
+928;David J. Thouless;Unknown;
+877;David J. Wineland;Unknown;
+1003;David W.C. MacMillan;Unknown;
+237;Derek Barton;Unknown;
+362;Dickinson W. Richards;Unknown;
+975;Didier Queloz;Unknown;
+1006;Dmitry Muratov;Unknown;
+568;Doctors Without Borders;Unknown;
+267;Donald J. Cram;Unknown;
+962;Donna Strickland;Unknown;
+817;Doris Lessing;Unknown;
+230;Dorothy Crowfoot Hodgkin;Unknown;
+1022;Douglas Diamond;Unknown;
+710;Douglass C. North;Unknown;
+264;Dudley R. Herschbach;Unknown;
+443;E. Donnall Thomas;Unknown;
+59;E. M. Purcell;Unknown;
+397;Earl W. Sutherland, Jr.;Unknown;
+324;Edgar Adrian;Unknown;
+807;Edmund S. Phelps;Unknown;
+166;Eduard Buchner;Unknown;
+905;Edvard I. Moser;Unknown;
+336;Edward A. Doisy;Unknown;
+452;Edward B. Lewis;Unknown;
+349;Edward C. Kendall;Unknown;
+787;Edward C. Prescott;Unknown;
+365;Edward Tatum;Unknown;
+52;Edward V. Appleton;Unknown;
+447;Edwin G. Krebs;Unknown;
+212;Edwin M. McMillan;Unknown;
+348;Egas Moniz;Unknown;
+852;Ei-ichi Negishi;Unknown;
+533;Eisaku Satō;Unknown;
+275;Elias James Corey;Unknown;
+835;Elizabeth H. Blackburn;Unknown;
+161;Emil Fischer;Unknown;
+293;Emil von Behring;Unknown;
+991;Emmanuelle Charpentier;Unknown;
+46;Enrico Fermi;Unknown;
+909;Eric Betzig;Unknown;
+738;Eric Cornell;Unknown;
+454;Eric F. Wieschaus;Unknown;
+821;Eric S. Maskin;Unknown;
+604;Erik Axel Karlfeldt;Unknown;
+47;Ernest Lawrence;Unknown;
+167;Ernest Rutherford;Unknown;
+244;Ernst Otto Fischer;Unknown;
+127;Ernst Ruska;Unknown;
+444;Erwin Neher;Unknown;
+39;Erwin Schrödinger;Unknown;
+983;Esther Duflo;Unknown;
+608;Eugene O'Neill;Unknown;
+651;Eugenio Montale;Unknown;
+881;European Union;Unknown;
+649;Eyvind Johnson;Unknown;
+929;F. Duncan M. Haldane;Unknown;
+283;F. Sherwood Rowland;Unknown;
+379;Feodor Lynen;Unknown;
+14;Ferdinand Braun;Unknown;
+1027;Ferenc Krausz;Unknown;
+786;Finn E. Kydland;Unknown;
+963;Frances H. Arnold;Unknown;
+372;Francis Crick;Unknown;
+180;Francis W. Aston;Unknown;
+699;Franco Modigliani;Unknown;
+824;Françoise Barré-Sinoussi;Unknown;
+494;Frank B. Kellogg;Unknown;
+778;Frank Wilczek;Unknown;
+613;Frans Eemil Sillanpää;Unknown;
+193;Frédéric Joliot;Unknown;
+463;Frédéric Passy;Unknown;
+358;Frederick C. Robbins;Unknown;
+313;Frederick G. Banting;Unknown;
+222;Frederick Sanger;Unknown;
+179;Frederick Soddy;Unknown;
+474;Fredrik Bajer;Unknown;
+487;Fridtjof Nansen;Unknown;
+190;Friedrich Bergius;Unknown;
+685;Friedrich von Hayek;Unknown;
+60;Frits Zernike;Unknown;
+181;Fritz Pregl;Unknown;
+734;Gao Xingjian;Unknown;
+708;Gary Becker;Unknown;
+245;Geoffrey Wilkinson;Unknown;
+371;Georg von Békésy;Unknown;
+253;Georg Wittig;Unknown;
+744;George A. Akerlof;Unknown;
+364;George Beadle;Unknown;
+596;George Bernard Shaw;Unknown;
+421;George D. Snell;Unknown;
+405;George E. Palade;Unknown;
+840;George E. Smith;Unknown;
+805;George F. Smoot;Unknown;
+439;George H. Hitchings;Unknown;
+326;George H. Whipple;Unknown;
+964;George P. Smith;Unknown;
+45;George Paget Thomson;Unknown;
+235;George Porter;Unknown;
+327;George R. Minot;Unknown;
+430;Georges J.F. Köhler;Unknown;
+697;Gerard Debreu;Unknown;
+961;Gérard Mourou;Unknown;
+158;Gerardus 't Hooft;Unknown;
+128;Gerd Binnig;Unknown;
+334;Gerhard Domagk;Unknown;
+240;Gerhard Herzberg;Unknown;
+582;Gerhart Hauptmann;Unknown;
+1001;Giorgio Parisi;Unknown;
+576;Giosuè Carducci;Unknown;
+229;Giulio Natta;Unknown;
+213;Glenn T. Seaborg;Unknown;
+418;Godfrey N. Hounsfield;Unknown;
+810;Grameen Bank;Unknown;
+972;Gregg L. Semenza;Unknown;
+1009;Guido W. Imbens;Unknown;
+684;Gunnar Myrdal;Unknown;
+461;Günter Blobel;Unknown;
+17;Gustaf Dalén;Unknown;
+389;H. Gobind Khorana;Unknown;
+416;Hamilton O. Smith;Unknown;
+91;Hannes Alfvén;Unknown;
+188;Hans Fischer;Unknown;
+136;Hans G. Dehmelt;Unknown;
+329;Hans Spemann;Unknown;
+187;Hans von Euler-Chelpin;Unknown;
+823;Harald zur Hausen;Unknown;
+192;Harold C. Urey;Unknown;
+704;Harry M. Markowitz;Unknown;
+650;Harry Martinson;Unknown;
+272;Hartmut Michel;Unknown;
+18;Heike Kamerlingh Onnes;Unknown;
+129;Heinrich Rohrer;Unknown;
+184;Heinrich Wieland;Unknown;
+2;Hendrik A. Lorentz;Unknown;
+4;Henri Becquerel;Unknown;
+481;Henri La Fontaine;Unknown;
+335;Henrik Dam;Unknown;
+587;Henrik Pontoppidan;Unknown;
+462;Henry Dunant;Unknown;
+260;Henry Taube;Unknown;
+139;Henry W. Kendall;Unknown;
+727;Herbert Kroemer;Unknown;
+338;Herbert S. Gasser;Unknown;
+691;Herbert Simon;Unknown;
+216;Hermann Staudinger;Unknown;
+731;Hideki Shirakawa;Unknown;
+54;Hideki Yukawa;Unknown;
+907;Hiroshi Amano;Unknown;
+156;Horst L. Störmer;Unknown;
+359;Hugo Theorell;Unknown;
+467;Institute of International Law;Unknown;
+818;Intergovernmental Panel on Climate Change;Unknown;
+797;International Atomic Energy Agency;Unknown;
+948;International Campaign to Abolish Nuclear Weapons;Unknown;
+564;International Campaign to Ban Landmines;Unknown;
+482;International Committee of the Red Cross;Unknown;
+527;International Labour Organization;Unknown;
+547;International Physicians for the Prevention of Nuclear War;Unknown;
+194;Irène Joliot-Curie;Unknown;
+191;Irving Langmuir;Unknown;
+906;Isamu Akasaki;Unknown;
+296;Ivan Pavlov;Unknown;
+98;Ivar Giaever;Unknown;
+130;J. Georg Bednorz;Unknown;
+80;J. Hans D. Jensen;Unknown;
+763;J. M. Coetzee;Unknown;
+440;J. Michael Bishop;Unknown;
+790;J. Robin Warren;Unknown;
+592;Jacinto Benavente;Unknown;
+728;Jack Kilby;Unknown;
+837;Jack W. Szostak;Unknown;
+160;Jacobus H. van 't Hoff;Unknown;
+944;Jacques Dubochet;Unknown;
+382;Jacques Monod;Unknown;
+715;James A. Mirrlees;Unknown;
+204;James B. Sumner;Unknown;
+41;James Chadwick;Unknown;
+116;James Cronin;Unknown;
+690;James E. Meade;Unknown;
+732;James J. Heckman;Unknown;
+700;James M. Buchanan Jr.;Unknown;
+958;James P. Allison;Unknown;
+973;James Peebles;Unknown;
+104;James Rainwater;Unknown;
+695;James Tobin;Unknown;
+373;James Watson;Unknown;
+678;Jan Tinbergen;Unknown;
+223;Jaroslav Heyrovsky;Unknown;
+661;Jaroslav Seifert;Unknown;
+32;Jean Baptiste Perrin;Unknown;
+420;Jean Dausset;Unknown;
+915;Jean Tirole;Unknown;
+832;Jean-Marie Gustave Le Clézio;Unknown;
+268;Jean-Marie Lehn;Unknown;
+637;Jean-Paul Sartre;Unknown;
+931;Jean-Pierre Sauvage;Unknown;
+938;Jeffrey C. Hall;Unknown;
+992;Jennifer A. Doudna;Unknown;
+289;Jens C. Skou;Unknown;
+945;Joachim Frank;Unknown;
+565;Jody Williams;Unknown;
+270;Johann Deisenhofer;Unknown;
+15;Johannes Diderik van der Waals;Unknown;
+316;Johannes Fibiger;Unknown;
+24;Johannes Stark;Unknown;
+614;Johannes V. Jensen;Unknown;
+756;John B. Fenn;Unknown;
+66;John Bardeen;Unknown;
+711;John C. Harsanyi;Unknown;
+227;John C. Kendrew;Unknown;
+804;John C. Mather;Unknown;
+1013;John Clauser;Unknown;
+56;John Cockcroft;Unknown;
+247;John Cornforth;Unknown;
+752;John E. Sulston;Unknown;
+288;John E. Walker;Unknown;
+356;John F. Enders;Unknown;
+712;John F. Nash Jr.;Unknown;
+605;John Galsworthy;Unknown;
+205;John H. Northrop;Unknown;
+109;John H. Van Vleck;Unknown;
+792;John L. Hall;Unknown;
+314;John Macleod;Unknown;
+903;John O'Keefe;Unknown;
+291;John Pople;Unknown;
+681;John R. Hicks;Unknown;
+675;José Saramago;Unknown;
+442;Joseph E. Murray;Unknown;
+746;Joseph E. Stiglitz;Unknown;
+144;Joseph H. Taylor Jr.;Unknown;
+1008;Joshua D. Angrist;Unknown;
+862;Jules A. Hoffmann;Unknown;
+309;Jules Bordet;Unknown;
+317;Julius Wagner-Jauregg;Unknown;
+743;K. Barry Sharpless;Unknown;
+120;Kai M. Siegbahn;Unknown;
+913;Kailash Satyarthi;Unknown;
+586;Karl Gjellerup;Unknown;
+400;Karl von Frisch;Unknown;
+228;Karl Ziegler;Unknown;
+278;Kary B. Mullis;Unknown;
+1024;Katalin Karikó;Unknown;
+947;Kazuo Ishiguro;Unknown;
+386;Keffer Hartline;Unknown;
+257;Kenichi Fukui;Unknown;
+121;Kenneth G. Wilson;Unknown;
+682;Kenneth J. Arrow;Unknown;
+671;Kenzaburo Oe;Unknown;
+943;Kip S. Thorne;Unknown;
+473;Klas Pontus Arnoldson;Unknown;
+1000;Klaus Hasselmann;Unknown;
+126;Klaus von Klitzing;Unknown;
+589;Knut Hamsun;Unknown;
+757;Koichi Tanaka;Unknown;
+401;Konrad Lorenz;Unknown;
+850;Konstantin Novoselov;Unknown;
+211;Kurt Alder;Unknown;
+758;Kurt Wüthrich;Unknown;
+236;Lars Onsager;Unknown;
+895;Lars Peter Hansen;Unknown;
+21;Lawrence Bragg;Unknown;
+694;Lawrence R. Klein;Unknown;
+531;Le Duc Tho ;Unknown;
+523;League of Red Cross Societies;Unknown;
+735;Leland Hartwell;Unknown;
+97;Leo Esaki;Unknown;
+484;Léon Bourgeois;Unknown;
+512;Léon Jouhaux;Unknown;
+95;Leon N. Cooper;Unknown;
+820;Leonid Hurwicz;Unknown;
+686;Leonid Vitaliyevich Kantorovich;Unknown;
+200;Leopold Ruzicka;Unknown;
+775;Linda B. Buck;Unknown;
+217;Linus Pauling;Unknown;
+855;Liu Xiaobo;Unknown;
+883;Lloyd S. Shapley;Unknown;
+221;Lord Todd;Unknown;
+1030;Louis Brus;Unknown;
+36;Louis de Broglie;Unknown;
+459;Louis J. Ignarro;Unknown;
+92;Louis Néel;Unknown;
+825;Luc Montagnier;Unknown;
+493;Ludwig Quidde;Unknown;
+607;Luigi Pirandello;Unknown;
+89;Luis Alvarez;Unknown;
+239;Luis Leloir;Unknown;
+977;M. Stanley Whittingham;Unknown;
+827;Makoto Kobayashi;Unknown;
+233;Manfred Eigen;Unknown;
+29;Manne Siegbahn;Unknown;
+79;Maria Goeppert Mayer;Unknown;
+1005;Maria Ressa;Unknown;
+6;Marie Curie;Unknown;
+282;Mario J. Molina;Unknown;
+811;Mario R. Capecchi;Unknown;
+854;Mario Vargas Llosa;Unknown;
+100;Martin Ryle;Unknown;
+159;Martinus J.G. Veltman;Unknown;
+754;Masatoshi Koshiba;Unknown;
+581;Maurice Maeterlinck;Unknown;
+374;Maurice Wilkins;Unknown;
+391;Max Delbrück;Unknown;
+23;Max Planck;Unknown;
+352;Max Theiler;Unknown;
+19;Max von Laue;Unknown;
+904;May-Britt Moser;Unknown;
+1019;Memorial;Unknown;
+705;Merton H. Miller;Unknown;
+986;Michael Houghton;Unknown;
+984;Michael Kremer;Unknown;
+279;Michael Smith;Unknown;
+940;Michael W. Young;Unknown;
+974;Michel Mayor;Unknown;
+552;Mikhail Gorbachev;Unknown;
+638;Mikhail Sholokhov;Unknown;
+688;Milton Friedman;Unknown;
+880;Mo Yan;Unknown;
+1016;Morten Meldal;Unknown;
+718;Myron Scholes;Unknown;
+967;Nadia Murad;Unknown;
+503;Nansen International Office for Refugees;Unknown;
+925;National Dialogue Quartet;Unknown;
+118;Nicolaas Bloembergen;Unknown;
+82;Nicolay G. Basov;Unknown;
+429;Niels K. Jerne;Unknown;
+295;Niels Ryberg Finsen;Unknown;
+402;Nikolaas Tinbergen;Unknown;
+220;Nikolay Semenov;Unknown;
+135;Norman F. Ramsey;Unknown;
+196;Norman Haworth;Unknown;
+238;Odd Hassel;Unknown;
+515;Office of the United Nations High Commissioner for Refugees;Unknown;
+979;Olga Tokarczuk;Unknown;
+847;Oliver E. Williamson;Unknown;
+935;Oliver Hart;Unknown;
+813;Oliver Smithies;Unknown;
+893;Organisation for the Prohibition of Chemical Weapons;Unknown;
+829;Osamu Shimomura;Unknown;
+210;Otto Diels;Unknown;
+202;Otto Hahn;Unknown;
+73;Owen Chamberlain;Unknown;
+35;Owen Willans Richardson;Unknown;
+645;Pablo Neruda;Unknown;
+622;Pär Lagerkvist;Unknown;
+53;Patrick M.S. Blackett;Unknown;
+648;Patrick White;Unknown;
+679;Paul A. Samuelson;Unknown;
+40;Paul A.M. Dirac;Unknown;
+764;Paul C. Lauterbur;Unknown;
+287;Paul D. Boyer;Unknown;
+281;Paul J. Crutzen;Unknown;
+246;Paul J. Flory;Unknown;
+197;Paul Karrer;Unknown;
+834;Paul Krugman;Unknown;
+969;Paul M. Romer;Unknown;
+922;Paul Modrich;Unknown;
+346;Paul Müller;Unknown;
+995;Paul R. Milgrom;Unknown;
+173;Paul Sabatier;Unknown;
+70;Pavel A. Cherenkov;Unknown;
+51;Percy W. Bridgman;Unknown;
+477;Permanent International Peace Bureau;Unknown;
+856;Peter A. Diamond;Unknown;
+769;Peter Agre;Unknown;
+455;Peter C. Doherty;Unknown;
+195;Peter Debye;Unknown;
+888;Peter Higgs;Unknown;
+370;Peter Medawar;Unknown;
+251;Peter Mitchell;Unknown;
+383;Peyton Rous;Unknown;
+1023;Philip Dybvig;Unknown;
+351;Philip S. Hench;Unknown;
+107;Philip W. Anderson;Unknown;
+9;Philipp Lenard;Unknown;
+449;Phillip A. Sharp;Unknown;
+1026;Pierre Agostini;Unknown;
+5;Pierre Curie;Unknown;
+141;Pierre-Gilles de Gennes;Unknown;
+3;Pieter Zeeman;Unknown;
+64;Polykarp Kusch;Unknown;
+561;Pugwash Conferences on Science and World Affairs;Unknown;
+110;Pyotr Kapitsa;Unknown;
+583;Rabindranath Tagore;Unknown;
+677;Ragnar Frisch;Unknown;
+385;Ragnar Granit;Unknown;
+753;Raymond Davis Jr.;Unknown;
+989;Reinhard Genzel;Unknown;
+713;Reinhard Selten;Unknown;
+407;Renato Dulbecco;Unknown;
+755;Riccardo Giacconi;Unknown;
+140;Richard E. Taylor;Unknown;
+851;Richard F. Heck;Unknown;
+949;Richard H. Thaler;Unknown;
+946;Richard Henderson;Unknown;
+448;Richard J. Roberts;Unknown;
+198;Richard Kuhn;Unknown;
+215;Richard L.M. Synge;Unknown;
+276;Richard R. Ernst;Unknown;
+796;Richard R. Schrock;Unknown;
+698;Richard Stone;Unknown;
+182;Richard Zsigmondy;Unknown;
+554;Rigoberta Menchú Tum;Unknown;
+155;Robert B. Laughlin;Unknown;
+996;Robert B. Wilson;Unknown;
+231;Robert B. Woodward;Unknown;
+717;Robert C. Merton;Unknown;
+151;Robert C. Richardson;Unknown;
+502;Robert Cecil, Viscount Cecil of Chelwood;Unknown;
+714;Robert E. Lucas Jr.;Unknown;
+284;Robert F. Curl Jr.;Unknown;
+771;Robert F. Engle III;Unknown;
+848;Robert G. Edwards;Unknown;
+795;Robert H. Grubbs;Unknown;
+271;Robert Huber;Unknown;
+799;Robert J. Aumann;Unknown;
+297;Robert Koch;Unknown;
+701;Robert M. Solow;Unknown;
+720;Robert Mundell;Unknown;
+232;Robert S. Mulliken;Unknown;
+96;Robert Schrieffer;Unknown;
+709;Robert W. Fogel;Unknown;
+388;Robert W. Holley;Unknown;
+112;Robert Woodrow Wilson;Unknown;
+770;Roderick MacKinnon;Unknown;
+399;Rodney R. Porter;Unknown;
+822;Roger B. Myerson;Unknown;
+411;Roger Guillemin;Unknown;
+609;Roger Martin du Gard;Unknown;
+422;Roger W. Sperry;Unknown;
+831;Roger Y. Tsien;Unknown;
+456;Rolf M. Zinkernagel;Unknown;
+584;Romain Rolland;Unknown;
+234;Ronald G.W. Norrish;Unknown;
+707;Ronald H. Coase;Unknown;
+294;Ronald Ross;Unknown;
+578;Rudolf Eucken;Unknown;
+76;Rudolf Mössbauer;Unknown;
+577;Rudyard Kipling;Unknown;
+143;Russell A. Hulse;Unknown;
+742;Ryoji Noyori;Unknown;
+631;Saint-John Perse;Unknown;
+630;Salvatore Quasimodo;Unknown;
+643;Samuel Beckett;Unknown;
+106;Samuel C.C. Ting;Unknown;
+917;Satoshi Ōmura;Unknown;
+367;Severo Ochoa;Unknown;
+875;Shinya Yamanaka;Unknown;
+908;Shuji Nakamura;Unknown;
+680;Simon Kuznets;Unknown;
+125;Simon van der Meer;Unknown;
+603;Sinclair Lewis;Unknown;
+84;Sin-Itiro Tomonaga;Unknown;
+339;Sir Alexander Fleming;Unknown;
+37;Sir Chandrasekhara Venkata Raman;Unknown;
+323;Sir Charles Sherrington;Unknown;
+219;Sir Cyril Hinshelwood;Unknown;
+369;Sir Frank Macfarlane Burnet;Unknown;
+320;Sir Frederick Hopkins;Unknown;
+965;Sir Gregory P. Winter;Unknown;
+330;Sir Henry Dale;Unknown;
+341;Sir Howard Florey;Unknown;
+932;Sir J. Fraser Stoddart;Unknown;
+437;Sir James W. Black;Unknown;
+812;Sir Martin J. Evans;Unknown;
+498;Sir Norman Angell;Unknown;
+737;Sir Paul Nurse;Unknown;
+971;Sir Peter J. Ratcliffe;Unknown;
+765;Sir Peter Mansfield;Unknown;
+207;Sir Robert Robinson;Unknown;
+163;Sir William Ramsay;Unknown;
+242;Stanford Moore;Unknown;
+910;Stefan W. Hell;Unknown;
+152;Steven Chu;Unknown;
+122;Subrahmanyan Chandrasekhar;Unknown;
+569;Sully Prudhomme;Unknown;
+425;Sune K. Bergström;Unknown;
+436;Susumu Tonegawa;Unknown;
+162;Svante Arrhenius;Unknown;
+1011;Svante Pääbo;Unknown;
+924;Svetlana Alexievich;Unknown;
+999;Syukuro Manabe;Unknown;
+919;Takaaki Kajita;Unknown;
+959;Tasuku Honjo;Unknown;
+551;The 14th Dalai Lama;Unknown;
+183;The Svedberg;Unknown;
+793;Theodor W. Hänsch;Unknown;
+175;Theodore W. Richards;Unknown;
+842;Thomas A. Steitz;Unknown;
+800;Thomas C. Schelling;Unknown;
+886;Thomas C. Südhof;Unknown;
+325;Thomas H. Morgan;Unknown;
+357;Thomas H. Weller;Unknown;
+872;Thomas J. Sargent;Unknown;
+274;Thomas R. Cech;Unknown;
+736;Tim Hunt;Unknown;
+921;Tomas Lindahl;Unknown;
+424;Torsten N. Wiesel;Unknown;
+828;Toshihide Maskawa;Unknown;
+69;Tsung-Dao Lee;Unknown;
+918;Tu Youyou;Unknown;
+395;Ulf von Euler;Unknown;
+748;United Nations;Unknown;
+525;United Nations Children's Fund;Unknown;
+550;United Nations Peacekeeping Forces;Unknown;
+747;V. S. Naipaul;Unknown;
+117;Val Fitch;Unknown;
+841;Venkatraman Ramakrishnan;Unknown;
+760;Vernon L. Smith;Unknown;
+653;Vicente Aleixandre;Unknown;
+172;Victor Grignard;Unknown;
+218;Vincent du Vigneaud;Unknown;
+248;Vladimir Prelog;Unknown;
+67;Walter H. Brattain;Unknown;
+347;Walter Hess;Unknown;
+62;Walther Bothe;Unknown;
+178;Walther Nernst;Unknown;
+683;Wassily Leontief;Unknown;
+206;Wendell M. Stanley;Unknown;
+361;Werner Forssmann;Unknown;
+1;Wilhelm Conrad Röntgen;Unknown;
+168;Wilhelm Ostwald;Unknown;
+16;Wilhelm Wien;Unknown;
+224;Willard F. Libby;Unknown;
+839;Willard S. Boyle;Unknown;
+315;Willem Einthoven;Unknown;
+123;William A. Fowler;Unknown;
+65;William B. Shockley;Unknown;
+20;William Bragg;Unknown;
+968;William D. Nordhaus;Unknown;
+911;William E. Moerner;Unknown;
+209;William F. Giauque;Unknown;
+706;William F. Sharpe;Unknown;
+970;William G. Kaelin Jr;Unknown;
+660;William Golding;Unknown;
+741;William Knowles;Unknown;
+249;William Lipscomb;Unknown;
+328;William P. Murphy;Unknown;
+63;Willis E. Lamb;Unknown;
+673;Wisława Szymborska;Unknown;
+663;Wole Soyinka;Unknown;
+739;Wolfgang Ketterle;Unknown;
+137;Wolfgang Paul;Unknown;
+994;World Food Programme;Unknown;
+642;Yasunari Kawabata;Unknown;
+826;Yoichiro Nambu;Unknown;
+927;Yoshinori Ohsumi;Unknown;
+265;Yuan T. Lee;Unknown;
+794;Yves Chauvin;Unknown;
