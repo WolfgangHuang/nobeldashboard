@@ -13,13 +13,14 @@ import dash_mantine_components as dmc
 # App-level configuration
 APP_CONFIG = {
     'title': 'Nobel Laureate Data Dashboard',
-    'external_stylesheets': [
-        "assets/dmc_styles.css",
-    ],
+    # assets/*.css is auto-served by Dash; no explicit stylesheet entries needed.
+    'external_stylesheets': [],
     'suppress_callback_exceptions': True,
     'port': 8050,
-    'debug': True,
-    'host': '0.0.0.0'
+    # Safe defaults for `python app.py`: opt in to the Werkzeug debugger / external
+    # binding via the DEBUG / HOST env vars. Production runs via Gunicorn (app:server).
+    'debug': False,
+    'host': '127.0.0.1'
 }
 
 ##################################################################################################

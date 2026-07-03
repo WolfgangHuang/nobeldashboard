@@ -92,7 +92,7 @@ def get_last_update_timestamp():
 app = Dash(
     external_stylesheets=[
         th.GOOGLE_FONTS_URL,
-        APP_CONFIG['external_stylesheets'][0],
+        *APP_CONFIG['external_stylesheets'],
         dmc.styles.ALL
     ],
     title=APP_CONFIG['title'],
@@ -2814,4 +2814,5 @@ def update_timestamp_display(n_intervals):
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', APP_CONFIG['port']))
     debug_mode = os.environ.get('DEBUG', str(APP_CONFIG['debug'])).lower() == 'true'
-    app.run(host=APP_CONFIG['host'], port=port, debug=debug_mode)
+    host = os.environ.get('HOST', APP_CONFIG['host'])
+    app.run(host=host, port=port, debug=debug_mode)

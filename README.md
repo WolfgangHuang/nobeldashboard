@@ -204,13 +204,21 @@ The codebase uses several optimization techniques:
 
 Development:
 ```bash
-python app.py
+python app.py                          # binds 127.0.0.1:8050, debug off
+DEBUG=true HOST=0.0.0.0 python app.py  # opt-in: Werkzeug debugger + external binding
 ```
+
+Note: `DEBUG=true` enables the Werkzeug interactive debugger (arbitrary code
+execution) — never combine it with an externally reachable host.
 
 Production (Gunicorn):
 ```bash
-gunicorn -w 4 -b 0.0.0.0:8050 app:server
+gunicorn -w 4 --preload -b 0.0.0.0:8050 app:server
 ```
+
+`--preload` loads the app (including the ~10 MB nominations dataset and the
+precomputed edge table) once in the master process and forks the workers,
+instead of paying the load 4× in RAM and startup time.
 
 ## Data Updates
 
