@@ -1,4 +1,7 @@
-nbldata.org, www.nbldata.org {
-	encode zstd gzip
-	reverse_proxy dashboard:8050
+nbldata.org {
+    reverse_proxy dashboard:8050
+}
+
+www.nbldata.org {
+    redir https://nbldata.org{uri} permanent
 }
