@@ -3,3 +3,5 @@ __pycache__/
 .venv/
 venv/
 data_update.log
+last_scheduled_run.txt
+.scheduled_update.lock
