@@ -1,0 +1,27 @@
+services:
+  caddy:
+    image: caddy:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    restart: unless-stopped
+    depends_on:
+      - dashboard
+
+  dashboard:
+    build: .
+    expose:
+      - "8050"
+    restart: unless-stopped
+    volumes:
+      # Code and CSVs come from the host dir, so update_data.py results are
+      # picked up by a container restart without rebuilding the image.
+      - ./:/app
+
+volumes:
+  caddy_data:
+  caddy_config:

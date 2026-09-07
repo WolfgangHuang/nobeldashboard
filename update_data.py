@@ -98,57 +98,123 @@ def run_plotdatagenerator():
         return False
 
 
-def restart_app():
-    """Restart the Dash application after data update (Gunicorn)."""
-    try:
-        logger.info("Attempting to reload Gunicorn workers...")
-        
-        # Find Gunicorn master process for the production app
-        # Looking specifically for the nbldata_app path (not _dev)
-        result = subprocess.run(
-            ["pgrep", "-f", "gunicorn.*nbldata_app/nbldata.sock"],
-            capture_output=True,
-            text=True
-        )
-        
-        if result.returncode == 0 and result.stdout.strip():
-            master_pid = result.stdout.strip().split('\n')[0]  # Get first (master) process
-            logger.info(f"Found Gunicorn master process: {master_pid}")
-            
-            try:
-                # Send HUP signal for graceful reload
-                subprocess.run(["kill", "-HUP", master_pid], check=True)
-                logger.info(f"Sent HUP signal to Gunicorn master process {master_pid}")
-                logger.info("Gunicorn workers will gracefully reload with new data")
-                return True
-                
-            except subprocess.CalledProcessError as e:
-                logger.error(f"Failed to send HUP signal: {e}")
-                return False
-        else:
-            logger.warning("Could not find Gunicorn master process")
-            
-            # Fallback: Try to find any gunicorn master in current directory
+# Deployment layout (see docker-compose.yml): the app runs as the "dashboard"
+# service behind Caddy, with this directory bind-mounted into the container.
+# Restarting the service is what picks up the regenerated CSVs.
+COMPOSE_SERVICE = "dashboard"
+
+
+def _compose_command():
+    """Return a working Compose CLI invocation, or None if Docker is unavailable."""
+    for candidate in (["docker", "compose"], ["docker-compose"]):
+        try:
             result = subprocess.run(
-                ["pgrep", "-f", f"gunicorn.*{current_dir}"],
-                capture_output=True,
-                text=True
+                candidate + ["version"], capture_output=True, text=True, timeout=30
             )
-            
-            if result.returncode == 0 and result.stdout.strip():
-                master_pid = result.stdout.strip().split('\n')[0]
-                logger.info(f"Found Gunicorn master via path search: {master_pid}")
-                subprocess.run(["kill", "-HUP", master_pid], check=True)
-                logger.info("Gunicorn reload signal sent via fallback method")
-                return True
-            
-            logger.error("Could not locate Gunicorn master process")
-            logger.info("Manual restart required: kill -HUP <master_pid>")
+        except (FileNotFoundError, subprocess.TimeoutExpired):
+            continue
+        if result.returncode == 0:
+            return candidate
+    return None
+
+
+def _compose_service_running(compose):
+    """True if the service currently has a running container."""
+    try:
+        result = subprocess.run(
+            compose + ["ps", "--quiet", COMPOSE_SERVICE],
+            cwd=current_dir, capture_output=True, text=True, timeout=60
+        )
+    except subprocess.TimeoutExpired:
+        return False
+    return bool(result.stdout.strip())
+
+
+def _restart_compose_service():
+    """Restart the Dash container so it loads the new data. Returns None if not applicable."""
+    if not os.path.exists(os.path.join(current_dir, "docker-compose.yml")):
+        logger.info("No docker-compose.yml here - not a Compose deployment")
+        return None
+
+    compose = _compose_command()
+    if compose is None:
+        logger.warning("Docker CLI not available (or no permission) - cannot use Compose")
+        return None
+
+    logger.info(f"Restarting Compose service '{COMPOSE_SERVICE}'...")
+    try:
+        result = subprocess.run(
+            compose + ["restart", COMPOSE_SERVICE],
+            cwd=current_dir, capture_output=True, text=True, timeout=180
+        )
+    except subprocess.TimeoutExpired:
+        logger.error("Compose restart timed out after 180 seconds")
+        return False
+
+    if result.returncode != 0:
+        logger.error(f"Compose restart failed (exit {result.returncode}): {result.stderr.strip()}")
+        return False
+
+    # `compose restart` exits 0 even when the service has no container at all,
+    # so confirm something is actually running before reporting success.
+    if not _compose_service_running(compose):
+        logger.error(f"Service '{COMPOSE_SERVICE}' is not running after the restart")
+        logger.info(f"Start it manually: docker compose up -d {COMPOSE_SERVICE}")
+        return False
+
+    logger.info(f"Service '{COMPOSE_SERVICE}' restarted with the new data")
+    return True
+
+
+def _reload_host_gunicorn():
+    """Fallback for a bare host-side Gunicorn (no container): graceful worker reload."""
+    patterns = [
+        "gunicorn.*wsgi:application",
+        f"gunicorn.*{current_dir}",
+    ]
+
+    for pattern in patterns:
+        result = subprocess.run(
+            ["pgrep", "-f", pattern], capture_output=True, text=True
+        )
+        if result.returncode != 0 or not result.stdout.strip():
+            continue
+
+        master_pid = result.stdout.strip().split('\n')[0]  # Get first (master) process
+        logger.info(f"Found Gunicorn master process: {master_pid}")
+        try:
+            subprocess.run(["kill", "-HUP", master_pid], check=True)
+        except subprocess.CalledProcessError as e:
+            logger.error(f"Failed to send HUP signal to {master_pid}: {e}")
             return False
-        
+
+        logger.info(f"Sent HUP signal to Gunicorn master process {master_pid}")
+        # Note: with --preload the app lives in the master process, so HUP restarts
+        # the workers but does NOT re-read the data - a full restart is needed there.
+        logger.info("Gunicorn workers reloading (a --preload master needs a full restart)")
+        return True
+
+    logger.error("Could not locate a Gunicorn master process")
+    return False
+
+
+def restart_app():
+    """Restart the Dash application after a data update (Compose service, else Gunicorn)."""
+    try:
+        compose_result = _restart_compose_service()
+        if compose_result is not None:
+            return compose_result
+
+        logger.info("Falling back to a host-side Gunicorn reload...")
+        if _reload_host_gunicorn():
+            return True
+
+        logger.info(f"Manual restart required: docker compose restart {COMPOSE_SERVICE}")
+        return False
+
     except Exception as e:
         logger.error(f"Failed to restart application: {e}")
-        logger.info(f"Manual restart: kill -HUP 7339  # or current master PID")
+        logger.info(f"Manual restart: docker compose restart {COMPOSE_SERVICE}")
         return False
 
 
