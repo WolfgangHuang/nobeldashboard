@@ -1,0 +1,4 @@
+nbldata.org, www.nbldata.org {
+	encode zstd gzip
+	reverse_proxy dashboard:8050
+}

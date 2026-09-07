@@ -1,0 +1,18 @@
+# Environments (859 MB locally, wrong platform inside the image)
+.venv/
+venv/
+
+# VCS, caches, editor/tooling state
+.git/
+.gitignore
+__pycache__/
+*.pyc
+.ruff_cache/
+.vscode/
+.claude/
+*.code-workspace
+
+# Not needed at runtime
+_archive/
+redesign/
+*.log
