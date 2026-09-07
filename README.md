@@ -258,7 +258,41 @@ This script:
 2. Validates the response
 3. Saves raw data to CSV
 4. Runs plotdatagenerator.py to process the data
-5. Restarts the application (if running under Gunicorn)
+5. Restarts the Compose service `dashboard` (falls back to a Gunicorn HUP when
+   the deployment is not containerised)
+
+Run it on the host, not inside the container: it needs the Docker CLI for step 5,
+and the bind mount makes the new CSVs visible to the app immediately.
+
+### Scheduling
+
+`scheduled_update.py` is the cron entry point and owns the schedule, so the
+crontab holds a single line:
+
+```
+*/5 * * * * /path/to/.venv/bin/python /path/to/scheduled_update.py >> ~/cron-nbldata.log 2>&1
+```
+
+It exits within milliseconds unless an update is due:
+
+- once a day at `DAILY_TIME` (08:00)
+- every five minutes inside a Nobel announcement window — from the announced
+  time until `WINDOW_HOURS` (3h) later, on the dates in `ANNOUNCEMENTS`
+
+All times are `Europe/Stockholm`. The server clock runs on UTC, so putting the
+announcement times into the crontab directly would fire them two hours late
+during CEST. Converting inside the script also survives the winter-time switch.
+
+The `ANNOUNCEMENTS` dict needs refreshing once a year from
+https://www.nobelprize.org/press/ — the dates move, the pattern (Medicine on the
+first Monday through Peace on Friday, Economics the following Monday) does not.
+
+```bash
+python scheduled_update.py --check   # print the decision, change nothing
+python scheduled_update.py --force   # update regardless of schedule
+```
+
+A file lock prevents a slow run from overlapping with the next cron slot.
 
 ## License
 
