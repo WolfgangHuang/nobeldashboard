@@ -7,6 +7,15 @@ import os
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
+# api.nobelprize.org sits behind Cloudflare, which answers the requests default
+# User-Agent ("python-requests/x.y") with a 403 challenge page. Any identifying
+# UA passes; this one names the client honestly instead of faking a browser.
+API_HEADERS = {'User-Agent': 'nbldata-dashboard/1.0 (+https://nbldata.org)'}
+
+# Without a timeout a stalled connection hangs the cron job indefinitely.
+API_TIMEOUT = 30
+
+
 def get_all_laureates_data():
     """
     Fetch all laureates data from Nobel Prize API, handling pagination.
@@ -21,7 +30,7 @@ def get_all_laureates_data():
 
     # Step 2: Make an initial GET request to retrieve the meta information
     try:
-        initial_response = requests.get(base_url)
+        initial_response = requests.get(base_url, headers=API_HEADERS, timeout=API_TIMEOUT)
         initial_response.raise_for_status()
     except requests.RequestException as e:
         logger.error(f"Failed to retrieve initial metadata: {e}")
@@ -43,7 +52,7 @@ def get_all_laureates_data():
     while True:
         try:
             # Make the GET request to the API with the correct limit
-            response = requests.get(base_url, params=params)
+            response = requests.get(base_url, params=params, headers=API_HEADERS, timeout=API_TIMEOUT)
             response.raise_for_status()
 
             data = response.json()
