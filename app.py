@@ -2272,6 +2272,8 @@ layout = dmc.AppShell(
                         ],
                         gap="sm",
                         align="center",
+                        wrap="nowrap",
+                        className="nbl-header-brand",
                     ),
                     dmc.Group(
                         [
@@ -2290,12 +2292,14 @@ layout = dmc.AppShell(
                         ],
                         gap="sm",
                         align="center",
+                        wrap="nowrap",
                     ),
                 ],
                 h="100%",
-                px="lg",
+                px={"base": "sm", "sm": "lg"},
                 justify="space-between",
                 align="center",
+                wrap="nowrap",
             ),
         ),
         dmc.AppShellNavbar(
@@ -2309,11 +2313,11 @@ layout = dmc.AppShell(
             dmc.Container(
                 html.Div(id="main-content", children=render_overview_content()),
                 fluid=True,
-                p="md"
+                p={"base": 0, "sm": "md"},
             )
         ),
     ],
-    header={"height": 72},
+    header={"height": {"base": 60, "sm": 72}},
     navbar={
         "width": 212,
         "breakpoint": "sm",
@@ -2386,6 +2390,16 @@ def manage_navbar(burger_opened, collapse_clicks, navbar):
     navbar["collapsed"] = {"mobile": not burger_opened}
     nav_cls = "nbl-navbar collapsed" if collapsed_desktop else "nbl-navbar"
     return navbar, nav_cls
+
+
+# ---- Close the mobile navbar after navigating (a nav link changes only the URL) ----------------
+@app.callback(
+    Output("burger", "opened"),
+    Input("url", "pathname"),
+    prevent_initial_call=True,
+)
+def close_burger_on_navigate(_pathname):
+    return False
 
 
 # ---- Keep the active nav item in sync with the URL ---------------------------------------------
