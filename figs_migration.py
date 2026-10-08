@@ -15,7 +15,7 @@ from data import df_laureates, lastyearincluded
 from filters import standard_filter
 
 
-def generate_parcat_migration(data=df_laureates, loc1="ParCatDegreeCountry", loc2="ParCatWorkCountry", loc3="ParCatPrizeCountry", categories="all", gender="all", timerange=[1901, lastyearincluded], timerange_field="award", width=1000, height=1400):
+def generate_parcat_migration(data=df_laureates, loc1="ParCatDegreeCountry", loc2="ParCatWorkCountry", loc3="ParCatPrizeCountry", categories="all", gender="all", timerange=[1901, lastyearincluded], timerange_field="award", width=None, height=1400):
     """
     Generates a parallel categories diagram visualizing Nobel laureates' movement 
     via three locations (Degree/WorkPrize or Birth/Prize/Death)
@@ -27,7 +27,7 @@ def generate_parcat_migration(data=df_laureates, loc1="ParCatDegreeCountry", loc
         loc1 (str): Column representing the first location (default: "ParCatDegreeCountry").
         loc2 (str): Column representing the second location (default: "ParCatWorkCountry").
         loc3 (str): Column representing the third location (default: "ParCatPrizeCountry").
-        width (int): plot width (default: 1600)
+        width (int): plot width (default: None = fill the container)
         height (int): plot height (default: 1400)
         
         For Birth/Prize/Death:

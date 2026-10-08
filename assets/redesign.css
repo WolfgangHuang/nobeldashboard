@@ -594,3 +594,36 @@ body {
     fill: var(--surface) !important;
     stroke: var(--card-border) !important;
 }
+
+/* ===============================================================================================
+   Mobile (< sm = 48em): compact single-row header, stacked filter toolbar
+   =============================================================================================== */
+.nbl-header-brand {
+    min-width: 0;
+}
+@media (max-width: 47.99em) {
+    .nbl-wordmark {
+        font-size: 16px;
+        line-height: 1.15;
+    }
+    .nbl-subtitle,
+    .nbl-badge {
+        display: none;
+    }
+    .nbl-logo .bar {
+        width: 5px;
+        height: 18px;
+        border-radius: 3px;
+    }
+    .nbl-logo {
+        gap: 2px;
+        flex-shrink: 0;
+    }
+    /* Toolbar sections wrap onto their own rows — vertical dividers would float mid-card */
+    .toolbar-divider {
+        display: none;
+    }
+    .filter-toolbar {
+        padding: 14px;
+    }
+}

@@ -486,6 +486,7 @@ def generate_heatmap_age(data=df_laureates, categories="all", gender="all", time
         x=data.columns,
         y=data.index,
         color_continuous_scale= cf.c_colorscale_red,
+        aspect="auto",  # default "equal" squeezes 6 rows x ~125 years into a thin strip
     )
 
     fig.update_layout(
@@ -539,6 +540,8 @@ def generate_heatmap_age(data=df_laureates, categories="all", gender="all", time
     )
 
     fig.update_xaxes(rangeslider_thickness = 0.05)  # sets the slider height to 0.5% of the plot height
+    # margin l=0 above: let the category tick labels + axis title claim their space
+    fig.update_yaxes(automargin=True)
 
 
     return fig

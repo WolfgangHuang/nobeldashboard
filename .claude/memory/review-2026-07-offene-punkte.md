@@ -11,8 +11,8 @@ Initial-Commit e33a632) blieben offen:
 1. **Visueller Dark-Mode-Check im Browser steht aus** — die Theme-Swaps sind nur
    programmatisch verifiziert (Roundtrip-Tests). Besonders prüfen: Globen, Karten
    (carto-darkmatter), Data-Seite, Netzwerk-Verhalten nach cola-Umstellung.
-2. **Live-Server (nbldata.org) läuft noch auf altem Stand** — Deploy des neuen
-   Codes + Umstellung auf `gunicorn --preload` steht aus.
+2. ~~Live-Server läuft noch auf altem Stand~~ — **erledigt am 7. September 2026**:
+   neuer Code deployt, `--preload` aktiv, Details in [[deployment-server]].
 3. **Optionale Folgearbeiten**, bewusst nicht umgesetzt: app.py-Callbacks in
    Feature-Module (register_callbacks-Muster; Begründung im Phase-4-Commit),
    Debounce für den Live-Nominierungszähler, Caching-Layer (nach dem
@@ -26,6 +26,6 @@ Initial-Commit e33a632) blieben offen:
 **Why:** Ohne diese Notiz wirkt der Stand „fertig", obwohl Browser-Check und
 Server-Deploy fehlen; die Folgearbeiten würden ggf. doppelt analysiert.
 
-**How to apply:** Bei nächster Session zu diesem Repo zuerst fragen, ob
-Browser-Check/Deploy erledigt sind, dann diese Memory aktualisieren/löschen.
-Siehe auch [[dev-environment]].
+**How to apply:** Offen ist nur noch Punkt 1 (visueller Dark-Mode-Check) und die
+Folgearbeiten unter Punkt 3 — bei nächster Session danach fragen und diese Memory
+dann löschen. Siehe auch [[dev-environment]] und [[deployment-server]].
