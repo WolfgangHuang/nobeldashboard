@@ -16,6 +16,9 @@ COPY . .
 
 EXPOSE 8050
 
-# --preload loads the ~10 MB nominations dataset and the precomputed edge table
-# once in the master process and forks the workers, instead of paying it per worker.
-CMD ["gunicorn", "--bind", "0.0.0.0:8050", "--workers", "3", "--preload", "wsgi:application"]
+# No --preload: polars deadlocks in a forked child once its thread pool has run in
+# the parent (and building df_edges at import runs it), so every network/nominations
+# callback would hang until the worker timeout. Each worker loads the app itself
+# instead (~450 MB RSS each). gthread keeps a few slow requests (bubbles ~2.5 s)
+# from blocking the app; callbacks share no mutable state.
+CMD ["gunicorn", "--bind", "0.0.0.0:8050", "--workers", "2", "--worker-class", "gthread", "--threads", "4", "wsgi:application"]

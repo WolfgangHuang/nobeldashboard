@@ -4,6 +4,8 @@ Cytoscape network widget). Extracted from app.py so config/plot_config no longer
 need a circular `from app import ...`.
 """
 
+import inspect
+
 from dash import dcc, html
 from dash.exceptions import PreventUpdate
 import dash_mantine_components as dmc
@@ -57,7 +59,7 @@ def generate_loader_spinner(id):
     )
 
 
-def generate_plot_in_layout_standard(plot_config):
+def generate_plot_in_layout_standard(plot_config, dark=False):
     """
     Generate the complete layout for a standard (non-nominations) plot.
     
@@ -73,6 +75,7 @@ def generate_plot_in_layout_standard(plot_config):
             - style: CSS styling for the plot
             - footer: Optional footer content
             - badges: Filter state indicators
+        dark (bool): Render the figure for the dark theme.
             
     Returns:
         dmc.SimpleGrid: Complete widget layout with header, plot, and controls.
@@ -93,8 +96,10 @@ def generate_plot_in_layout_standard(plot_config):
     if plot_config.plot_category == "nominations":
         raise PreventUpdate
 
-    figure = plot_generator(**plot_config.plot_generator_kwargs)
-    figure = th.recolor_figure(figure, dark=False)  # embed light template on first render
+    kwargs = dict(plot_config.plot_generator_kwargs)
+    if "dark" in inspect.signature(plot_generator).parameters:
+        kwargs["dark"] = dark
+    figure = th.recolor_figure(plot_generator(**kwargs), dark=dark)  # embed the current theme on first render
     filter_drawer = cf.render_filter_standard(plot_config)
 
     return dmc.SimpleGrid(
@@ -300,10 +305,12 @@ def generate_network_in_layout_cytoscape(plot_config):
     itself is a cyto.Cytoscape (in-browser force layout, node dragging, click-to-
     highlight) instead of a dcc.Graph. Category colors/laureate rings come from the
     theme stylesheet; the ego-network highlight + info text are driven by the callback
-    below using the same graph-connections store as the old Plotly path.
+    below from the filters kept in nom-cyto-graph-store.
     """
-    elements, G = pdg.generate_network_elements(**plot_config.plot_generator_kwargs)
-    initial_connections = pdg.extract_graph_connections(G) if G is not None else None
+    # The store keeps the filters the graph was built from (not its connections);
+    # a node click rebuilds what it needs from the server-side cache.
+    initial_filters = {k: v for k, v in plot_config.plot_generator_kwargs.items() if k != "data"}
+    elements, _G = pdg.network_elements_cached(initial_filters)
 
     filter_drawer = cf.render_filter_nominations(plot_config)
 
@@ -312,7 +319,7 @@ def generate_network_in_layout_cytoscape(plot_config):
         spacing="sm",
         verticalSpacing="sm",
         children=[
-            dcc.Store(id="nom-cyto-graph-store", data=initial_connections),
+            dcc.Store(id="nom-cyto-graph-store", data=initial_filters),
             dcc.Store(id="nom-cyto-fit-store"),
             html.Div(
                 id=plot_config.plot_id,

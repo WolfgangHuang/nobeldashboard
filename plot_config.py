@@ -104,7 +104,7 @@ class PlotConfig:
             raise ValueError("Plot generator function not defined.")
         return getattr(pdg_module, self.plot_generator, None)
 
-    def generate_layout(self):
+    def generate_layout(self, dark=False):
         """
         Generate the complete widget layout for this plot.
         
@@ -120,7 +120,7 @@ class PlotConfig:
             return generate_plot_in_layout_nominations(self)
         else:
             from layouts import generate_plot_in_layout_standard
-            return generate_plot_in_layout_standard(self)
+            return generate_plot_in_layout_standard(self, dark=dark)
 
     def generate_badges(self):
         """
@@ -556,7 +556,9 @@ def get_plot_configs(df_laureates, df_prizes, df_nominations, lastyearincluded):
         subheader = "This plot works the same way, but has slightly diffferent data: place of birth, place of organisation when the prize was awarded, place of death. Note that this dataset, unlike the previous one, spans the full time range. (Selecting *City* may lead to incorrect visuals, as there are simply too many to display.)",
         badges=["Natural Sciences", f"1901-{lastyearincluded}"],
         plot_generator="generate_parcat_migration",
-        plot_generator_kwargs={"data": df_laureates},
+        # Must match the dropdown defaults below; the generator defaults are the dwp columns.
+        plot_generator_kwargs={"data": df_laureates, "loc1": "BirthContinent",
+                               "loc2": "Prize0_Affiliation0_Country", "loc3": "DeathCityNow"},
         show_filters={
             "categories": True, 
             "gender": True,

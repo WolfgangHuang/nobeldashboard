@@ -9,7 +9,9 @@ import polars as pl
 import numpy as np
 import config as cf
 import networkx as nx
+import json
 from collections import defaultdict
+from functools import lru_cache
 from data import data_path, df_edges, df_nominations, lastyearincluded
 
 
@@ -540,6 +542,52 @@ def build_network_graph(df_edges=df_edges, df_nominations=df_nominations):
     return G
 
 
+def node_connections(G, node):
+    """
+    Connection info for one node: who it nominated and who nominated it, with edge
+    data (years, categories), plus the node's own attributes.
+    """
+    # Get successors (people this person nominated) with edge data
+    # MultiDiGraph: G.edges[u, v] returns dict of {key: edge_data}
+    successors_data = []
+    for successor in G.successors(node):
+        # Get ALL edges from node to successor (multiple nominations possible)
+        edge_dict = G.get_edge_data(node, successor)
+        if edge_dict:
+            for edge_key, edge_data in edge_dict.items():
+                successors_data.append({
+                    'id': str(successor),
+                    'name': G.nodes[successor].get('name', 'Unknown'),
+                    'year': edge_data.get('year', 'Unknown'),
+                    'category': edge_data.get('category', 'Unknown')
+                })
+
+    # Get predecessors (people who nominated this person) with edge data
+    predecessors_data = []
+    for predecessor in G.predecessors(node):
+        # Get ALL edges from predecessor to node (multiple nominations possible)
+        edge_dict = G.get_edge_data(predecessor, node)
+        if edge_dict:
+            for edge_key, edge_data in edge_dict.items():
+                predecessors_data.append({
+                    'id': str(predecessor),
+                    'name': G.nodes[predecessor].get('name', 'Unknown'),
+                    'year': edge_data.get('year', 'Unknown'),
+                    'category': edge_data.get('category', 'Unknown')
+                })
+
+    return {
+        'successors': successors_data,
+        'predecessors': predecessors_data,
+        'node_data': {
+            'name': G.nodes[node].get('name', 'Unknown'),
+            'country': G.nodes[node].get('country', 'Unknown'),
+            'main_category': G.nodes[node].get('main_category', 'Unknown'),
+            'is_laureate': G.nodes[node].get('is_laureate', False),
+        }
+    }
+
+
 def extract_graph_connections(G):
     """
     Extract connection information from NetworkX graph for storage in dcc.Store.
@@ -551,50 +599,7 @@ def extract_graph_connections(G):
     Returns:
         Dict with connection info that can be stored in dcc.Store
     """
-    connections = {}
-    
-    for node in G.nodes():
-        # Get successors (people this person nominated) with edge data
-        # MultiDiGraph: G.edges[u, v] returns dict of {key: edge_data}
-        successors_data = []
-        for successor in G.successors(node):
-            # Get ALL edges from node to successor (multiple nominations possible)
-            edge_dict = G.get_edge_data(node, successor)
-            if edge_dict:
-                for edge_key, edge_data in edge_dict.items():
-                    successors_data.append({
-                        'id': str(successor),
-                        'name': G.nodes[successor].get('name', 'Unknown'),
-                        'year': edge_data.get('year', 'Unknown'),
-                        'category': edge_data.get('category', 'Unknown')
-                    })
-        
-        # Get predecessors (people who nominated this person) with edge data
-        predecessors_data = []
-        for predecessor in G.predecessors(node):
-            # Get ALL edges from predecessor to node (multiple nominations possible)
-            edge_dict = G.get_edge_data(predecessor, node)
-            if edge_dict:
-                for edge_key, edge_data in edge_dict.items():
-                    predecessors_data.append({
-                        'id': str(predecessor),
-                        'name': G.nodes[predecessor].get('name', 'Unknown'),
-                        'year': edge_data.get('year', 'Unknown'),
-                        'category': edge_data.get('category', 'Unknown')
-                    })
-        
-        connections[str(node)] = {
-            'successors': successors_data,
-            'predecessors': predecessors_data,
-            'node_data': {
-                'name': G.nodes[node].get('name', 'Unknown'),
-                'country': G.nodes[node].get('country', 'Unknown'),
-                'main_category': G.nodes[node].get('main_category', 'Unknown'),
-                'is_laureate': G.nodes[node].get('is_laureate', False),
-            }
-        }
-    
-    return connections
+    return {str(node): node_connections(G, node) for node in G.nodes()}
 
 
 def update_network_highlighting(existing_figure, highlighted_person_id=None, graph_connections=None):
@@ -705,7 +710,7 @@ def get_person_info_text(graph_connections, person_id):
     info_parts.append(f"**Category:** {category}")
     
     if is_laureate:
-        info_parts.append("**Status:** Nobel Laureate Ã¢Â­Â")
+        info_parts.append("**Status:** Nobel Laureate ⭐")
     
     info_parts.append("")  # Empty line
     
@@ -819,6 +824,43 @@ def generate_network_elements(data=df_nominations,
     G = build_network_graph(df_edges_local, data)
     elements = graph_to_cytoscape_elements(G)
     return elements, G
+
+
+def _filters_key(filters):
+    # default=int: numpy ints (lastyearincluded) are not JSON serialisable.
+    return json.dumps(filters, sort_keys=True, default=int)
+
+
+@lru_cache(maxsize=4)
+def _network_cached(filters_json):
+    elements, G = generate_network_elements(**json.loads(filters_json))
+    return elements, G, {str(node): node for node in G.nodes()}
+
+
+def network_elements_cached(filters):
+    """
+    generate_network_elements() for the Cytoscape widget, cached per worker.
+
+    `filters` holds the generator kwargs without `data` (always df_nominations) and
+    is what the widget keeps in its dcc.Store. A node click only sends these few
+    bytes back instead of the connections of the whole graph (6 MB for all
+    nominations); network_node_connections() then rebuilds that one node's
+    connections from the cached graph.
+    """
+    elements, G, _ids = _network_cached(_filters_key(filters))
+    return elements, G
+
+
+def network_node_connections(filters, node_id):
+    """
+    Connections of one node, in the format of extract_graph_connections() (so
+    get_person_info_text() works unchanged), or None if the node is not in the graph.
+    """
+    _elements, G, ids = _network_cached(_filters_key(filters))
+    node = ids.get(str(node_id))
+    if node is None:
+        return None
+    return {str(node_id): node_connections(G, node)}
 
 
 def generate_map_nominations(data=df_nominations,

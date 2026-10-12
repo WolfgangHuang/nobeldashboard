@@ -125,8 +125,9 @@ server = app.server
     Output({'type': 'border', 'index': MATCH}, "style"),  # Hide border
     Output({'type': 'inner-container', 'index': MATCH}, "style"),  # Show graph
     Input({'type': 'inner-container', 'index': MATCH}, "id"),  # Trigger on app load
+    State("theme-store", "data"),
 )
-def display_plot(triggered_id):
+def display_plot(triggered_id, theme):
     """
     Callback to render plots and replace loading spinners.
     
@@ -136,6 +137,8 @@ def display_plot(triggered_id):
     Args:
         triggered_id (dict): Pattern-matched component ID containing
             the plot identifier in the 'index' key.
+        theme (str): "light" or "dark" from the theme store, so the first
+            render already matches and update_plot need not run initially.
             
     Returns:
         tuple: (plot_layout, spinner_style, border_style, container_style)
@@ -158,7 +161,7 @@ def display_plot(triggered_id):
 
     # Generate the layout for the plot
     # fig = generate_plot_in_layout_class(config)
-    fig_in_layout = plot_configs[plot_id].generate_layout()
+    fig_in_layout = plot_configs[plot_id].generate_layout(dark=(theme == "dark"))
     # Hide the loader and show the graph
 
     return fig_in_layout, {"display": "none"}, {"display": "none"}, {"display": "block"}
@@ -191,7 +194,10 @@ def display_plot(triggered_id):
         Input({"type": "custom-filter", "index": MATCH, "filter": ALL}, "value"),
         Input("theme-store", "data")
     ],
-    [State({"type": "plot", "index": MATCH}, "id")]
+    [State({"type": "plot", "index": MATCH}, "id")],
+    # display_plot already renders the figure with the default filters; an initial
+    # call here would compute every plot a second time on page load.
+    prevent_initial_call=True,
 )
 def update_plot(
     chip_medicine, chip_physics, chip_chemistry, chip_economics, chip_literature, chip_peace,
@@ -235,10 +241,13 @@ def update_plot(
     plot_generator_kwargs = dict(plot_config.plot_generator_kwargs)
     plot_generator_kwargs.update({
         "categories": selected_categories,
-        "gender": selected_genders,
         "timerange": slider_timerange,
         "timerange_field": dropdown_timerange
     })
+    # The gender chips are always rendered, hidden when the plot has no gender filter;
+    # their default "all" must not override a fixed gender (fig_surface_prizesforwomen).
+    if plot_config.show_filters.get("gender", False):
+        plot_generator_kwargs["gender"] = selected_genders
 
     if custom_filter_values:
         # Parse each input id, skipping plain (non-pattern-matched) component ids
@@ -358,7 +367,7 @@ NETWORK_PLOT_ID = "fig_network_nominations"
         State({"type": "nom-nominee-name-input", "index": NETWORK_PLOT_ID}, "value"),
         State({"type": "nom-nominee-searchmode", "index": NETWORK_PLOT_ID}, "value"),
         State({"type": "nom-nominee-laureate-checkbox", "index": NETWORK_PLOT_ID}, "checked"),
-        # Graph store
+        # Filters the displayed graph was built from
         State("nom-cyto-graph-store", "data"),
     ],
     prevent_initial_call=True,
@@ -369,7 +378,7 @@ def update_network_cytoscape(
     slider_timerange, dropdown_timerange,
     chip_nominator_female, chip_nominator_male, nominator_country, nominator_name, nominator_searchmode, nominator_islaureate,
     chip_nominee_female, chip_nominee_male, nominee_country, nominee_name, nominee_searchmode, nominee_islaureate,
-    graph_connections,
+    graph_filters,
 ):
     """
     Drive the Cytoscape nominations network: filter recompute, click-to-highlight,
@@ -398,8 +407,9 @@ def update_network_cytoscape(
         if not tap_node:
             raise PreventUpdate
         nid = str(tap_node["id"])
+        graph_connections = pdg.network_node_connections(graph_filters or {}, nid)
         neighbours = set()
-        if graph_connections and nid in graph_connections:
+        if graph_connections:
             neighbours.update(s["id"] for s in graph_connections[nid]["successors"])
             neighbours.update(p["id"] for p in graph_connections[nid]["predecessors"])
         style = base_style + th.network_highlight_overlay(nid, neighbours, dark)
@@ -432,8 +442,7 @@ def update_network_cytoscape(
         nominator_gender = pdg.define_gender_states(chip_nominator_female, chip_nominator_male)
         nominee_gender = pdg.define_gender_states(chip_nominee_female, chip_nominee_male)
 
-        kwargs = {
-            "data": df_nominations,
+        filters = {
             "categories": selected_categories,
             "timerange_nomination": slider_timerange,
             "timerange_field": dropdown_timerange,
@@ -450,9 +459,8 @@ def update_network_cytoscape(
         }
 
         try:
-            elements, G = pdg.generate_network_elements(**kwargs)
-            connections = pdg.extract_graph_connections(G) if G is not None else None
-            return elements, base_style, th.network_layout_options(layout_name), connections, NETWORK_DEFAULT_INFO
+            elements, _G = pdg.network_elements_cached(filters)
+            return elements, base_style, th.network_layout_options(layout_name), filters, NETWORK_DEFAULT_INFO
         except Exception as e:
             print(f"Error generating cytoscape network: {e}")
             import traceback

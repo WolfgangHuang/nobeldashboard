@@ -125,7 +125,7 @@ Functions:
 - `update_data()` - Main update orchestrator
 - `validate_laureates_data()` - Validates API response before saving
 - `run_plotdatagenerator()` - Triggers data processing after update
-- `restart_app()` - Sends HUP signal to Gunicorn for graceful reload
+- `restart_app()` - Restarts the Compose service (Gunicorn HUP outside Docker)
 
 ### scrape_nominations.py
 
@@ -239,12 +239,13 @@ execution) — never combine it with an externally reachable host.
 
 Production (Gunicorn):
 ```bash
-gunicorn -w 4 --preload -b 0.0.0.0:8050 app:server
+gunicorn -w 2 -k gthread --threads 4 -b 0.0.0.0:8050 app:server
 ```
 
-`--preload` loads the app (including the ~10 MB nominations dataset and the
-precomputed edge table) once in the master process and forks the workers,
-instead of paying the load 4× in RAM and startup time.
+Do not add `--preload`: polars deadlocks in a forked worker once its thread pool
+has run in the master (building the edge table at import does that), so every
+nominations/network callback would hang. Each worker loads the app itself
+(~450 MB RSS); the `gthread` workers keep a few slow requests from blocking the app.
 
 ## Data Updates
 
@@ -260,6 +261,12 @@ This script:
 4. Runs plotdatagenerator.py to process the data
 5. Restarts the Compose service `dashboard` (falls back to a Gunicorn HUP when
    the deployment is not containerised)
+
+Steps 4 and 5 only run when `df_laureates.csv` differs from the data the last
+complete run processed (SHA-256 in `.last_processed_laureates.sha256`); otherwise
+only the timestamp is refreshed. This keeps the announcement windows, with a run
+every five minutes, from restarting the app each time. `python update_data.py
+--force` processes and restarts regardless, e.g. after changing the pipeline code.
 
 Run it on the host, not inside the container: it needs the Docker CLI for step 5,
 and the bind mount makes the new CSVs visible to the app immediately.
@@ -291,7 +298,7 @@ to `ANNOUNCEMENT_OVERRIDES`.
 
 ```bash
 python scheduled_update.py --check   # print the decision, change nothing
-python scheduled_update.py --force   # update regardless of schedule
+python scheduled_update.py --force   # update regardless of schedule (passes --force on)
 ```
 
 A file lock prevents a slow run from overlapping with the next cron slot.

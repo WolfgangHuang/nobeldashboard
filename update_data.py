@@ -2,8 +2,12 @@
 Nobel Prize Data Update Script
 Standalone script to update data from Nobel Prize API
 Designed to be run via cron job or systemd timer
+
+Processing and the app restart only happen when the API data differs from the
+data the last complete run processed; --force does both regardless.
 """
 
+import hashlib
 import sys
 import os
 import logging
@@ -28,6 +32,36 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger('data_update')
+
+# Digest of the df_laureates.csv the last *complete* run (processing + restart)
+# was based on. Written only after both succeeded, so a run that failed halfway is
+# retried next time even though the raw file is already up to date.
+PROCESSED_STATE = ".last_processed_laureates.sha256"
+
+
+def file_digest(path):
+    """SHA-256 of a file's bytes, or None if it does not exist."""
+    try:
+        with open(path, 'rb') as f:
+            return hashlib.sha256(f.read()).hexdigest()
+    except FileNotFoundError:
+        return None
+
+
+def read_processed_digest():
+    try:
+        with open(PROCESSED_STATE) as f:
+            return f.read().strip()
+    except FileNotFoundError:
+        return None
+
+
+def write_processed_digest(digest):
+    try:
+        with open(PROCESSED_STATE, 'w') as f:
+            f.write(digest)
+    except OSError as e:
+        logger.error(f"Could not write {PROCESSED_STATE}: {e}")
 
 
 def save_update_timestamp():
@@ -189,7 +223,7 @@ def _reload_host_gunicorn():
             return False
 
         logger.info(f"Sent HUP signal to Gunicorn master process {master_pid}")
-        # Note: with --preload the app lives in the master process, so HUP restarts
+        # Note: with --preload the app would live in the master process, so HUP restarts
         # the workers but does NOT re-read the data - a full restart is needed there.
         logger.info("Gunicorn workers reloading (a --preload master needs a full restart)")
         return True
@@ -218,7 +252,7 @@ def restart_app():
         return False
 
 
-def update_data():
+def update_data(force=False):
     """Main function to update laureates data from API."""
     logger.info("=" * 80)
     logger.info("Starting Nobel Prize data update")
@@ -265,6 +299,16 @@ def update_data():
 
         logger.info(f"Raw data saved successfully - {len(df_laureates_new)} records")
 
+        # The rows are sorted by ID, so identical API data gives an identical file.
+        # Skipping here keeps the announcement window (a run every five minutes)
+        # from restarting the app -- with a short outage each time -- for nothing.
+        raw_digest = file_digest("df_laureates.csv")
+        if not force and raw_digest == read_processed_digest():
+            save_update_timestamp()
+            logger.info("API data unchanged since the last processed update - "
+                        "skipping processing and restart")
+            return True
+
         # Process the raw data through plotdatagenerator
         processing_success = run_plotdatagenerator()
 
@@ -284,6 +328,7 @@ def update_data():
         
         if restart_success:
             logger.info("Application restart completed successfully")
+            write_processed_digest(raw_digest)
         else:
             logger.warning("Application restart may have failed - manual restart might be needed")
         
@@ -295,5 +340,5 @@ def update_data():
 
 
 if __name__ == "__main__":
-    success = update_data()
+    success = update_data(force="--force" in sys.argv[1:])
     sys.exit(0 if success else 1)

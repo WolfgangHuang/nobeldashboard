@@ -18,7 +18,8 @@ polars, the full API fetch) runs as a subprocess, and only when there is work.
 Usage:
     scheduled_update.py            # what cron runs
     scheduled_update.py --check    # print the decision, change nothing
-    scheduled_update.py --force    # run the update regardless of schedule
+    scheduled_update.py --force    # run the update regardless of schedule, and
+                                   # process + restart even if the data is unchanged
 """
 
 import fcntl
@@ -136,10 +137,10 @@ def decide(now):
     return None
 
 
-def run_update():
+def run_update(force=False):
     """Run update_data.py in this interpreter's environment."""
     result = subprocess.run(
-        [sys.executable, os.path.join(BASE_DIR, "update_data.py")],
+        [sys.executable, os.path.join(BASE_DIR, "update_data.py")] + (["--force"] if force else []),
         cwd=BASE_DIR
     )
     return result.returncode
@@ -170,7 +171,7 @@ def main():
             return 0
 
         logger.info(f"Triggering update: {reason}")
-        returncode = run_update()
+        returncode = run_update(force="--force" in args)
 
     if returncode == 0:
         write_last_run(now.strftime("%Y-%m-%d"))
