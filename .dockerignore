@@ -12,11 +12,16 @@ venv/
 .claude/
 *.code-workspace
 
-# Bind-mounted at runtime (docker-compose.yml) -- never bake data into the image
-data/
+# Runtime data: bind-mounted (docker-compose.yml), never baked into the image.
+# data/curated/ and data/raw/nominations_full.csv are in git and part of the image.
+data/raw/df_laureates.csv
+data/raw/df_laureates.xlsx
+data/derived/
+data/state/
 
 # Not needed at runtime: host-side pipeline, design sources, leftovers
 pipeline/
 design/
+deploy/
 _archive/
 *.log

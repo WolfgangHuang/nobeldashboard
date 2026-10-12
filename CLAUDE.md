@@ -20,6 +20,7 @@ Repo-spezifische Memories liegen unter `.claude/memory/`, Index in
   pipeline.update_data`, `python -m pipeline.export_derived`). Die Kanten werden
   beim Import aus `nominations_full.csv` gebaut; es gibt kein `df_edges.csv` mehr.
 - Was der Cron schreibt (raw/df_laureates.csv, derived/, state/), ist gitignored.
+  Ort per `NBL_DATA_DIR` umstellbar (unter Dokploy außerhalb des Checkouts, siehe README).
 - Kein `--preload` für Gunicorn (Polars-Deadlock nach fork, siehe Dockerfile).
 - Statischer Check vor Commits: `uv run ruff check .` (F821 hat beim Modul-Split
   echte Fehler gefunden).

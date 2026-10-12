@@ -12,7 +12,7 @@ data/raw/df_laureates.xlsx
 data/derived/
 data/state/
 
-# Claude Code: repo memories (contain server details) and local settings stay out of git
+# Claude Code: repo memories and local settings stay out of git
 .claude/memory/
 .claude/MEMORY.md
 .claude/settings.local.json

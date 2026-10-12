@@ -11,8 +11,8 @@ RUN pip install --no-cache-dir uv
 COPY requirements.txt ./
 RUN uv pip install --system --no-cache -r requirements.txt
 
-# App code only (see .dockerignore): data/ is bind-mounted read-only by
-# docker-compose.yml, so code changes need `docker compose up -d --build`.
+# Code plus the data kept in git (see .dockerignore); the data the update cron
+# writes is bind-mounted read-only by docker-compose.yml.
 COPY . .
 
 EXPOSE 8050

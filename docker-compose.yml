@@ -1,3 +1,8 @@
+# Runs locally (`docker compose up -d --build`) and as a Dokploy "Docker Compose"
+# app. Under Dokploy, HTTPS and the domain come from Traefik: add the domain in the
+# app's Domains tab (service "dashboard", port 8050), and set NBL_RUNTIME_DIR (below)
+# in its Environment tab. Security headers: deploy/traefik-security-headers.yml.
+
 x-logging: &logging
   # Docker's json-file driver keeps container logs forever by default.
   driver: json-file
@@ -6,41 +11,24 @@ x-logging: &logging
     max-file: "3"
 
 services:
-  caddy:
-    # Major version pinned: fixes arrive with `docker compose pull`, a breaking
-    # Caddy 3 does not.
-    image: caddy:2
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
-      - caddy_config:/config
-    restart: unless-stopped
-    logging: *logging
-    depends_on:
-      dashboard:
-        condition: service_healthy
-
   dashboard:
     build: .
     expose:
       - "8050"
     restart: unless-stopped
     logging: *logging
+    environment:
+      NBL_DATA_DIR: /app/runtime
     volumes:
-      # Only the data comes from the host: the update cron writes it there, and a
-      # `docker compose restart dashboard` loads it. The code is baked into the
-      # image, so code changes need `docker compose up -d --build`.
-      - ./data:/app/data:ro
+      # Runtime data written by the update cron on the host (raw/df_laureates.csv,
+      # state/), mounted read-only; a restart of this service loads new data.
+      # Locally that is ./data. Under Dokploy set NBL_RUNTIME_DIR=../files/data:
+      # Dokploy re-clones the checkout on every deploy, ../files survives.
+      # Code and the data in git (data/curated, nominations) are in the image.
+      - ${NBL_RUNTIME_DIR:-./data}:/app/runtime:ro
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8050/healthz', timeout=5)"]
       interval: 30s
       timeout: 10s
       start_period: 60s
       retries: 3
-
-volumes:
-  caddy_data:
-  caddy_config:

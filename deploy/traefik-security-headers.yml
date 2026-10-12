@@ -1,0 +1,28 @@
+# Security headers for Traefik under Dokploy (replaces the former Caddyfile).
+#
+# 1. Save this file as /etc/dokploy/traefik/dynamic/security-headers.yml
+#    (Dokploy UI: Traefik File System -> dynamic).
+# 2. Apply it to every app by adding the middleware to the HTTPS entry point in
+#    /etc/dokploy/traefik/traefik.yml, then restart Traefik:
+#
+#      entryPoints:
+#        websecure:
+#          http:
+#            middlewares:
+#              - security-headers@file
+#
+#    This covers all apps on the server, including the Dokploy UI. An app that has
+#    to be embedded in other sites needs its own middleware without the frame rules.
+
+http:
+  middlewares:
+    security-headers:
+      headers:
+        stsSeconds: 31536000
+        contentTypeNosniff: true
+        referrerPolicy: "strict-origin-when-cross-origin"
+        customFrameOptionsValue: "SAMEORIGIN"
+        # Only frame-ancestors: a full CSP would need to allow Dash's inline scripts.
+        contentSecurityPolicy: "frame-ancestors 'self'"
+        customResponseHeaders:
+          Server: ""   # drop "Server: gunicorn"

@@ -44,8 +44,10 @@ A comprehensive interactive dashboard for exploring Nobel Prize data, built with
 │   ├── curated/               # Maintained by hand: corrections, ethnicity, religion, ...
 │   ├── derived/               # Exports for analysis (not in git, not read by the app)
 │   └── state/                 # Timestamps, lock, log (not in git)
+│                              #   (raw API data, derived/, state/: elsewhere via NBL_DATA_DIR)
 ├── design/                    # Design sources and unused images (not served)
-└── Dockerfile, docker-compose.yml, Caddyfile
+├── deploy/                    # Server-side config snippets (Traefik security headers)
+└── Dockerfile, docker-compose.yml
 ```
 
 Everything written by the update cron lives in git-ignored files, so `git pull`
@@ -96,23 +98,41 @@ has run in the master (building the edge table at import does that), so every
 nominations/network callback would hang. Each worker loads the app itself
 (~450 MB RSS); the `gthread` workers keep a few slow requests from blocking the app.
 
-## Deployment (Docker Compose)
+## Deployment (Dokploy)
 
-`docker-compose.yml` runs the app behind Caddy (HTTPS, security headers). The image
-contains the code only; `data/` is bind-mounted read-only, so:
+The server runs [Dokploy](https://dokploy.com) (Traefik in front, one Docker
+Compose app per project). Data is split in two:
 
-```bash
-docker compose up -d --build        # after a code change (git pull)
-docker compose restart dashboard    # load new data (update_data.py does this)
+- **In git, part of the image:** code, `data/curated/`, `data/raw/nominations_full.csv`.
+- **Runtime data, written on the host by the update cron:** `raw/df_laureates.csv`,
+  `state/`, `derived/`. Mounted read-only into the container at `/app/runtime`
+  (`NBL_DATA_DIR`). Dokploy re-clones the checkout on every deploy, so this lives
+  in the app's `files/` directory: `/etc/dokploy/compose/<appName>/files/data`.
+
+Setup in Dokploy:
+1. Create a *Docker Compose* app from this GitHub repo (compose path
+   `docker-compose.yml`), with auto-deploy on push.
+2. Environment tab: `NBL_RUNTIME_DIR=../files/data`.
+3. Domains tab: `nbldata.org` (and `www`) → service `dashboard`, port `8050`, HTTPS.
+4. Security headers for all apps: see `deploy/traefik-security-headers.yml`.
+
+The update pipeline runs from a separate checkout on the host (e.g.
+`/srv/nbldata`, `uv sync` there), pointed at the app's data directory:
+
+```
+*/5 * * * * cd /srv/nbldata && NBL_DATA_DIR=/etc/dokploy/compose/<appName>/files/data NBL_COMPOSE_PROJECT=<appName> .venv/bin/python -m pipeline.scheduled_update >> ~/cron-nbldata.log 2>&1
 ```
 
-The `dashboard` service has a healthcheck on `/healthz`; Caddy starts once it is
-healthy. Container logs are capped at 3 × 10 MB per service.
+`NBL_COMPOSE_PROJECT` makes `update_data.py` restart the container by its
+compose labels. Before the first deploy, run the same command once with
+`-m pipeline.update_data --force` to fetch the API data (the restart step fails
+harmlessly while the app does not exist yet). After changes to the loading code
+or `data/curated/`, `git pull` the pipeline checkout too.
 
-A fresh server needs the data before the first start: `uv sync`, then
-`uv run python -m pipeline.update_data --force` (fetches the API data and writes
-`data/state/`; the restart step fails harmlessly while nothing runs yet), then
-`docker compose up -d --build`.
+The `dashboard` service has a healthcheck on `/healthz`; container logs are
+capped at 3 × 10 MB.
+
+Locally, `docker compose up -d --build` uses `./data` as runtime directory.
 
 ## Data Updates
 
@@ -137,6 +157,7 @@ with a run every five minutes, from restarting the app each time. `--force`
 processes and restarts regardless, e.g. after changing the loading code.
 
 Run it on the host, not inside the container: it needs the Docker CLI for step 5.
+Under Dokploy set `NBL_DATA_DIR` and `NBL_COMPOSE_PROJECT` (see Deployment).
 The log goes to `data/state/data_update.log` (rotated at 1 MB, three old copies).
 
 New nominations: run `pipeline/scrape_nominations.py` by hand (`python -m

@@ -658,7 +658,7 @@ def merge_with_existing(df_new: pd.DataFrame) -> pd.DataFrame:
     The existing column order is kept; columns only the new rows have (e.g. a
     nomination with more nominees than ever before) are appended at the end.
     """
-    df_old = pd.read_csv(paths.raw("nominations_full.csv"), sep=';', dtype=str, keep_default_na=False)
+    df_old = pd.read_csv(paths.NOMINATIONS_CSV, sep=';', dtype=str, keep_default_na=False)
     df_new = df_new.astype(str).replace({'nan': ''})
     df_new = df_new[~df_new['nomination_id'].isin(df_old['nomination_id'])]
     columns = list(df_old.columns) + [c for c in df_new.columns if c not in df_old.columns]
@@ -692,7 +692,7 @@ def main():
         df = scraper.scrape_range(start_id=start, end_id=end, delay=args.delay)
         output_name = "nominations_test"
     else:
-        existing = pd.read_csv(paths.raw("nominations_full.csv"), sep=';', usecols=['nomination_id'])
+        existing = pd.read_csv(paths.NOMINATIONS_CSV, sep=';', usecols=['nomination_id'])
         start = int(existing['nomination_id'].max()) + 1
         logger.info(f"Running INCREMENTAL scrape from ID {start} (existing data ends at {start - 1})...")
         df_new = scraper.scrape_range(start_id=start, delay=args.delay)

@@ -135,9 +135,44 @@ def run_export():
 
 
 # Deployment layout (see docker-compose.yml): the app runs as the "dashboard"
-# service behind Caddy, with data/ bind-mounted into the container.
+# service, with the data directory bind-mounted into the container.
 # Restarting the service is what picks up the regenerated CSVs.
 COMPOSE_SERVICE = "dashboard"
+# Under Dokploy the compose project is named after the app ("appName" in the UI)
+# and its compose file lives in Dokploy's own directory, not in this checkout.
+# Set NBL_COMPOSE_PROJECT to that name; the container is then found by its labels.
+COMPOSE_PROJECT = os.environ.get("NBL_COMPOSE_PROJECT")
+
+
+def _restart_by_labels(project):
+    """Restart the service's containers of compose project `project` via the Docker CLI."""
+    try:
+        result = subprocess.run(
+            ["docker", "ps", "--quiet",
+             "--filter", f"label=com.docker.compose.project={project}",
+             "--filter", f"label=com.docker.compose.service={COMPOSE_SERVICE}"],
+            capture_output=True, text=True, timeout=60
+        )
+    except (FileNotFoundError, subprocess.TimeoutExpired) as e:
+        logger.error(f"Docker CLI not usable: {e}")
+        return False
+    container_ids = result.stdout.split()
+    if result.returncode != 0 or not container_ids:
+        logger.error(f"No running '{COMPOSE_SERVICE}' container in compose project '{project}'")
+        return False
+
+    logger.info(f"Restarting {len(container_ids)} container(s) of '{project}/{COMPOSE_SERVICE}'...")
+    try:
+        result = subprocess.run(["docker", "restart"] + container_ids,
+                                capture_output=True, text=True, timeout=180)
+    except subprocess.TimeoutExpired:
+        logger.error("docker restart timed out after 180 seconds")
+        return False
+    if result.returncode != 0:
+        logger.error(f"docker restart failed (exit {result.returncode}): {result.stderr.strip()}")
+        return False
+    logger.info(f"Service '{COMPOSE_SERVICE}' restarted with the new data")
+    return True
 
 
 def _compose_command():
@@ -237,6 +272,9 @@ def _reload_host_gunicorn():
 def restart_app():
     """Restart the Dash application after a data update (Compose service, else Gunicorn)."""
     try:
+        if COMPOSE_PROJECT:
+            return _restart_by_labels(COMPOSE_PROJECT)
+
         compose_result = _restart_compose_service()
         if compose_result is not None:
             return compose_result

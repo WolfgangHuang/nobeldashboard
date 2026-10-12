@@ -27,7 +27,7 @@ df_laureates_import = pd.read_csv(paths.raw('df_laureates.csv'), sep=';', index_
 df_laureates_corrections = pd.read_csv(paths.curated('df_laureates_corrections.csv'), sep=';', index_col=0)
 
 
-df_nominations = pl.read_csv(paths.raw('nominations_full.csv'), separator=';', encoding='utf8')
+df_nominations = pl.read_csv(paths.NOMINATIONS_CSV, separator=';', encoding='utf8')
 
 
 def get_max_nominee_count(df):
