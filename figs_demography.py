@@ -168,6 +168,21 @@ def generate_3dsurface_pergender(data=df_prizes, categories="all", gender="femal
     return fig
 
 
+# Ethnicity/religion come from a hand-curated table that lags behind the API (recent
+# laureates are not classified yet). value_counts() would drop them silently, so the
+# shares would refer to a smaller population than the selected time range suggests.
+UNCLASSIFIED_LABEL = "Not classified"
+
+
+def _counts_with_unclassified(series):
+    """value_counts() plus a trailing 'Not classified' slice for missing values."""
+    counts = series.value_counts().reset_index()
+    n_missing = int(series.isna().sum())
+    if n_missing:
+        counts.loc[len(counts)] = [UNCLASSIFIED_LABEL, n_missing]
+    return counts
+
+
 def prepare_data_donuts(data, categories, gender, timerange, timerange_field, characteristic):
     """
     Prepares data for a donut chart by filtering and aggregating counts 
@@ -197,13 +212,13 @@ def prepare_data_donuts(data, categories, gender, timerange, timerange_field, ch
 
     elif characteristic == "ethnicity":
         # Data for ethnicity
-        df_ethnicity_counts = data['Ethnicity'].value_counts().reset_index()
+        df_ethnicity_counts = _counts_with_unclassified(data['Ethnicity'])
         df_ethnicity_counts.columns = ['Label', 'Count']
         return df_ethnicity_counts
 
     elif characteristic == "religion":
         # Data for religion
-        df_religion_counts = data['Religion'].value_counts().reset_index()
+        df_religion_counts = _counts_with_unclassified(data['Religion'])
         df_religion_counts.columns = ['Label', 'Count']
         return df_religion_counts
 
@@ -247,6 +262,9 @@ def generate_donut(data=df_laureates, categories="all", gender="all", characteri
         n = th.neutrals(dark)
         # In dark mode lead with the Neon colorway, otherwise Jewel (extended for many slices).
         donut_palette = (th.colorway(True) + th.colorway(False)) if dark else (th.colorway(False) + th.colorway(True))
+        # Missing classifications get a neutral grey instead of a category color.
+        slice_colors = [n["text_muted"] if label == UNCLASSIFIED_LABEL else color
+                        for label, color in zip(labels, donut_palette * (len(labels) // len(donut_palette) + 1))]
         fig = go.Figure(
             data=[
                 go.Pie(
@@ -256,7 +274,7 @@ def generate_donut(data=df_laureates, categories="all", gender="all", characteri
                     sort=False,
                     direction='clockwise',
                     marker=dict(
-                        colors=donut_palette,
+                        colors=slice_colors,
                         line=dict(color=n["surface"], width=3)  # slice separators in the surface color
                     ),
                     showlegend=False,
@@ -327,7 +345,7 @@ def prepare_data_sunburst(data, year, path, categories, gender, timerange, timer
     return data_count
 
 
-def generate_sunburst(data=df_laureates, year="all", path=['Prize0_Category', 'LaureateGender', 'BirthCountryNow'], categories="all", gender="all", timerange=[1901, lastyearincluded], timerange_field="award", dark=False):
+def generate_sunburst(data=df_prizes, year="all", path=['Prize0_Category', 'LaureateGender', 'BirthCountryNow'], categories="all", gender="all", timerange=[1901, lastyearincluded], timerange_field="award", dark=False):
     """
     Generates a sunburst chart visualizing the distribution of Nobel laureates 
     based on the specified hierarchical path.

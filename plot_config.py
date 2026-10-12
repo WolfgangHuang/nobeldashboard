@@ -212,7 +212,7 @@ def get_plot_configs(df_laureates, df_prizes, df_nominations, lastyearincluded):
         header="Nobel Prizes by Country of Birth",
         subheader="This plot shows the distribution of country of birth of the laureates; you may rotate the globe and zoom in and out.",
         plot_generator="generate_choroplethglobe",
-        plot_generator_kwargs={"data": df_laureates},
+        plot_generator_kwargs={"data": df_prizes},
         footer=[
             dcc.Markdown("**Interesting Findings**: The US dominance is clearly visible; apart from Africa, there are surprisingly few white spots.")
         ],
@@ -303,7 +303,7 @@ def get_plot_configs(df_laureates, df_prizes, df_nominations, lastyearincluded):
         header = "Nobel Prizes Awarded to Women",
         subheader = "This plot shows the number of prizes for women in all of the disciplines per decade. It allows you to see when and in which disciplines the most prizes were awarded to women. Feel free to rotate the plot and zoom.",
         plot_generator="generate_3dsurface_pergender",
-        plot_generator_kwargs={"data": df_laureates, "gender": "female"},
+        plot_generator_kwargs={"data": df_prizes, "gender": "female"},
         show_filters={"categories": True, "gender": False, "custom-filter": False},
         footer=[
             dcc.Markdown("**Interesting Findings**: Although it looks like an impressively high mountain range in the more recent decades, note that the maximum value on the y-axis is 5, meaning that at the most 5 out of 30 possible prizes per decade/category went to women.")
@@ -316,7 +316,7 @@ def get_plot_configs(df_laureates, df_prizes, df_nominations, lastyearincluded):
         header = "Nobel Prizes Awarded to Men and Women",
         subheader = "This plot is identical to the above, but here, men and women are both shown as two surfaces.",
         plot_generator="generate_3dsurface_pergender",
-        plot_generator_kwargs={"data": df_laureates, "gender": "all"},
+        plot_generator_kwargs={"data": df_prizes, "gender": "all"},
         show_filters={"categories": True, "gender": False, "custom-filter": False},
         footer=[
             dcc.Markdown("**Interesting Findings**: It is not much of a surprise that much many prizes were given to men than to women. Disciplines that perform particularly poorly are economics sciences and physics. The plot also clearly shows that the number of laureates (per year/decade) increases, i.e. prizes are more often given to two or three laureates instead of just one.")
@@ -456,7 +456,7 @@ def get_plot_configs(df_laureates, df_prizes, df_nominations, lastyearincluded):
         header = "Laureate Age at Time of Award",
         subheader = "This is basically the same data, but presented differently. Here, you see the time gap for all prizes (averaged in case of multiple winners) in all years. The plot also shows the trendlines (going up), as well as the average life expectancy (also going up).",
         plot_generator="generate_scatterbox_age",
-        plot_generator_kwargs={"data": df_laureates},
+        plot_generator_kwargs={"data": df_prizes},
         footer = [dcc.Markdown("**Interesting Findings**: In the early years, the average age in the natural sciences was around 45, whereas nowadays it is close to 65. This fits well to the earlier finding that the timegap has increased by - on average - 25 years. Interestingly enough, peace prize awardees get younger.")],
     ),
 
@@ -467,7 +467,7 @@ def get_plot_configs(df_laureates, df_prizes, df_nominations, lastyearincluded):
         header = "Laureate Age at Time of Award (Heatmap)",
         subheader = "Same data as above, but displayed as heatmap.",
         plot_generator="generate_heatmap_age",
-        plot_generator_kwargs={"data": df_laureates},
+        plot_generator_kwargs={"data": df_prizes},
         footer=[],
     ),
 
@@ -628,9 +628,9 @@ def get_plot_configs(df_laureates, df_prizes, df_nominations, lastyearincluded):
         plot_id="fig_line_prizemoney",
         lastyearincluded=lastyearincluded,
         header="Prize Money Over the Years",
-        subheader = f"In SEK; total amount paid up until today: {(totalprizeamount * 0.088):,.0f} EUR",
+        subheader = f"In EUR (converted from SEK at a fixed rate); total amount paid up until today, inflation-adjusted: {totalprizeamount:,.0f} EUR",
         plot_generator="generate_line_prizemoney",
-        plot_generator_kwargs={"data": df_laureates},
+        plot_generator_kwargs={"data": df_prizes},
         footer=[
             dcc.Markdown("**Interesting Findings**: Prize money has increased significantly in recent decades.")
         ],
@@ -644,7 +644,7 @@ def get_plot_configs(df_laureates, df_prizes, df_nominations, lastyearincluded):
         subheader="Click on the segments to filter the data.",
         badges=["All Categories", f"{lastyearincluded}"],
         plot_generator="generate_sunburst",
-        plot_generator_kwargs={"data": df_laureates, "year": "last"},
+        plot_generator_kwargs={"data": df_prizes, "year": "last"},
         footer=[
             dcc.Markdown("**Interesting Findings**: Let's see who will receive the remaining prizes.")
         ],

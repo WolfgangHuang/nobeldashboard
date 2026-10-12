@@ -8,6 +8,11 @@ import pandas as pd
 from data import df_laureates, df_prizes
 
 
+def count_prizes(df_prizes_rows):
+    """Number of distinct prizes (award year + category) -- not of laureate/prize rows."""
+    return df_prizes_rows[["Prize0_AwardYear", "Prize0_Category"]].drop_duplicates().shape[0]
+
+
 def generate_overview_stats(df_filtered_laureates=df_laureates, df_filtered_prizes=df_prizes):
 
     if df_filtered_laureates.shape[0] == 0 or df_filtered_prizes.shape[0] == 0:
@@ -26,7 +31,8 @@ def generate_overview_stats(df_filtered_laureates=df_laureates, df_filtered_priz
 
     else:
         # Number of Prizes
-        number_of_prizes = df_filtered_prizes.shape[0]
+        # df_prizes has one row per laureate and prize; a shared prize is still one prize
+        number_of_prizes = count_prizes(df_filtered_prizes)
 
         # Number of Laureates#
         number_of_laureates = df_filtered_laureates.shape[0]

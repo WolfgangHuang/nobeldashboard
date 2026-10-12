@@ -334,8 +334,21 @@ def standard_filter(data, categories="all", gender="all", timerange=[1901, lasty
 
     # print(f"Categories from: {callsign}: {categories}")
 
-    # Apply category filter
-    df_filtered = data[data["Prize0_Category"].isin(categories)]
+    # Apply category filter. Person-level frames (df_laureates) carry a laureate's 2nd/3rd
+    # prize in the Prize1_/Prize2_ columns: a person matches if ANY of their prizes falls
+    # into the selected categories -- and, for the award time range, into the selected
+    # years. Otherwise e.g. Marie Curie vanishes from a Chemistry selection because her
+    # first prize was Physics. df_prizes has one row per prize, so only Prize0 exists there.
+    prize_slots = [k for k in range(3) if f"Prize{k}_Category" in data.columns]
+    filter_award_per_prize = (len(prize_slots) > 1 and timerange is not None
+                              and timerange_field not in ("birth", "death"))
+    mask = pd.Series(False, index=data.index)
+    for k in prize_slots:
+        slot_match = data[f"Prize{k}_Category"].isin(categories)
+        if filter_award_per_prize:
+            slot_match &= data[f"Prize{k}_AwardYear"].between(timerange[0], timerange[1])
+        mask |= slot_match
+    df_filtered = data[mask]
 
     # Apply gender filter if not "all"
     if gender.lower() != "all":
@@ -374,10 +387,11 @@ def standard_filter(data, categories="all", gender="all", timerange=[1901, lasty
         # print(f"Datefield dtype: {df_filtered[datefield].dtype}")
         # print(f"Timerange dtype: {type(timerange[0])}")
 
-        df_filtered = df_filtered[
-            (df_filtered[datefield].astype(int) >= timerange[0]) &
-            (df_filtered[datefield].astype(int) <= timerange[1])
-        ]
+        if not filter_award_per_prize:  # otherwise already applied per prize above
+            df_filtered = df_filtered[
+                (df_filtered[datefield].astype(int) >= timerange[0]) &
+                (df_filtered[datefield].astype(int) <= timerange[1])
+            ]
 
     # print(f"Result rows/columns: {df_filtered.shape[0]}, {df_filtered.shape[1]}")
 

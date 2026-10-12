@@ -306,7 +306,7 @@ df_prizes['Prize0_AwardYear'] = df_prizes['Prize0_AwardYear'].astype('Int64') # 
 df_laureates_enriched_full_clean = df_laureates.copy()
 
 
-df_prizes_enriched_full_clean = df_laureates.copy()
+df_prizes_enriched_full_clean = df_prizes.copy()
 
 
 df_laureates.drop(

@@ -5,7 +5,7 @@ actually due, so the schedule lives here rather than in the crontab:
 
   - once a day at DAILY_TIME
   - on every invocation inside a Nobel announcement window, i.e. from the
-    announced time until WINDOW_HOURS later on the days in ANNOUNCEMENTS
+    announced time until WINDOW_HOURS later on the announcement days
 
 All times are Europe/Stockholm, where the prizes are announced. That is the
 reason this file exists at all: the server clock runs on UTC, so putting 11:30
@@ -26,24 +26,29 @@ import logging
 import os
 import subprocess
 import sys
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from zoneinfo import ZoneInfo
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 TZ = ZoneInfo("Europe/Stockholm")
 
-# Earliest announced time per prize, in Stockholm local time. Refresh once a
-# year from https://www.nobelprize.org/press/ -- the dates shift, the pattern
-# (Medicine Monday through Peace Friday, Economics the following Monday) holds.
-ANNOUNCEMENTS = {
-    "2026-10-05": ("11:30", "Medicine"),
-    "2026-10-06": ("11:45", "Physics"),
-    "2026-10-07": ("11:45", "Chemistry"),
-    "2026-10-08": ("13:00", "Literature"),
-    "2026-10-09": ("11:00", "Peace"),
-    "2026-10-12": ("11:45", "Economics"),
-}
+# Announcement pattern, Stockholm local time: Medicine on the first Monday in
+# October, Physics through Peace Tuesday to Friday, Economics the following Monday.
+# (Day offset from that first Monday, earliest announced time, prize.) The dates
+# are derived per year, so the table needs no yearly refresh -- it held 2021-2026.
+ANNOUNCEMENT_PATTERN = [
+    (0, "11:30", "Medicine"),
+    (1, "11:45", "Physics"),
+    (2, "11:45", "Chemistry"),
+    (3, "13:00", "Literature"),
+    (4, "11:00", "Peace"),
+    (7, "11:45", "Economics"),
+]
+
+# Should the Nobel Foundation ever break the pattern, add the deviating dates here
+# ("YYYY-MM-DD": ("HH:MM", "Prize")), checked against https://www.nobelprize.org/press/.
+ANNOUNCEMENT_OVERRIDES = {}
 
 # Announcements regularly start late and the API needs a moment to follow, so
 # the window stays open well past the scheduled time.
@@ -66,9 +71,21 @@ logging.basicConfig(
 logger = logging.getLogger('scheduled_update')
 
 
+def announcements(year):
+    """Announcement table {"YYYY-MM-DD": ("HH:MM", prize)} for one year."""
+    october_first = date(year, 10, 1)
+    first_monday = october_first + timedelta(days=(7 - october_first.weekday()) % 7)
+    table = {
+        (first_monday + timedelta(days=offset)).isoformat(): (start_time, prize)
+        for offset, start_time, prize in ANNOUNCEMENT_PATTERN
+    }
+    table.update(ANNOUNCEMENT_OVERRIDES)
+    return table
+
+
 def announcement_window(now):
     """Return the prize name if `now` sits inside an announcement window."""
-    entry = ANNOUNCEMENTS.get(now.strftime("%Y-%m-%d"))
+    entry = announcements(now.year).get(now.strftime("%Y-%m-%d"))
     if entry is None:
         return None
 

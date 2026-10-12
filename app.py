@@ -49,7 +49,7 @@ plot_configs = get_plot_configs(df_laureates, df_prizes, df_nominations, pdg.las
 df = pdg.count_per_country()
 max_prize_count = df['Count'].max()
 lastyearincluded = pdg.get_lastyearincluded()
-numberofprizes = df_prizes.shape[0]
+numberofprizes = pdg.count_prizes(df_prizes)  # distinct prizes, not laureate/prize rows
 totalprizeamount = pdg.generate_var_prizeamount()
 
 standard_loader_message = dmc.Loader(html.Div("Initializing tab..."))

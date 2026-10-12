@@ -277,15 +277,17 @@ It exits within milliseconds unless an update is due:
 
 - once a day at `DAILY_TIME` (08:00)
 - every five minutes inside a Nobel announcement window — from the announced
-  time until `WINDOW_HOURS` (3h) later, on the dates in `ANNOUNCEMENTS`
+  time until `WINDOW_HOURS` (3h) later, on the announcement days
 
 All times are `Europe/Stockholm`. The server clock runs on UTC, so putting the
 announcement times into the crontab directly would fire them two hours late
 during CEST. Converting inside the script also survives the winter-time switch.
 
-The `ANNOUNCEMENTS` dict needs refreshing once a year from
-https://www.nobelprize.org/press/ — the dates move, the pattern (Medicine on the
-first Monday through Peace on Friday, Economics the following Monday) does not.
+The announcement days are derived per year from `ANNOUNCEMENT_PATTERN`
+(Medicine on the first Monday in October, Physics through Peace Tuesday to Friday,
+Economics the following Monday), so nothing needs a yearly refresh. Should the
+Nobel Foundation deviate (check https://www.nobelprize.org/press/), add the dates
+to `ANNOUNCEMENT_OVERRIDES`.
 
 ```bash
 python scheduled_update.py --check   # print the decision, change nothing

@@ -333,7 +333,7 @@ def prepare_data_age(data, categories, gender, timerange, timerange_field):
     return df_age_grouped
 
 
-def generate_scatterbox_age(data=df_laureates, categories="all", gender="all", timerange=[1901, lastyearincluded], timerange_field="award"):
+def generate_scatterbox_age(data=df_prizes, categories="all", gender="all", timerange=[1901, lastyearincluded], timerange_field="award"):
     """
     Generates a scatter plot with trendlines showing the average age of Nobel 
     laureates at the time of award, grouped by year and prize categories.
@@ -452,7 +452,7 @@ def generate_scatterbox_age(data=df_laureates, categories="all", gender="all", t
     return fig
 
 
-def generate_heatmap_age(data=df_laureates, categories="all", gender="all", timerange=[1901, lastyearincluded], timerange_field="award"):
+def generate_heatmap_age(data=df_prizes, categories="all", gender="all", timerange=[1901, lastyearincluded], timerange_field="award"):
     """
     Generates a heatmap showing the average age of Nobel laureates at the 
     time of award, categorized by prize and year.

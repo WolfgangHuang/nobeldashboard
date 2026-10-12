@@ -14,12 +14,12 @@ from data import df_laureates, df_pop, df_prizes, lastyearincluded
 from filters import count_per_country, replace_country_designations, standard_filter
 
 
-def generate_choroplethglobe(data=df_laureates, country="birth", gender="all", categories="all", timerange=[1901, lastyearincluded], timerange_field="award"):
+def generate_choroplethglobe(data=df_prizes, country="birth", gender="all", categories="all", timerange=[1901, lastyearincluded], timerange_field="award"):
     """
-    Generates a 3D globe with the number of Nobel Laureates per Country.
+    Generates a 3D globe with the number of Nobel Prizes per Country (one row per prize).
 
     Parameters:
-    - data (pd.DataFrame): The input DataFrame. Default: df_laureates.
+    - data (pd.DataFrame): The input DataFrame. Default: df_prizes.
     - country (str): The column name representing the country. Default: "birth".
         - "birth"
         - "affiliation"
@@ -58,7 +58,7 @@ def generate_choroplethglobe(data=df_laureates, country="birth", gender="all", c
         marker_line_color='darkgray',
         marker_line_width=0.5,
         colorbar=dict(
-            title='No of Laureates',
+            title='No of Prizes',
             len=0.9,  # Adjust the height
             x=1,  # Adjust the x position (default is 1, which is far right)
             xanchor='left',  # Align colorbar with its left side at x=0.9
