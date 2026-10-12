@@ -626,4 +626,8 @@ body {
     .filter-toolbar {
         padding: 14px;
     }
+    /* Plot header: badges share a row with the (taller) Filter button — center them */
+    .widget-badges {
+        align-self: center;
+    }
 }

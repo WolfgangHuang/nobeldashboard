@@ -114,7 +114,7 @@ def generate_plot_in_layout_standard(plot_config):
                                 dmc.GridCol(html.Div(plot_config.subheader, className="plot-subheader"), 
                                           span={"base": 24, "md": 14}),
                                 dmc.GridCol(html.Div(plot_config.generate_badges()), 
-                                          span={"base": 24, "md": 7}),
+                                          span={"base": "auto", "md": 7}, className="widget-badges"),
                                 dmc.GridCol(
                                     html.Div([
                                         dmc.Button(
@@ -126,7 +126,7 @@ def generate_plot_in_layout_standard(plot_config):
                                         ),
                                         filter_drawer,
                                     ], style={"textAlign": "right"}),
-                                    span={"base": 24, "md": 3}
+                                    span={"base": "content", "md": 3}
                                 ),
                             ],
                         ),
@@ -229,7 +229,7 @@ def generate_plot_in_layout_nominations(plot_config):
                                 dmc.GridCol(html.Div(plot_config.subheader, className="plot-subheader"), 
                                           span={"base": 24, "md": 14}),
                                 dmc.GridCol(html.Div(plot_config.generate_badges()), 
-                                          span={"base": 24, "md": 7}),
+                                          span={"base": "auto", "md": 7}, className="widget-badges"),
                                 dmc.GridCol(
                                     html.Div([
                                         dmc.Button(
@@ -241,7 +241,7 @@ def generate_plot_in_layout_nominations(plot_config):
                                         ),
                                         filter_drawer,
                                     ], style={"textAlign": "right"}),
-                                    span={"base": 24, "md": 3}
+                                    span={"base": "content", "md": 3}
                                 ),
                             ],
                         ),
@@ -326,7 +326,7 @@ def generate_network_in_layout_cytoscape(plot_config):
                                 dmc.GridCol(html.Div(plot_config.subheader, className="plot-subheader"),
                                             span={"base": 24, "md": 14}),
                                 dmc.GridCol(html.Div(plot_config.generate_badges()),
-                                            span={"base": 24, "md": 7}),
+                                            span={"base": "auto", "md": 7}, className="widget-badges"),
                                 dmc.GridCol(
                                     html.Div([
                                         dmc.Button(
@@ -338,7 +338,7 @@ def generate_network_in_layout_cytoscape(plot_config):
                                         ),
                                         filter_drawer,
                                     ], style={"textAlign": "right"}),
-                                    span={"base": 24, "md": 3}
+                                    span={"base": "content", "md": 3}
                                 ),
                             ],
                         ),

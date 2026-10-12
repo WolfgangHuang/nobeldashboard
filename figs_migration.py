@@ -262,7 +262,7 @@ def generate_map_movement(data=df_laureates, year="last", categories="all", gend
     Returns:
     -------
     plotly.graph_objs._figure.Figure
-        A Plotly mapbox visualization with migration paths, birth, and affiliation markers.
+        A Plotly map (MapLibre) visualization with migration paths, birth, and affiliation markers.
     """
     
     # colors = colorscale_palette
@@ -309,13 +309,13 @@ def generate_map_movement(data=df_laureates, year="last", categories="all", gend
     fig = go.Figure()
 
     # Add markers for birth cities
-    fig.add_trace(go.Scattermapbox(
+    fig.add_trace(go.Scattermap(
         lon=data["BirthCityNowLon"],
         lat=data["BirthCityNowLat"],
         text=data["AwardeeDisplayName"],
         hoverinfo="text",
         mode="markers",
-        marker=go.scattermapbox.Marker(
+        marker=go.scattermap.Marker(
             size=10,
             color=th.SPECTRUM_LIGHT["Peace"],  # spectrum green; swaps to Neon in dark mode
             opacity=0.7
@@ -324,13 +324,13 @@ def generate_map_movement(data=df_laureates, year="last", categories="all", gend
     ))
 
     # Add markers for affiliation cities
-    fig.add_trace(go.Scattermapbox(
+    fig.add_trace(go.Scattermap(
         lon=data["Prize0_Affiliation0_CityLongitude"],
         lat=data["Prize0_Affiliation0_CityLatitude"],
         text=data["AwardeeDisplayName"],
         hoverinfo="text",
         mode="markers",
-        marker=go.scattermapbox.Marker(
+        marker=go.scattermap.Marker(
             size=10,
             color=th.SPECTRUM_LIGHT["Peace"],  # spectrum green; swaps to Neon in dark mode
             opacity=0.9
@@ -351,7 +351,7 @@ def generate_map_movement(data=df_laureates, year="last", categories="all", gend
         )
 
         # Add a trace for each migration path
-        fig.add_trace(go.Scattermapbox(
+        fig.add_trace(go.Scattermap(
             lon=lons,
             lat=lats,
             mode="lines",
@@ -362,13 +362,15 @@ def generate_map_movement(data=df_laureates, year="last", categories="all", gend
             name=f"{row['AwardeeDisplayName']}"
         ))
 
-    # Update layout for the mapbox visualization
+    # Update layout for the map (MapLibre) visualization
     fig.update_layout(
         template='nbl_light',
         plot_bgcolor=cf.c_plot_background,
         title_text="Places of Birth & Affiliation",
         showlegend=False,
-        mapbox=dict(
+        # go.Scattermap reads layout.map. (The deprecated Scattermapbox needs a Mapbox
+        # token for carto styles and rendered "API KEY REQUIRED" tiles.)
+        map=dict(
             style=th.MAPBOX_STYLE_LIGHT,  # swaps to carto-darkmatter in dark mode
             center=dict(lat=30, lon=0),  # Center the map globally
             zoom=0.8,

@@ -1007,7 +1007,8 @@ def generate_map_nominations(data=df_nominations,
             x=0.01,
             bgcolor="rgba(255,255,255,0.8)"
         ),
-        mapbox=dict(
+        # go.Scattermap reads layout.map; layout.mapbox was silently ignored.
+        map=dict(
             style="carto-positron",
             center=dict(lat=30, lon=80),
             zoom=1.0,
