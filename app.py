@@ -12,7 +12,6 @@ import dash
 from dash import dcc, html, Dash, State, callback_context  #, _dash_renderer
 from dash.exceptions import PreventUpdate
 from dash.dependencies import Input, Output, MATCH, ALL, ClientsideFunction
-from dash_iconify import DashIconify
 import dash_mantine_components as dmc
 import dash_cytoscape as cyto
 cyto.load_extra_layouts()  # registers cola / fcose / dagre / etc.
@@ -20,11 +19,7 @@ import json
 import inspect
 import plotdatagenerator as pdg
 from config import APP_CONFIG, get_plot_configs #, PlotConfig
-import config as cf
-from layouts import (NETWORK_DEFAULT_INFO, generate_loader_spinner,
-                     generate_plot_in_layout_standard,
-                     generate_plot_in_layout_nominations,
-                     generate_network_in_layout_cytoscape)
+from layouts import (NETWORK_DEFAULT_INFO, generate_loader_spinner)
 import theme as th
 
 
@@ -37,8 +32,11 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(current_dir)
 
 # Load tables {#f9e}
-df_laureates = pd.read_csv('df_laureates_enriched_redux_clean.csv', sep=';', encoding="utf8", index_col=0)
-df_prizes = pd.read_csv('df_prizes_enriched_redux_clean.csv', sep=';', encoding="utf8", index_col=0)
+# Same frames data.py builds from the raw files at import -- not the exported
+# *_redux_clean.csv, which can lag behind df_laureates.csv when a data update fails
+# halfway (the plot generators' defaults already use the in-memory frames).
+df_laureates = pdg.df_laureates_enriched_redux_clean
+df_prizes = pdg.df_prizes_enriched_redux_clean
 df_prizestats = pd.read_csv("df_prizestats.csv", sep=';', encoding="utf8")
 # df_nominations = pl.read_csv('nominations_full.csv', separator=';', encoding='utf8')
 df_nominations = pdg.df_nominations
@@ -231,8 +229,10 @@ def update_plot(
     )
     selected_genders = pdg.define_gender_states(chip_female, chip_male)
 
-    # Combine standard kwargs with filter values
-    plot_generator_kwargs = plot_config.plot_generator_kwargs or {}
+    # Combine standard kwargs with filter values. Copy: plot_config is shared by all
+    # requests in this worker, so updating its dict in place leaks one user's filters
+    # (and theme) into everybody's next render.
+    plot_generator_kwargs = dict(plot_config.plot_generator_kwargs)
     plot_generator_kwargs.update({
         "categories": selected_categories,
         "gender": selected_genders,
@@ -692,7 +692,7 @@ def update_nominations_plot_combined(
         nominator_gender = pdg.define_gender_states(chip_nominator_female, chip_nominator_male)
         nominee_gender = pdg.define_gender_states(chip_nominee_female, chip_nominee_male)
         
-        plot_generator_kwargs = plot_config.plot_generator_kwargs or {}
+        plot_generator_kwargs = dict(plot_config.plot_generator_kwargs)  # shared config: never mutate
         plot_generator_kwargs.update({
             "categories": selected_categories,
             "timerange_nomination": slider_timerange,

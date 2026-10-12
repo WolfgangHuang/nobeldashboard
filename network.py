@@ -4,15 +4,11 @@ Nominations network: edge building/filtering, NetworkX graph, cytoscape elements
 Extracted from plotdatagenerator.py (facade re-exports everything).
 """
 
-import plotly.express as px
 import plotly.graph_objects as go
-import pandas as pd
 import polars as pl
 import numpy as np
 import config as cf
-import theme as th
 import networkx as nx
-import time
 from collections import defaultdict
 from data import data_path, df_edges, df_nominations, lastyearincluded
 
@@ -169,11 +165,16 @@ def filter_edges(data, categories="all", timerange_nomination=[1901, 1902], time
         combined_text = pl.concat_str([
             pl.col(col).cast(pl.Utf8).fill_null("") for col in columns
         ], separator=" ")
+
+        # User input: match literally (no regex), case-insensitive. A bare string
+        # would otherwise be iterated character by character.
+        if isinstance(search_terms, str):
+            search_terms = [search_terms]
         
         if mode.lower() == "any":
             # At least one term must be present
             conditions = [
-                combined_text.str.contains(f"(?i){term}") 
+                combined_text.str.to_lowercase().str.contains(term.lower(), literal=True)
                 for term in search_terms
             ]
             return pl.any_horizontal(conditions)
@@ -181,7 +182,7 @@ def filter_edges(data, categories="all", timerange_nomination=[1901, 1902], time
         elif mode.lower() == "all":
             # All terms must be present
             conditions = [
-                combined_text.str.contains(f"(?i){term}") 
+                combined_text.str.to_lowercase().str.contains(term.lower(), literal=True)
                 for term in search_terms
             ]
             return pl.all_horizontal(conditions)
@@ -226,8 +227,8 @@ def filter_edges(data, categories="all", timerange_nomination=[1901, 1902], time
                 pl.col('nominee_id').is_in(list(primary_person_ids)).alias('is_primary_nominee')
             ])
         else:
-            # No matching persons found - add empty marker columns
-            df_filtered = df_filtered.with_columns([
+            # No matching persons found: the result is empty (not the unfiltered network)
+            df_filtered = df_filtered.clear().with_columns([
                 pl.lit(False).alias('is_primary_nominator'),
                 pl.lit(False).alias('is_primary_nominee')
             ])

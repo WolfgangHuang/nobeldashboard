@@ -4,10 +4,7 @@ Migration figures: parallel categories, movement globe/map.
 Extracted from plotdatagenerator.py (facade re-exports everything).
 """
 
-import plotly.express as px
 import plotly.graph_objects as go
-import pandas as pd
-import polars as pl
 import numpy as np
 import config as cf
 import theme as th

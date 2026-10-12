@@ -4,13 +4,8 @@ Shared filter helpers (standard_filter, extended_filter, chip-state translators)
 Extracted from plotdatagenerator.py (facade re-exports everything).
 """
 
-import plotly.express as px
-import plotly.graph_objects as go
 import pandas as pd
 import polars as pl
-import numpy as np
-import config as cf
-import theme as th
 from data import (
     df_iso,
     df_laureates,
@@ -568,11 +563,16 @@ def extended_filter(data=pldf_laureates_enriched_redux_clean, categories="all", 
         combined_text = pl.concat_str([
             pl.col(col).cast(pl.Utf8).fill_null("") for col in columns
         ], separator=" ")
+
+        # User input: match literally (no regex), case-insensitive. A bare string
+        # would otherwise be iterated character by character.
+        if isinstance(search_terms, str):
+            search_terms = [search_terms]
         
         if mode.lower() == "any":
             # at least one term must be present
             conditions = [
-                combined_text.str.contains(f"(?i){term}") 
+                combined_text.str.to_lowercase().str.contains(term.lower(), literal=True)
                 for term in search_terms
             ]
             return pl.any_horizontal(conditions)
@@ -580,7 +580,7 @@ def extended_filter(data=pldf_laureates_enriched_redux_clean, categories="all", 
         elif mode.lower() == "all":
             # all terms must be present
             conditions = [
-                combined_text.str.contains(f"(?i){term}") 
+                combined_text.str.to_lowercase().str.contains(term.lower(), literal=True)
                 for term in search_terms
             ]
             return pl.all_horizontal(conditions)

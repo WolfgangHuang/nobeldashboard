@@ -177,12 +177,20 @@ def get_all_laureates_data():
             # Step 6: Update the offset to fetch the next page of laureates
             params['offset'] += params['limit']
 
-        except requests.RequestException as e:
+        except (requests.RequestException, ValueError, KeyError) as e:
+            # Abort the whole fetch: returning the pages fetched so far would pass
+            # validation when only the last page is missing -- and drop exactly the
+            # newest laureates.
             logger.error(f"Failed to retrieve data at offset {params['offset']}: {e}")
-            break
+            return None
 
     if not all_data:
         logger.error("No data retrieved")
+        return None
+
+    expected = meta.get('count')
+    if expected is not None and len(all_data) != expected:
+        logger.error(f"Incomplete fetch: got {len(all_data)} laureates, API reports {expected}")
         return None
 
     # Step 7: Convert the list of dictionaries to a DataFrame

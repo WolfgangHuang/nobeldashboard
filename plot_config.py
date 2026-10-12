@@ -3,7 +3,7 @@ PlotConfig class + the per-plot configuration data for every dashboard widget.
 Extracted from config.py (which keeps app settings and color constants).
 """
 
-from dash import dcc, html
+from dash import html
 import dash_mantine_components as dmc
 
 
