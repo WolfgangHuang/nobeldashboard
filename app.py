@@ -17,19 +17,16 @@ import dash_cytoscape as cyto
 cyto.load_extra_layouts()  # registers cola / fcose / dagre / etc.
 import json
 import inspect
-import plotdatagenerator as pdg
-from config import APP_CONFIG, get_plot_configs #, PlotConfig
-from layouts import (NETWORK_DEFAULT_INFO, generate_loader_spinner)
-import theme as th
+from nbldash import plotdatagenerator as pdg
+from nbldash.config import APP_CONFIG, get_plot_configs #, PlotConfig
+from nbldash.layouts import (NETWORK_DEFAULT_INFO, generate_loader_spinner)
+from nbldash import theme as th
+from nbldash import paths
 
 
 ##################################################################################################
 # Data Loading
 ##################################################################################################
-
-# Get the path of the directory where the script is located
-current_dir = os.path.dirname(os.path.abspath(__file__))
-os.chdir(current_dir)
 
 # Load tables {#f9e}
 # Same frames data.py builds from the raw files at import -- not the exported
@@ -37,8 +34,7 @@ os.chdir(current_dir)
 # halfway (the plot generators' defaults already use the in-memory frames).
 df_laureates = pdg.df_laureates_enriched_redux_clean
 df_prizes = pdg.df_prizes_enriched_redux_clean
-df_prizestats = pd.read_csv("df_prizestats.csv", sep=';', encoding="utf8")
-# df_nominations = pl.read_csv('nominations_full.csv', separator=';', encoding='utf8')
+df_prizestats = pd.read_csv(paths.curated("df_prizestats.csv"), sep=';', encoding="utf8")
 df_nominations = pdg.df_nominations
 
 
@@ -72,9 +68,9 @@ def get_last_update_timestamp():
         str: Timestamp string (format varies) or "Never" if no update recorded.
         
     Note:
-        Timestamp file path: "last_api_update.txt" in the current directory.
+        Timestamp file path: data/state/last_api_update.txt (written by the update cron).
     """
-    timestamp_file = "last_api_update.txt"
+    timestamp_file = paths.state("last_api_update.txt")
     if os.path.exists(timestamp_file):
         try:
             with open(timestamp_file, 'r') as f:
@@ -102,6 +98,12 @@ app = Dash(
 )
 
 server = app.server
+
+
+@server.route("/healthz")
+def healthz():
+    """Liveness probe for the Compose healthcheck (no data access, no Dash machinery)."""
+    return "ok"
 
 
 ##################################################################################################
@@ -2030,10 +2032,10 @@ def export_csv(n_clicks):
 ##################################################################################################
 
 # Ethnicity
-df_ethnicity = pd.read_csv('df_ethnicity.csv', sep=';', encoding="utf8")
+df_ethnicity = pd.read_csv(paths.curated('df_ethnicity.csv'), sep=';', encoding="utf8")
 
 # Religion
-df_religion = pd.read_csv('df_religion.csv', sep=';', encoding="utf8")
+df_religion = pd.read_csv(paths.curated('df_religion.csv'), sep=';', encoding="utf8")
 
 # # Defining the grid of AGGrid: The full data table
 ag_df_laureates = dag.AgGrid(

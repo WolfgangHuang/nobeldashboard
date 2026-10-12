@@ -5,14 +5,18 @@ venv/
 # VCS, caches, editor/tooling state
 .git/
 .gitignore
-__pycache__/
-*.pyc
+**/__pycache__/
+**/*.pyc
 .ruff_cache/
 .vscode/
 .claude/
 *.code-workspace
 
-# Not needed at runtime
+# Bind-mounted at runtime (docker-compose.yml) -- never bake data into the image
+data/
+
+# Not needed at runtime: host-side pipeline, design sources, leftovers
+pipeline/
+design/
 _archive/
-redesign/
 *.log

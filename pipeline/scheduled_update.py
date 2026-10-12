@@ -1,0 +1,177 @@
+"""Cron entry point for the data update.
+
+Cron calls this every five minutes; it exits in milliseconds unless an update is
+actually due, so the schedule lives here rather than in the crontab:
+
+  - once a day at DAILY_TIME
+  - on every invocation inside a Nobel announcement window, i.e. from the
+    announced time until WINDOW_HOURS later on the announcement days
+
+All times are Europe/Stockholm, where the prizes are announced. That is the
+reason this file exists at all: the server clock runs on UTC, so putting 11:30
+into the crontab would fire two hours late during CEST -- and one hour off once
+winter time starts. Converting here keeps the table readable and correct.
+
+Only the standard library (plus the stdlib-only nbldash.paths and pipeline.logs)
+is imported at module level. update_data.py (pandas,
+polars, the full API fetch) runs as a subprocess, and only when there is work.
+
+Usage (from the project root):
+    python -m pipeline.scheduled_update            # what cron runs
+    python -m pipeline.scheduled_update --check    # print the decision, change nothing
+    python -m pipeline.scheduled_update --force    # run the update regardless of schedule,
+                                                   # and process + restart even if the
+                                                   # data is unchanged
+"""
+
+import fcntl
+import subprocess
+import sys
+from datetime import date, datetime, timedelta
+from zoneinfo import ZoneInfo
+
+from nbldash import paths
+from pipeline.logs import setup_logging
+
+TZ = ZoneInfo("Europe/Stockholm")
+
+# Announcement pattern, Stockholm local time: Medicine on the first Monday in
+# October, Physics through Peace Tuesday to Friday, Economics the following Monday.
+# (Day offset from that first Monday, earliest announced time, prize.) The dates
+# are derived per year, so the table needs no yearly refresh -- it held 2021-2026.
+ANNOUNCEMENT_PATTERN = [
+    (0, "11:30", "Medicine"),
+    (1, "11:45", "Physics"),
+    (2, "11:45", "Chemistry"),
+    (3, "13:00", "Literature"),
+    (4, "11:00", "Peace"),
+    (7, "11:45", "Economics"),
+]
+
+# Should the Nobel Foundation ever break the pattern, add the deviating dates here
+# ("YYYY-MM-DD": ("HH:MM", "Prize")), checked against https://www.nobelprize.org/press/.
+ANNOUNCEMENT_OVERRIDES = {}
+
+# Announcements regularly start late and the API needs a moment to follow, so
+# the window stays open well past the scheduled time.
+WINDOW_HOURS = 3
+
+# Baseline update for the rest of the year.
+DAILY_TIME = "08:00"
+
+STATE_FILE = paths.state("last_scheduled_run.txt")
+LOCK_FILE = paths.state("scheduled_update.lock")
+
+logger = setup_logging('scheduled_update')
+
+
+def announcements(year):
+    """Announcement table {"YYYY-MM-DD": ("HH:MM", prize)} for one year."""
+    october_first = date(year, 10, 1)
+    first_monday = october_first + timedelta(days=(7 - october_first.weekday()) % 7)
+    table = {
+        (first_monday + timedelta(days=offset)).isoformat(): (start_time, prize)
+        for offset, start_time, prize in ANNOUNCEMENT_PATTERN
+    }
+    table.update(ANNOUNCEMENT_OVERRIDES)
+    return table
+
+
+def announcement_window(now):
+    """Return the prize name if `now` sits inside an announcement window."""
+    entry = announcements(now.year).get(now.strftime("%Y-%m-%d"))
+    if entry is None:
+        return None
+
+    start_time, prize = entry
+    hour, minute = (int(part) for part in start_time.split(":"))
+    start = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
+
+    if start <= now < start + timedelta(hours=WINDOW_HOURS):
+        return prize
+    return None
+
+
+def read_last_run():
+    """Date (YYYY-MM-DD) of the last successful run, or None."""
+    try:
+        with open(STATE_FILE) as f:
+            return f.read().strip()
+    except FileNotFoundError:
+        return None
+    except OSError as e:
+        logger.warning(f"Could not read {STATE_FILE}: {e}")
+        return None
+
+
+def write_last_run(day):
+    try:
+        with open(STATE_FILE, 'w') as f:
+            f.write(day)
+    except OSError as e:
+        logger.error(f"Could not write {STATE_FILE}: {e}")
+
+
+def daily_due(now):
+    """True once DAILY_TIME has passed and today's update has not run yet."""
+    hour, minute = (int(part) for part in DAILY_TIME.split(":"))
+    if (now.hour, now.minute) < (hour, minute):
+        return False
+    return read_last_run() != now.strftime("%Y-%m-%d")
+
+
+def decide(now):
+    """Return the reason to run, or None to stay idle."""
+    prize = announcement_window(now)
+    if prize:
+        return f"{prize} announcement window"
+    if daily_due(now):
+        return "daily update"
+    return None
+
+
+def run_update(force=False):
+    """Run update_data.py in this interpreter's environment."""
+    result = subprocess.run(
+        [sys.executable, "-m", "pipeline.update_data"] + (["--force"] if force else []),
+        cwd=paths.ROOT
+    )
+    return result.returncode
+
+
+def main():
+    args = sys.argv[1:]
+    now = datetime.now(TZ)
+    reason = "manual --force" if "--force" in args else decide(now)
+
+    if "--check" in args:
+        stamp = now.strftime('%Y-%m-%d %H:%M %Z')
+        print(f"Now (Stockholm): {stamp}")
+        print(f"Last run:        {read_last_run() or 'never'}")
+        print(f"Decision:        {reason or 'idle - nothing due'}")
+        return 0
+
+    if reason is None:
+        return 0
+
+    # A slow API run can outlast the five-minute cron interval; without the lock
+    # two updates would write the same CSVs at the same time.
+    with open(LOCK_FILE, 'w') as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            logger.info("Another update is still running - skipping this slot")
+            return 0
+
+        logger.info(f"Triggering update: {reason}")
+        returncode = run_update(force="--force" in args)
+
+    if returncode == 0:
+        write_last_run(now.strftime("%Y-%m-%d"))
+    else:
+        logger.error(f"update_data.py exited with {returncode}")
+    return returncode
+
+
+if __name__ == "__main__":
+    sys.exit(main())

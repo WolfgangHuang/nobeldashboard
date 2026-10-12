@@ -14,185 +14,45 @@ A comprehensive interactive dashboard for exploring Nobel Prize data, built with
 ## Project Structure
 
 ```
-├── app.py                    # Main Dash application (layout, callbacks, routing)
-├── layouts.py                # Widget layout builders (plot shells, network widget)
-├── config.py                 # App settings + color constants
-├── plot_config.py            # PlotConfig class + per-plot configuration data
-├── filters_ui.py             # Filter drawer renderers (standard + nominations)
-├── theme.py                  # Nobel-Spektrum design system (colors, templates)
-├── plotdatagenerator.py      # Facade re-exporting the modules below; script mode
-│                             #   regenerates the derived CSVs (used by update_data.py)
-├── data.py                   # Data loading, cleaning, enrichment (runs at import)
-├── filters.py                # standard_filter / extended_filter + chip-state helpers
-├── figs_geography.py         # Globe, city map, population bubbles, country bars
-├── figs_demography.py        # 3D surface, donuts, sunburst, first names
-├── figs_time.py              # Time gap, age at award
-├── figs_migration.py         # Parallel categories, movement globe/map
-├── figs_prizemoney.py        # Prize money figures
-├── network.py                # Nominations network (edges, graph, cytoscape, map)
-├── overview_stats.py         # Overview KPIs
-├── update_data.py            # API data update script
-├── scrape_nominations.py     # Nomination archive scraper
-├── df_laureates.csv          # Laureate data (from Nobel API)
-├── nominations_full.csv      # Historical nomination data
-├── _archive/                 # Stale backups + dead code (not loaded)
-└── [additional data files]   # Supporting datasets
+├── app.py                     # Dash app: layout, callbacks, routing (assets/ must sit next to it)
+├── wsgi.py                    # Gunicorn entry point (wsgi:application)
+├── assets/                    # Served publicly by Dash: CSS, JS, favicons, images
+├── nbldash/                   # Dashboard package (imported by app.py)
+│   ├── paths.py               # Where all data files live (standard library only)
+│   ├── data.py                # Loading, cleaning, enrichment, nomination edges (runs at import)
+│   ├── filters.py             # standard_filter / extended_filter + chip-state helpers
+│   ├── network.py             # Nominations network (filtering, graph, cytoscape, map)
+│   ├── overview_stats.py      # Overview KPIs
+│   ├── figs/                  # Figure generators: geography, demography, time_age,
+│   │                          #   migration, prizemoney
+│   ├── plotdatagenerator.py   # Facade re-exporting all of the above (`pdg` in app.py)
+│   ├── plot_config.py         # PlotConfig class + per-plot configuration
+│   ├── config.py              # App settings + color constants
+│   ├── layouts.py             # Widget layout builders (plot shells, network widget)
+│   ├── filters_ui.py          # Filter drawer renderers
+│   └── theme.py               # Nobel-Spektrum design system (colors, templates)
+├── pipeline/                  # Runs on the host, not in the container
+│   ├── scheduled_update.py    # Cron entry point: owns the schedule
+│   ├── update_data.py         # API fetch → validate → export → restart
+│   ├── nobel_api.py           # Nobel Prize API client
+│   ├── export_derived.py      # Loads the data like the app, writes data/derived/
+│   ├── scrape_nominations.py  # Nomination archive scraper (run by hand)
+│   └── logs.py                # Rotating log in data/state/
+├── data/
+│   ├── raw/                   # df_laureates.csv (API, written by cron, not in git),
+│   │                          #   nominations_full.csv (scraper, in git)
+│   ├── curated/               # Maintained by hand: corrections, ethnicity, religion, ...
+│   ├── derived/               # Exports for analysis (not in git, not read by the app)
+│   └── state/                 # Timestamps, lock, log (not in git)
+├── design/                    # Design sources and unused images (not served)
+└── Dockerfile, docker-compose.yml, Caddyfile
 ```
 
-## File Descriptions
+Everything written by the update cron lives in git-ignored files, so `git pull`
+on the server never conflicts with fresh data.
 
-### app.py
-
-Main application entry point. Handles:
-
-- Dash app initialization and layout (AppShell structure)
-- Navigation and URL routing
-- Callback definitions for plot updates and filter interactions
-- Loading spinner management for lazy-loaded plots
-- Section rendering (Overview, Geography, Demography, Time, etc.)
-
-Key functions:
-- `generate_loader_spinner()` - Creates placeholder spinners for plots
-- `display_plot()` - Callback that renders plots when containers load
-- `generate_plot_in_layout_standard()` - Builds widget layout for standard plots
-- `generate_plot_in_layout_nominations()` - Builds widget layout for nomination plots
-- `update_plot()` - Callback handling filter changes for standard plots
-
-### config.py
-
-Central configuration file containing:
-
-- App settings (title, port, debug mode)
-- Color palette definitions (category colors, chart colors)
-- `PlotConfig` class for plot configuration management
-- Plot configuration dictionary with all dashboard plots
-- Filter panel rendering functions
-
-Key components:
-- `PlotConfig` class - Encapsulates all settings for a single plot (ID, title, generator function, filter options, styling)
-- `render_filter_standard()` - Generates filter drawer for standard plots
-- `render_filter_nominations()` - Generates filter drawer for nomination plots
-- `get_plot_configs()` - Factory function returning all plot configurations
-
-### plotdatagenerator.py
-
-Data processing engine and plot generator library. Handles:
-
-- Data import and cleaning (Pandas and Polars)
-- Data enrichment (joining religion, ethnicity, movement data)
-- Filter functions for data subsetting
-- Plot generation functions for all visualization types
-
-Key sections:
-
-**Data Import (Lines 1-150)**
-- Loads CSV/Excel files using lazy evaluation where possible
-- Joins coordinate data for geographic visualizations
-- Creates lookup tables for nominations
-
-**Data Cleaning (Lines 150-450)**
-- Standardizes country names
-- Handles missing values
-- Creates derived datasets (df_prizes from df_laureates)
-
-**Filter Functions (Lines 500-1000)**
-- `standard_filter()` - Pandas-based filtering for most plots
-- `extended_filter()` - Polars-based filtering with lazy evaluation for list generator
-- `filter_edges()` - Filters nomination network data
-
-**Plot Generators (Lines 1000-5000)**
-
-| Function | Description |
-|----------|-------------|
-| `generate_choroplethglobe()` | 3D globe with laureates per country |
-| `generate_scattermapbox_cities()` | City-level scatter map |
-| `generate_bubbles_perpopulation()` | Animated bubble chart (prizes vs population) |
-| `generate_bar_percountry()` | Bar chart of prizes per country |
-| `generate_3dsurface_pergender()` | 3D surface plot by gender |
-| `generate_donut()` | Donut charts (gender, religion, ethnicity) |
-| `generate_histogram_timegap()` | Publication-to-prize time gap histogram |
-| `generate_scatterbox_age()` | Age at award scatter/box plot |
-| `generate_heatmap_age()` | Age heatmap by category and decade |
-| `generate_parcat_migration()` | Parallel categories for migration |
-| `generate_network()` | NetworkX-based nomination graph |
-| `generate_map_nominations()` | Geographic nomination flow map |
-
-### update_data.py
-
-Standalone script for updating laureate data from the Nobel Prize API. Designed for cron job execution.
-
-Functions:
-- `update_data()` - Main update orchestrator
-- `validate_laureates_data()` - Validates API response before saving
-- `run_plotdatagenerator()` - Triggers data processing after update
-- `restart_app()` - Restarts the Compose service (Gunicorn HUP outside Docker)
-
-### scrape_nominations.py
-
-Web scraper for the Nobel Prize nomination archive (nobelprize.org).
-
-Classes:
-- `NobelNominationScraper` - Scraper with rate limiting and progress saving
-
-Note: Nomination data has a 50-year secrecy period, so only historical nominations are available.
-
-## Data Flow
-
-```
-                                    ┌─────────────────────┐
-                                    │   Nobel Prize API   │
-                                    └──────────┬──────────┘
-                                               │
-                                               v
-┌─────────────────────┐            ┌─────────────────────┐
-│  Nomination Archive │            │   update_data.py    │
-│   (nobelprize.org)  │            │   (scheduled job)   │
-└──────────┬──────────┘            └──────────┬──────────┘
-           │                                  │
-           v                                  v
-┌─────────────────────┐            ┌─────────────────────┐
-│scrape_nominations.py│            │  df_laureates.csv   │
-└──────────┬──────────┘            └──────────┬──────────┘
-           │                                  │
-           v                                  │
-┌─────────────────────┐                       │
-│nominations_full.csv │                       │
-└──────────┬──────────┘                       │
-           │                                  │
-           └────────────┬─────────────────────┘
-                        │
-                        v
-           ┌─────────────────────┐
-           │ plotdatagenerator.py│
-           │                     │
-           │  - Data cleaning    │
-           │  - Enrichment       │
-           │  - df_prizes        │
-           │  - Polars DFs       │
-           └──────────┬──────────┘
-                      │
-                      v
-           ┌─────────────────────┐
-           │     config.py       │
-           │                     │
-           │  - PlotConfig       │
-           │  - Filter renderers │
-           └──────────┬──────────┘
-                      │
-                      v
-           ┌─────────────────────┐
-           │      app.py         │
-           │                     │
-           │  - Dash callbacks   │
-           │  - Layout rendering │
-           │  - User interaction │
-           └──────────┬──────────┘
-                      │
-                      v
-           ┌─────────────────────┐
-           │    Web Browser      │
-           └─────────────────────┘
-```
+The nomination edges are built from `nominations_full.csv` at import (~0.2 s);
+there is no `df_edges.csv` any more that could fall behind the nominations.
 
 ## Key Dependencies
 
@@ -203,24 +63,13 @@ Note: Nomination data has a 50-year secrecy period, so only historical nominatio
 - networkx / pygraphviz - Network graph generation
 - yfinance - Prize money currency conversion
 
-## Performance Optimizations
-
-The codebase uses several optimization techniques:
-
-1. **Lazy Evaluation (Polars)**: Large datasets use `pl.scan_csv()` and LazyFrames to defer computation until results are needed.
-
-2. **Query Optimization**: Filter chains in `extended_filter()` are built as query plans and executed in a single optimized pass.
-
-3. **Pre-computed Lookups**: Hover data for animations uses dictionary lookups (O(1)) instead of DataFrame filtering (O(n)).
-
-4. **Vectorized Operations**: String operations and data transformations use vectorized Polars/Pandas operations instead of row-wise apply.
-
 ## Running the Application
 
 Environment (uv — dependencies are declared in `pyproject.toml`, exact versions in `uv.lock`):
 ```bash
-uv sync                # creates .venv/ and installs the locked dependencies
-uv run python app.py   # run inside the environment
+uv sync                               # creates .venv/ and installs the locked dependencies
+uv run python -m pipeline.nobel_api   # first run only: fetch data/raw/df_laureates.csv
+uv run python app.py                  # run inside the environment
 ```
 `requirements.txt` is generated from the lock (`uv export --format requirements-txt
 --no-dev --no-hashes -o requirements.txt`) for pip-based deploys — don't edit it by hand.
@@ -247,37 +96,60 @@ has run in the master (building the edge table at import does that), so every
 nominations/network callback would hang. Each worker loads the app itself
 (~450 MB RSS); the `gthread` workers keep a few slow requests from blocking the app.
 
+## Deployment (Docker Compose)
+
+`docker-compose.yml` runs the app behind Caddy (HTTPS, security headers). The image
+contains the code only; `data/` is bind-mounted read-only, so:
+
+```bash
+docker compose up -d --build        # after a code change (git pull)
+docker compose restart dashboard    # load new data (update_data.py does this)
+```
+
+The `dashboard` service has a healthcheck on `/healthz`; Caddy starts once it is
+healthy. Container logs are capped at 3 × 10 MB per service.
+
+A fresh server needs the data before the first start: `uv sync`, then
+`uv run python -m pipeline.update_data --force` (fetches the API data and writes
+`data/state/`; the restart step fails harmlessly while nothing runs yet), then
+`docker compose up -d --build`.
+
 ## Data Updates
 
-To update laureate data from the API:
+To update laureate data from the API (from the project root):
 ```bash
-python update_data.py
+python -m pipeline.update_data
 ```
 
 This script:
 1. Fetches current data from the Nobel Prize API
 2. Validates the response
-3. Saves raw data to CSV
-4. Runs plotdatagenerator.py to process the data
+3. Saves it to `data/raw/df_laureates.csv`
+4. Runs `pipeline.export_derived`, which loads the data exactly like the app — if
+   that fails, the app is not restarted and keeps serving the old data
 5. Restarts the Compose service `dashboard` (falls back to a Gunicorn HUP when
    the deployment is not containerised)
 
 Steps 4 and 5 only run when `df_laureates.csv` differs from the data the last
-complete run processed (SHA-256 in `.last_processed_laureates.sha256`); otherwise
-only the timestamp is refreshed. This keeps the announcement windows, with a run
-every five minutes, from restarting the app each time. `python update_data.py
---force` processes and restarts regardless, e.g. after changing the pipeline code.
+complete run processed (SHA-256 in `data/state/last_processed_laureates.sha256`);
+otherwise only the timestamp is refreshed. This keeps the announcement windows,
+with a run every five minutes, from restarting the app each time. `--force`
+processes and restarts regardless, e.g. after changing the loading code.
 
-Run it on the host, not inside the container: it needs the Docker CLI for step 5,
-and the bind mount makes the new CSVs visible to the app immediately.
+Run it on the host, not inside the container: it needs the Docker CLI for step 5.
+The log goes to `data/state/data_update.log` (rotated at 1 MB, three old copies).
+
+New nominations: run `pipeline/scrape_nominations.py` by hand (`python -m
+pipeline.scrape_nominations`); it writes to `data/derived/`. After checking the
+result, copy it to `data/raw/nominations_full.csv` and commit it.
 
 ### Scheduling
 
-`scheduled_update.py` is the cron entry point and owns the schedule, so the
-crontab holds a single line:
+`pipeline/scheduled_update.py` is the cron entry point and owns the schedule, so
+the crontab holds a single line:
 
 ```
-*/5 * * * * /path/to/.venv/bin/python /path/to/scheduled_update.py >> ~/cron-nbldata.log 2>&1
+*/5 * * * * cd /path/to/repo && .venv/bin/python -m pipeline.scheduled_update >> ~/cron-nbldata.log 2>&1
 ```
 
 It exits within milliseconds unless an update is due:
@@ -297,8 +169,8 @@ Nobel Foundation deviate (check https://www.nobelprize.org/press/), add the date
 to `ANNOUNCEMENT_OVERRIDES`.
 
 ```bash
-python scheduled_update.py --check   # print the decision, change nothing
-python scheduled_update.py --force   # update regardless of schedule (passes --force on)
+python -m pipeline.scheduled_update --check   # print the decision, change nothing
+python -m pipeline.scheduled_update --force   # update regardless of schedule (passes --force on)
 ```
 
 A file lock prevents a slow run from overlapping with the next cron slot.

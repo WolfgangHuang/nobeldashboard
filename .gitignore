@@ -2,7 +2,10 @@ __pycache__/
 *.pyc
 .venv/
 venv/
-data_update.log
-last_scheduled_run.txt
-.scheduled_update.lock
-.last_processed_laureates.sha256
+.ruff_cache/
+
+# Written by the update cron, not by hand (see nbldash/paths.py)
+data/raw/df_laureates.csv
+data/raw/df_laureates.xlsx
+data/derived/
+data/state/

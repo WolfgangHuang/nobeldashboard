@@ -1,26 +1,45 @@
+x-logging: &logging
+  # Docker's json-file driver keeps container logs forever by default.
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
   caddy:
-    image: caddy:latest
+    # Major version pinned: fixes arrive with `docker compose pull`, a breaking
+    # Caddy 3 does not.
+    image: caddy:2
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
       - caddy_config:/config
     restart: unless-stopped
+    logging: *logging
     depends_on:
-      - dashboard
+      dashboard:
+        condition: service_healthy
 
   dashboard:
     build: .
     expose:
       - "8050"
     restart: unless-stopped
+    logging: *logging
     volumes:
-      # Code and CSVs come from the host dir, so update_data.py results are
-      # picked up by a container restart without rebuilding the image.
-      - ./:/app
+      # Only the data comes from the host: the update cron writes it there, and a
+      # `docker compose restart dashboard` loads it. The code is baked into the
+      # image, so code changes need `docker compose up -d --build`.
+      - ./data:/app/data:ro
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8050/healthz', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      start_period: 60s
+      retries: 3
 
 volumes:
   caddy_data:

@@ -1,5 +1,14 @@
 nbldata.org {
 	encode zstd gzip
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		# Only frame-ancestors: a full CSP would need to allow Dash's inline scripts.
+		Content-Security-Policy "frame-ancestors 'self'"
+		X-Frame-Options "SAMEORIGIN"
+		-Server
+	}
 	reverse_proxy dashboard:8050
 }
 

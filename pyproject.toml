@@ -45,8 +45,6 @@ package = false
 
 [tool.ruff]
 line-length = 120
-# Dead code kept for reference only (never imported).
-extend-exclude = ["_archive"]
 
 [tool.ruff.lint]
 # F821 (undefined names) is the guard that caught real bugs after the module

@@ -11,7 +11,8 @@ RUN pip install --no-cache-dir uv
 COPY requirements.txt ./
 RUN uv pip install --system --no-cache -r requirements.txt
 
-# App code + data files
+# App code only (see .dockerignore): data/ is bind-mounted read-only by
+# docker-compose.yml, so code changes need `docker compose up -d --build`.
 COPY . .
 
 EXPOSE 8050
