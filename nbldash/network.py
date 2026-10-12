@@ -14,7 +14,7 @@ from collections import defaultdict
 from functools import lru_cache
 from nbldash import paths
 from nbldash.data import (df_edges, df_nominations, get_max_nominee_count,  # noqa: F401
-                          is_valid_value, lastyearincluded, transform_to_edges)
+                          is_valid_value, lastnominationyear, lastyearincluded, transform_to_edges)
 
 
 max_nominees = get_max_nominee_count(df_nominations)
@@ -723,7 +723,7 @@ def graph_to_cytoscape_elements(G, max_nodes=800):
 
 def generate_network_elements(data=df_nominations,
                      algorithm="cola", sfdp_k_value=1.0, sfdp_rf_value=1.0, sfdp_overlap="prism",
-                     categories="all", timerange_nomination=[1901, lastyearincluded-49], timerange_field="nomination",
+                     categories="all", timerange_nomination=[1901, lastnominationyear], timerange_field="nomination",
                      nominator_name="", nominator_search_mode="all", nominator_gender="all", nominator_country="all", nominator_islaureate=False,
                      nominee_name="", nominee_search_mode="all", nominee_gender="female", nominee_country="all", nominee_islaureate=False, highlighted_person_id=None):
     """
@@ -787,7 +787,7 @@ def network_node_connections(filters, node_id):
 
 def generate_map_nominations(data=df_nominations,
                      algorithm="graphviz_sfdp", sfdp_k_value=1.0, sfdp_rf_value=1.0, sfdp_overlap="prism",
-                     categories="all", timerange_nomination=[1901, lastyearincluded-49], timerange_field="nomination",
+                     categories="all", timerange_nomination=[1901, lastnominationyear], timerange_field="nomination",
                      nominator_name="", nominator_search_mode="all", nominator_gender="all", nominator_country="all", nominator_islaureate=False, 
                      nominee_name="", nominee_search_mode="all", nominee_gender="female", nominee_country="all", nominee_islaureate=False, highlighted_person_id=None):
 

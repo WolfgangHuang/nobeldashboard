@@ -188,7 +188,7 @@ _nominator_prizes = df_nominations.select([
 _nominee_prizes_list = []
 
 
-for i in range(1, 16):  # Assuming max 15 nominees
+for i in range(1, get_max_nominee_count(df_nominations) + 1):
     col_id = f"nominee_{i}_id"
     col_prizes = f"nominee_{i}_awarded_prizes"
     if col_id in df_nominations.columns and col_prizes in df_nominations.columns:
@@ -217,6 +217,12 @@ df_edges = (
     )
     .collect()  # Materialize here - all operations run in one optimized pass
 )
+
+
+# Last year with published nominations. The archive opens each year's nominations
+# after 50 years, but not always on schedule, so it is read from the data rather
+# than derived from lastyearincluded.
+lastnominationyear = int(df_edges["year"].max())
 
 
 df_timegap = pd.read_csv(paths.curated('df_prize-publication-timegap.csv'), sep=';', encoding='UTF-8', index_col=0)

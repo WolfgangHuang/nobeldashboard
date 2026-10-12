@@ -196,7 +196,7 @@ def get_plot_configs(df_laureates, df_prizes, df_nominations, lastyearincluded):
     Returns:
         dict: Plot configurations
     """
-    from nbldash.plotdatagenerator import lastyearincluded, totalprizeamount
+    from nbldash.plotdatagenerator import lastyearincluded, lastnominationyear, totalprizeamount
     from dash import dcc
     
     # lastyearincluded = pdg.get_lastyearincluded(df_prizes)
@@ -698,8 +698,8 @@ def get_plot_configs(df_laureates, df_prizes, df_nominations, lastyearincluded):
         lastyearincluded=lastyearincluded,
         plot_category="nominations",
         header = "Graph/Network of Nominations",
-        subheader = f"Shows a graph visualization of nominators, nominations and nominees for the Nobel prizes. The initial graph shows all female nominees until {lastyearincluded - 49}. You may zoom and pan the graph. Hovering over a node shows additional information. Clicking on a node highlights edges and shows detail information below the graph. Use the filters to customize the view.",
-        badges=["All Categories", f"1901-{lastyearincluded -50}"],
+        subheader = f"Shows a graph visualization of nominators, nominations and nominees for the Nobel prizes. The initial graph shows all female nominees until {lastnominationyear}. You may zoom and pan the graph. Hovering over a node shows additional information. Clicking on a node highlights edges and shows detail information below the graph. Use the filters to customize the view.",
+        badges=["All Categories", f"1901-{lastnominationyear}"],
         filter_type="nominations",
         plot_generator_kwargs={"data":df_nominations},
         plot_generator = "generate_network",
@@ -714,8 +714,8 @@ def get_plot_configs(df_laureates, df_prizes, df_nominations, lastyearincluded):
         lastyearincluded=lastyearincluded,
         plot_category="nominations",
         header = "World Map of Nominations",
-        subheader = f"Nominations visualized as splines of world map, showing the flow from nominator to nominee. The initial graph shows all female nominees until 1976. You may zoom and pan the graph.",
-        badges=["All Categories", f"1901-{lastyearincluded -50}"],
+        subheader = f"Nominations visualized as splines of world map, showing the flow from nominator to nominee. The initial graph shows all female nominees until {lastnominationyear}. You may zoom and pan the graph.",
+        badges=["All Categories", f"1901-{lastnominationyear}"],
         filter_type="nominations",
         show_filters={"categories": True, "gender": True, "custom-filter": False, "algorithm": False},
         plot_generator_kwargs={"data":df_nominations},

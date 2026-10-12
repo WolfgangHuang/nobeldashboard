@@ -10,11 +10,12 @@ data the last complete run processed; --force does both regardless.
 """
 
 import hashlib
+import shutil
 import sys
 import os
 import subprocess
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timezone
 
 from nbldash import paths
 from pipeline.logs import setup_logging
@@ -22,6 +23,8 @@ from pipeline.nobel_api import get_all_laureates_data, save_laureates_data
 
 ROOT = str(paths.ROOT)
 LAUREATES_CSV = paths.raw("df_laureates.csv")
+# The previous file, kept while the new one is being checked by the export step.
+LAUREATES_BACKUP = paths.state("df_laureates.previous.csv")
 
 logger = setup_logging('data_update')
 
@@ -56,9 +59,16 @@ def write_processed_digest(digest):
         logger.error(f"Could not write {PROCESSED_STATE}: {e}")
 
 
+def restore_previous_data():
+    """Put the df_laureates.csv from before this run back in place."""
+    if os.path.exists(LAUREATES_BACKUP):
+        shutil.copy2(LAUREATES_BACKUP, LAUREATES_CSV)
+        logger.warning(f"Restored the previous {LAUREATES_CSV.name}")
+
+
 def save_update_timestamp():
     """Save the current timestamp to file."""
-    timestamp = datetime.now().strftime("%B %d, %Y at %H:%M UTC")
+    timestamp = datetime.now(timezone.utc).strftime("%B %d, %Y at %H:%M UTC")
     try:
         with open(paths.state("last_api_update.txt"), 'w') as f:
             f.write(timestamp)
@@ -281,12 +291,18 @@ def update_data(force=False):
 
         logger.info(f"Data validation passed: {validation_message}")
 
-        # Save raw data to files
+        # Save raw data to files. Keep the previous file: if the new data breaks the
+        # loading code (export step below), it is put back, so a later container
+        # restart (reboot, deploy) does not load data the app cannot handle.
+        if os.path.exists(LAUREATES_CSV):
+            paths.STATE_DIR.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(LAUREATES_CSV, LAUREATES_BACKUP)
         logger.info("Saving raw data to files...")
         success = save_laureates_data(df_laureates_new)
 
         if not success:
             logger.error("Failed to save laureates data")
+            restore_previous_data()
             return False
 
         logger.info(f"Raw data saved successfully - {len(df_laureates_new)} records")
@@ -306,6 +322,7 @@ def update_data(force=False):
 
         if not processing_success:
             logger.error("Data processing through pipeline.export_derived failed")
+            restore_previous_data()
             return False
 
         # Update timestamp after complete success

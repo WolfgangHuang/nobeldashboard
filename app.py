@@ -431,7 +431,7 @@ def update_network_cytoscape(
         chip_economics = chip_economics if chip_economics is not None else True
         chip_literature = chip_literature if chip_literature is not None else True
         chip_peace = chip_peace if chip_peace is not None else True
-        slider_timerange = slider_timerange if slider_timerange is not None else [1901, lastyearincluded - 49]
+        slider_timerange = slider_timerange if slider_timerange is not None else [1901, pdg.lastnominationyear]
         dropdown_timerange = dropdown_timerange if dropdown_timerange is not None else "nomination"
         chip_nominator_female = chip_nominator_female if chip_nominator_female is not None else True
         chip_nominator_male = chip_nominator_male if chip_nominator_male is not None else True
@@ -679,7 +679,7 @@ def update_nominations_plot_combined(
         chip_economics = chip_economics if chip_economics is not None else True
         chip_literature = chip_literature if chip_literature is not None else True
         chip_peace = chip_peace if chip_peace is not None else True
-        slider_timerange = slider_timerange if slider_timerange is not None else [1901, lastyearincluded-49]
+        slider_timerange = slider_timerange if slider_timerange is not None else [1901, pdg.lastnominationyear]
         dropdown_timerange = dropdown_timerange if dropdown_timerange is not None else "nomination"
         chip_nominator_female = chip_nominator_female if chip_nominator_female is not None else True
         chip_nominator_male = chip_nominator_male if chip_nominator_male is not None else True

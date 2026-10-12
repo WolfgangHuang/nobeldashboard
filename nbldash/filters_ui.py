@@ -192,11 +192,11 @@ def render_filter_nominations(plot_config):
         - Submit mode: Toggle for immediate vs. button-triggered updates
         
     Note:
-        Nomination data has a 50-year secrecy period, so max year is
-        lastyearincluded - 49.
+        Nomination data has a 50-year secrecy period; the max year is the last
+        year in the data (lastnominationyear).
     """
 
-    from nbldash.plotdatagenerator import lastyearincluded, countries_to_list, df_edges
+    from nbldash.plotdatagenerator import lastyearincluded, lastnominationyear, countries_to_list, df_edges
 
     marks_award = [
         {"value": 1901, "label": "1901"},
@@ -215,7 +215,7 @@ def render_filter_nominations(plot_config):
 
     marks_nomination = [
         {"value": 1901, "label": "1901"},
-        {"value": int(lastyearincluded)-49, "label": lastyearincluded-49}
+        {"value": lastnominationyear, "label": str(lastnominationyear)}
     ]
 
 
@@ -360,9 +360,11 @@ def render_filter_nominations(plot_config):
                                 ),
                                 dmc.RangeSlider(
                                     id={"type": "nom-slider-timerange", "index": plot_config.plot_id},
-                                    value=[1901, 1905],
+                                    # Same range as the initial graph (generator defaults);
+                                    # 1901-1905 here made a plain Submit shrink the view.
+                                    value=[1901, lastnominationyear],
                                     min=1901,
-                                    max=lastyearincluded-49,
+                                    max=lastnominationyear,
                                     minRange=1,
                                     marks=marks_nomination,
                                     style={"width": "100%"},
