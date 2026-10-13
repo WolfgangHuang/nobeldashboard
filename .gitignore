@@ -16,3 +16,7 @@ data/state/
 .claude/memory/
 .claude/MEMORY.md
 .claude/settings.local.json
+
+# Editor/workspace files (machine-specific)
+.vscode/
+Dashboard.code-workspace
