@@ -5,6 +5,7 @@ venv/
 .ruff_cache/
 .claude
 CLAUDE.md
+internal
 
 # Written by the update cron, not by hand (see nbldash/paths.py)
 data/raw/df_laureates.csv
