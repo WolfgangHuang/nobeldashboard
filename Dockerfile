@@ -15,6 +15,10 @@ RUN uv pip install --system --no-cache -r requirements.txt
 # writes is bind-mounted read-only by docker-compose.yml.
 COPY . .
 
+# Unprivileged user: code and runtime data (mounted :ro) only need read access.
+RUN useradd --create-home --uid 1000 app
+USER app
+
 EXPOSE 8050
 
 # No --preload: polars deadlocks in a forked child once its thread pool has run in

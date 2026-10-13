@@ -2298,7 +2298,7 @@ layout = dmc.AppShell(
                             ),
                             html.Button(msym("dark_mode"), id="theme-toggle",
                                         className="nbl-icon-btn", n_clicks=0),
-                            html.Div("V2.0", className="nbl-badge"),
+                            html.Div("Version 2.5", className="nbl-badge"),
                         ],
                         gap="sm",
                         align="center",
